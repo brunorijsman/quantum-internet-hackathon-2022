@@ -1,57 +1,29 @@
 [
-  {
-    "title": "Title for this application",
-    "description": "Description of this application",
-    "values": [
-      {
-        "name": "x",
-        "default_value": 0,
-        "minimum_value": 0,
-        "maximum_value": 1,
-        "unit": "",
-        "scale_value": 1.0
-      }
-    ],
-    "input_type": "number",
-    "roles": [
-      "Sender"
-    ]
-  },
-  {
-    "title": "Title for this application",
-    "description": "Description of this application",
-    "values": [
-      {
-        "name": "x",
-        "default_value": 0,
-        "minimum_value": 0,
-        "maximum_value": 1,
-        "unit": "",
-        "scale_value": 1.0
-      }
-    ],
-    "input_type": "number",
-    "roles": [
-      "Receiver"
-    ]
-  },
-  {
-    "title": "Title for this input",
-    "description": "This input is available for multiple roles",
-    "values": [
-      {
-        "name": "y",
-        "default_value": 0,
-        "minimum_value": 0,
-        "maximum_value": 1,
-        "unit": "",
-        "scale_value": 1.0
-      }
-    ],
-    "input_type": "number",
-    "roles": [
-      "Sender",
-      "Receiver"
-    ]
-  }
+    {
+        "title": "Qubit state of Sender",
+        "slug": "qubit_state_sender",
+        "description": "Sender state of the state teleportation",
+        "values": [
+            {
+                "name": "phi",
+                "default_value": 0.0,
+                "minimum_value": 0.0,
+                "maximum_value": 2.0,
+                "unit": "",
+                "scale_value": 1.0
+            },
+            {
+                "name": "theta",
+                "default_value": 0.0,
+                "minimum_value": 0.0,
+                "maximum_value": 1.0,
+                "unit": "",
+                "scale_value": 1.0
+            }
+        ],
+        "input_type": "qubit",
+        "roles": [
+            "Sender"
+        ]
+    }
 ]

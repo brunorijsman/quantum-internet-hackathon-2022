@@ -1,8 +1,8 @@
 [
     {
-        "title": "Qubit state of Sender",
+        "title": "Qubit state of sender",
         "slug": "qubit_state_sender",
-        "description": "Sender state of the state teleportation",
+        "description": "sender state of the state teleportation",
         "values": [
             {
                 "name": "phi",
@@ -23,7 +23,7 @@
         ],
         "input_type": "qubit",
         "roles": [
-            "Sender"
+            "sender"
         ]
     }
 ]

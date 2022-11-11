@@ -1,8 +1,10 @@
 from netqasm.sdk.external import NetQASMConnection
 from netqasm.sdk import EPRSocket
+import sys
 
 
 def main(phi, theta, app_config=None):
+    print("sender main", file=sys.stderr)
     # Specify an EPR socket to receiver
     epr_socket = EPRSocket("receiver")
 
@@ -17,4 +19,5 @@ def main(phi, theta, app_config=None):
         # Measure the qubit
         m = q_ent.measure()
     # Print the outcome
-    print(f"sender's outcome is: {m}")
+    print(f"sender's outcome is: {m}", file=sys.stderr)
+    return f"sender measurement is: {m}"

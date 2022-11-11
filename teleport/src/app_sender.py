@@ -1,11 +1,14 @@
+from netqasm.logging.output import get_new_app_logger
 from netqasm.sdk.external import NetQASMConnection
 from netqasm.sdk import EPRSocket
-import sys
 
 
 def main(phi, theta, app_config=None):
-    print("sender main", file=sys.stderr)
-    # Specify an EPR socket to receiver
+
+    app_logger = get_new_app_logger(app_name=app_config.app_name,
+                                    log_config=app_config.log_config)
+    app_logger.log("sender main")
+
     epr_socket = EPRSocket("receiver")
 
     sender = NetQASMConnection(
@@ -14,10 +17,9 @@ def main(phi, theta, app_config=None):
         epr_sockets=[epr_socket],
     )
     with sender:
-        # Create an entangled pair using the EPR socket to receiver
         q_ent = epr_socket.create()[0]
-        # Measure the qubit
         m = q_ent.measure()
-    # Print the outcome
-    print(f"sender's outcome is: {m}", file=sys.stderr)
+
+    app_logger.log(f"sender outcome is {m}")
+
     return f"sender measurement is: {m}"

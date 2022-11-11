@@ -1,0 +1,19 @@
+- AID: 0
+  ANG: null
+  HFL: null
+  HLN: null
+  INS: meas
+  LOG: Doing instruction meas with operands ['Q0=0', 'M0=0']
+  OPR:
+  - Q0=0
+  - M0=0
+  OUT: 0
+  PRC: 44
+  QGR: {}
+  QID:
+  - 0
+  SID: 0
+  SIT: 7540.0
+  VID:
+  - 0
+  WCT: '2022-11-11 10:37:23.716567'

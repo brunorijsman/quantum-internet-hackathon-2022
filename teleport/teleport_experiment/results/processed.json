@@ -1,13 +1,59 @@
 {
   "round_number": 1,
   "round_set": "local",
-  "round_result": {
-    "error": {
-      "exception": "CalledProcessError",
-      "message": "NetQASM returned with exit status 1.",
-      "trace": "Traceback (most recent call last):\n  File \"/Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/venv/bin/netqasm\", line 8, in <module>\n    sys.exit(cli())\n  File \"/Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/venv/lib/python3.8/site-packages/click/core.py\", line 1130, in __call__\n    return self.main(*args, **kwargs)\n  File \"/Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/venv/lib/python3.8/site-packages/click/core.py\", line 1055, in main\n    rv = self.invoke(ctx)\n  File \"/Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/venv/lib/python3.8/site-packages/click/core.py\", line 1657, in invoke\n    return _process_result(sub_ctx.command.invoke(sub_ctx))\n  File \"/Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/venv/lib/python3.8/site-packages/click/core.py\", line 1404, in invoke\n    return ctx.invoke(self.callback, **ctx.params)\n  File \"/Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/venv/lib/python3.8/site-packages/click/core.py\", line 760, in invoke\n    return __callback(*args, **kwargs)\n  File \"/Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/venv/lib/python3.8/site-packages/netqasm/runtime/cli.py\", line 344, in simulate\n    simulate_application(\n  File \"/Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/venv/lib/python3.8/site-packages/squidasm/run/multithread/simulate.py\", line 89, in simulate_application\n    result = mgr.run_app(app_instance, use_app_config=use_app_config)\n  File \"/Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/venv/lib/python3.8/site-packages/squidasm/run/multithread/runtime_mgr.py\", line 204, in run_app\n    results[name] = future.get()\n  File \"/usr/local/Cellar/python@3.8/3.8.14/Frameworks/Python.framework/Versions/3.8/lib/python3.8/multiprocessing/pool.py\", line 771, in get\n    raise self._value\n  File \"/usr/local/Cellar/python@3.8/3.8.14/Frameworks/Python.framework/Versions/3.8/lib/python3.8/multiprocessing/pool.py\", line 125, in worker\n    result = (True, func(*args, **kwds))\nTypeError: main() got an unexpected keyword argument 'phi'\nException in thread Thread-1:\nTraceback (most recent call last):\n  File \"/usr/local/Cellar/python@3.8/3.8.14/Frameworks/Python.framework/Versions/3.8/lib/python3.8/threading.py\", line 932, in _bootstrap_inner\n    self.run()\n  File \"/usr/local/Cellar/python@3.8/3.8.14/Frameworks/Python.framework/Versions/3.8/lib/python3.8/threading.py\", line 870, in run\n    self._target(*self._args, **self._kwargs)\n  File \"/Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/venv/lib/python3.8/site-packages/squidasm/run/multithread/runtime_mgr.py\", line 125, in backend_thread\n    ns.sim_run()\n  File \"/Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/venv/lib/python3.8/site-packages/netsquid/util/simtools.py\", line 275, in sim_run\n    _simengine.run()\n  File \"pydynaa/core.pyx\", line 1466, in pydynaa.core.SimulationEngine.run\n  File \"pydynaa/core.pyx\", line 172, in pydynaa.core._call_obj_expr\n  File \"pydynaa/core.pyx\", line 169, in pydynaa.core._call_obj_expr\n  File \"netsquid/protocols/protocol.pyx\", line 290, in netsquid.protocols.protocol.Protocol._expression_callback\n  File \"netsquid/protocols/protocol.pyx\", line 301, in netsquid.protocols.protocol.Protocol._generator_step\n  File \"/Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/venv/lib/python3.8/site-packages/squidasm/nqasm/qnodeos.py\", line 147, in run\n    ev = self._get_next_task_event()\n  File \"/Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/venv/lib/python3.8/site-packages/squidasm/nqasm/qnodeos.py\", line 177, in _get_next_task_event\n    return task.pop_next_event()\n  File \"/Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/venv/lib/python3.8/site-packages/squidasm/nqasm/qnodeos.py\", line 63, in pop_next_event\n    self.update_next_event()\n  File \"/Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/venv/lib/python3.8/site-packages/squidasm/nqasm/qnodeos.py\", line 75, in update_next_event\n    next_event = next(self._gen)\n  File \"/Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/venv/lib/python3.8/site-packages/netqasm/backend/qnodeos.py\", line 184, in _handle_open_epr_socket\n    yield from self._executor.setup_epr_socket(\n  File \"/Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/venv/lib/python3.8/site-packages/netqasm/backend/executor.py\", line 318, in setup_epr_socket\n    yield from output\n  File \"/Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/venv/lib/python3.8/site-packages/squidasm/nqasm/netstack.py\", line 157, in setup_epr_socket\n    yield from self._wait_for_remote_node(\n  File \"/Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/venv/lib/python3.8/site-packages/squidasm/nqasm/netstack.py\", line 208, in _wait_for_remote_node\n    raise TimeoutError(\"Remote node did not initialize the correct rules\")\nTimeoutError: Remote node did not initialize the correct rules\n"
+  "round_result": [
+    {
+      "app_receiver": null,
+      "app_sender": null
     }
-  },
-  "instructions": [],
+  ],
+  "instructions": [
+    {
+      "command": "entanglement",
+      "action": "start",
+      "from": {
+        "node": "amsterdam",
+        "id": 0
+      },
+      "to": {
+        "node": "leiden",
+        "id": 0
+      },
+      "channels": [
+        "amsterdam-leiden"
+      ],
+      "groups": {}
+    },
+    {
+      "command": "entanglement",
+      "action": "success",
+      "from": {
+        "node": "amsterdam",
+        "id": 0
+      },
+      "to": {
+        "node": "leiden",
+        "id": 0
+      },
+      "channels": [
+        "amsterdam-leiden"
+      ],
+      "groups": {
+        "299733713": {
+          "qubits": [
+            {
+              "node": "sender",
+              "id": 0
+            }
+          ],
+          "is_entangled": true,
+          "state": null
+        }
+      }
+    },
+    {
+      "command": "application-finished"
+    }
+  ],
   "cumulative_result": {}
 }

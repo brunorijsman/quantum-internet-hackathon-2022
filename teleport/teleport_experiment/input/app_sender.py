@@ -1,7 +1,8 @@
 from netqasm.sdk.external import NetQASMConnection
 from netqasm.sdk import EPRSocket
 
-def main(app_config=None):
+
+def main(phi, theta, app_config=None):
     # Specify an EPR socket to receiver
     epr_socket = EPRSocket("receiver")
 

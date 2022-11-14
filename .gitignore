@@ -1,4 +1,4 @@
 venv/**
 *.pyc
 
-**/teleport_experiment/**
+**/*_experiment/**

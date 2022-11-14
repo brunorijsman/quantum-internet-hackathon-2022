@@ -1,6 +1,7 @@
 from netqasm.logging.output import get_new_app_logger
+from netqasm.sdk import EPRSocket, Qubit
 from netqasm.sdk.external import NetQASMConnection, Socket
-from netqasm.sdk import EPRSocket
+from netqasm.sdk.toolbox import set_qubit_state
 
 
 def main(phi, theta, app_config=None):
@@ -22,7 +23,11 @@ def main(phi, theta, app_config=None):
 
     with sender:
 
+        app_logger.log("sender creates qubit to teleport")
+        q = Qubit(sender)
+        set_qubit_state(q, phi, theta)
+
         app_logger.log("sender creates entanglement with receiver")
         q_ent = epr_socket.create()[0]
 
-    return f"sender finishes"
+    return "sender finishes"

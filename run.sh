@@ -25,10 +25,21 @@ done
 echo "}" >> ~/.qne/applications.json
 
 for application in $(cat applications); do
+
     echo "Running ${application}..."
     cd ${TOP}/${application}
     qne experiment create ${application}_experiment ${application} randstad > /dev/null
     cd ${application}_experiment
     qne experiment run | gsed 's/\\n/\n/g'
+
+    echo "Results:"
     cat results/processed.json | jq '.round_result'
+
+    echo "Logs:"
+    for log_file in ${TOP}/${application}/${application}_experiment/raw_output/LAST/*_app_log.yaml; do
+        base=$(basename ${log_file})
+        echo "${base}:"
+        grep "LOG" ${log_file}
+    done
+
 done

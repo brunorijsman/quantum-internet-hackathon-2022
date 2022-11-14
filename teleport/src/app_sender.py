@@ -1,6 +1,7 @@
 from netqasm.logging.output import get_new_app_logger
 from netqasm.sdk import EPRSocket, Qubit
-from netqasm.sdk.external import NetQASMConnection, Socket
+from netqasm.sdk.classical_communication.message import StructuredMessage
+from netqasm.sdk.external import NetQASMConnection, Socket, get_qubit_state
 from netqasm.sdk.toolbox import set_qubit_state
 
 
@@ -26,8 +27,23 @@ def main(phi, theta, app_config=None):
         app_logger.log("sender creates qubit to teleport")
         q = Qubit(sender)
         set_qubit_state(q, phi, theta)
+        sender.flush()
+
+        dm = get_qubit_state(q)
+        app_logger.log(f"sender density matrix of teleported qubit is {dm}")
+        sender.flush()
 
         app_logger.log("sender creates entanglement with receiver")
         q_ent = epr_socket.create_keep()[0]
+
+        app_logger.log("sender performs teleportation")
+        q.cnot(q_ent)
+        q.H()
+        m1 = q.measure()
+        m2 = q_ent.measure()
+
+    correction = (int(m1), int(m2))
+    app_logger.log(f"sender sends correction message {correction} to receiver")
+    socket.send_structured(StructuredMessage("correction", correction))
 
     return "sender finishes"

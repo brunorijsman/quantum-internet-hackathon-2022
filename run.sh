@@ -39,7 +39,7 @@ for application in $(cat applications); do
     for log_file in ${TOP}/${application}/${application}_experiment/raw_output/LAST/*_app_log.yaml; do
         base=$(basename ${log_file})
         echo "${base}:"
-        grep "LOG" ${log_file}
+        egrep -v '(HFL|HLN|WCT)' ${log_file}
     done
 
 done

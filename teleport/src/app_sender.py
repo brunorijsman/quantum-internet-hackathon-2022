@@ -28,6 +28,6 @@ def main(phi, theta, app_config=None):
         set_qubit_state(q, phi, theta)
 
         app_logger.log("sender creates entanglement with receiver")
-        q_ent = epr_socket.create()[0]
+        q_ent = epr_socket.create_keep()[0]
 
     return "sender finishes"

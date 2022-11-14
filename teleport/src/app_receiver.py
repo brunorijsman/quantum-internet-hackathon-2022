@@ -23,6 +23,6 @@ def main(app_config=None):
     with receiver:
 
         app_logger.log("receiver creates entanglement with sender")
-        q_ent = epr_socket.recv()[0]
+        q_ent = epr_socket.recv_keep()[0]
 
     return "receiver finishes"

@@ -1,8 +1,10 @@
 {
     "cSpell.words": [
         "cnot",
+        "multivector",
         "netqasm",
         "QASM",
-        "Qubit"
+        "Qubit",
+        "statevector"
     ]
 }

@@ -1,6 +1,8 @@
 {
     "cSpell.words": [
         "cnot",
+        "crot",
+        "hadamard",
         "multivector",
         "netqasm",
         "QASM",

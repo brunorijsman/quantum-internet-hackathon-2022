@@ -50,6 +50,7 @@ for r in range(size):
     row = []
     for c in range(size):
         d = abs(qiskit[r][c] - qne[r][c])
+        # Easier to eye-ball, ignore tiny differences
         if d < 1e-6:
             d = 0.0
         row.append(d)

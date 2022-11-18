@@ -28,6 +28,7 @@ for application in $(cat applications); do
 
     echo "Running ${application}..."
     cd ${TOP}/${application}
+    echo qne experiment create ${application}_experiment ${application} randstad
     qne experiment create ${application}_experiment ${application} randstad > /dev/null
     cd ${application}_experiment
     qne experiment run | gsed 's/\\n/\n/g'

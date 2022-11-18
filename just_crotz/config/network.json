@@ -1,0 +1,10 @@
+{
+  "networks": [
+    "randstad",
+    "europe",
+    "the-netherlands"
+  ],
+  "roles": [
+    "just_crotz"
+  ]
+}

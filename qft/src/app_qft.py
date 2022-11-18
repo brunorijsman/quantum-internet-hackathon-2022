@@ -31,8 +31,8 @@ def apply_qft_rotations(app_logger, conn, qubits, n):
     app_logger.log(f"hadamard qubit {n}")
     qubits[n].H()
     for i in range(n):
-        app_logger.log(f"controlled phase control qubit {n} and target qubit {i} by angle pi/{2 ** (n - i)}")
-        qubits[n].crot_Z(qubits[i], n=1, d=n-i)
+        app_logger.log(f"controlled phase control qubit {i} and target qubit {n} by angle pi/{2 ** (n - i)}")
+        qubits[i].crot_Z(qubits[n], n=1, d=n-i)
     apply_qft_rotations(app_logger, conn, qubits, n)
 
 
@@ -48,9 +48,9 @@ def main(app_config=None):
     app_logger = get_new_app_logger(app_name=app_config.app_name,
                                     log_config=app_config.log_config)
     app_logger.log("qft starts")
-    n = 3
+    n = 4
     app_logger.log(f"{n=}")
-    value = 0
+    value = 9
     app_logger.log(f"{value=}")
     conn = NetQASMConnection("qft",
                              log_config=app_config.log_config,

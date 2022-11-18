@@ -13,7 +13,7 @@ def read_dm(filename):
         print(f"  N: {n}")
         value = int(f.readline().strip())
         print(f"  Value: {value}")
-        swap = bool(f.readline().strip())
+        swap = f.readline().strip() == "True"
         print(f"  Swap: {swap}")
         dm = []
         for r in range(n):

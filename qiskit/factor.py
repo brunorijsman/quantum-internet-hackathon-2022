@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-# TODO: Add --allow-lucky-guess -n option
-
 import argparse
 import random
 import sys

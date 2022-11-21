@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import random
 import sys
 
 
@@ -25,6 +26,10 @@ def parse_command_line_arguments():
 
 def find_divisor(args):
     number = get_number(args)
+    divisor = None
+    while divisor is None:
+        a = random.randint(2, number-1)
+        divisor = try_find_divisor_for_a(a)
     return number
 
 
@@ -34,13 +39,18 @@ def get_number(args):
         number = int(number_str)
     except ValueError:
         invalid_number_argument(number_str, 'Must be an integer')
-    if number < 1:
-        invalid_number_argument(number_str, 'Must be positive')
+    if number < 3:
+        invalid_number_argument(number_str, 'Must be 3 or greater')
     return number
 
 
 def invalid_number_argument(number_str, reason):
     raise AttributeError(f'Invalid number argument {number_str}: {reason}')
+
+
+def try_find_divisor_for_a(a):
+    print(f'try_find_divisor_for_a {a=}')
+    return None
 
 
 if __name__ == '__main__':

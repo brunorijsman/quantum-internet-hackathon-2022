@@ -44,6 +44,7 @@ class DivisorFinder:
         self.allow_lucky_guess = allow_lucky_guess
 
     def find_divisor(self):
+        # Note: there is no primality test; this will not return if number is a prime.
         divisor = None
         while divisor is None:
             a = random.randint(2, self.number - 1)

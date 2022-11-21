@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# TODO: Add --no-lucky-guess -n option
+# TODO: Add --allow-lucky-guess -n option
 
 import argparse
 import random
@@ -9,7 +9,7 @@ import sys
 
 def main():
     args = parse_command_line_arguments()
-    divisor_finder = DivisorFinder(args.number)
+    divisor_finder = DivisorFinder(args.number, args.allow_lucky_guess)
     divisor = divisor_finder.find_divisor()
     print(f'Divisor is {divisor}')
 
@@ -19,7 +19,13 @@ def parse_command_line_arguments():
     parser.add_argument(
         'number',
         help='The number for which to find a divisor')
+    parser.add_argument(
+        '-a',
+        '--allow-lucky-guess',
+        action="store_true",
+        help='Allow lucky guess of divisor')
     args = parser.parse_args()
+    print(f'{args=}')
     try:
         args.number = int(args.number)
     except ValueError:
@@ -36,8 +42,9 @@ def invalid_number_argument(number_str, reason):
 
 class DivisorFinder:
 
-    def __init__(self, number):
+    def __init__(self, number, allow_lucky_guess):
         self.number = number
+        self.allow_lucky_guess = allow_lucky_guess
 
     def find_divisor(self):
         divisor = None
@@ -51,8 +58,24 @@ class DivisorFinder:
         k = self.greatest_common_divisor(a, self.number)
         print(f'{k=}')
         if k != 1:
-            return k
-        return None
+            if self.allow_lucky_guess:
+                return k
+            else:
+                return None
+        period = self.find_period(a)
+        print(f'{period=}')
+        if period % 2 == 1:
+            return None
+        power = a ** (period // 2)
+        if power % self.number == self.number - 1:
+            return None
+        return self.greatest_common_divisor(power + 1, self.number)
+
+    def find_period(self, a):
+        for r in range(1, self.number):
+            if a ** r % self.number == 1:
+                return r
+        assert False  # TODO: Can this happen?
 
     @staticmethod
     def greatest_common_divisor(a, b):

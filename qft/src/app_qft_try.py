@@ -5,35 +5,44 @@ from netqasm.sdk import Qubit
 from datetime import datetime
 
 
-def apply_qft(app_logger, conn, qubits, n, value):
+def to_qiskit_qubit_nr(nr_qubits, qne_qubit_nr):
+    return nr_qubits - 1 - qne_qubit_nr
+
+
+def apply_qft(app_logger, conn, qubits, nr_qubits, value):
     app_logger.log("apply qft")
-    apply_qft_value(app_logger, conn, qubits, n, value)
-    apply_qft_rotations(app_logger, conn, qubits, n)
-    apply_qft_swaps(app_logger, conn, qubits, n)
+    apply_qft_value(app_logger, conn, qubits, nr_qubits, value)
+    apply_qft_rotations(app_logger, conn, qubits, nr_qubits, nr_qubits)
+    apply_qft_swaps(app_logger, conn, qubits, nr_qubits)
 
 
-def apply_qft_value(app_logger, conn, qubits, n, value):
-    app_logger.log(f"apply qft value {n=} {value=}")
-    for i in range(n):
-        bit = value & 1
+def apply_qft_value(app_logger, conn, qubits, nr_qubits, value):
+    app_logger.log(f"apply qft value {nr_qubits=} {value=}")
+    for qne_qubit_nr in range(nr_qubits):
+        bit_value = value & 1
         value >>= 1
-        app_logger.log(f"bit {i} = {bit}")
-        if bit:
-            app_logger.log(f"X gate qubit {i}")
-            qubits[i].X()
+        app_logger.log(f"bit {qne_qubit_nr} = {bit_value}")
+        if bit_value:
+            qiskit_qubit_nr = to_qiskit_qubit_nr(nr_qubits, qne_qubit_nr)
+            app_logger.log(f"X gate qubit {qiskit_qubit_nr}")
+            qubits[qiskit_qubit_nr].X()
 
 
-def apply_qft_rotations(app_logger, conn, qubits, n):
-    if n == 0:
+def apply_qft_rotations(app_logger, conn, qubits, nr_qubits, remaining_nr_qubits):
+    if remaining_nr_qubits == 0:
         return
-    app_logger.log(f"apply qft rotations {n=}")
-    n -= 1
-    app_logger.log(f"hadamard qubit {n}")
-    qubits[n].H()
-    for i in range(n):
-        app_logger.log(f"controlled phase control qubit {i} and target qubit {n} by angle pi/{2 ** (n - i)}")
-        qubits[i].crot_Z(qubits[n], n=1, d=n-i)
-    apply_qft_rotations(app_logger, conn, qubits, n)
+    app_logger.log(f"apply qft rotations {nr_qubits=} {remaining_nr_qubits=}")
+    remaining_nr_qubits -= 1
+    h_qubit_nr = to_qiskit_qubit_nr(nr_qubits, remaining_nr_qubits)
+    app_logger.log(f"hadamard qubit {h_qubit_nr}")
+    qubits[h_qubit_nr].H()
+    for i in range(remaining_nr_qubits):
+        ctrl_qubit_nr = to_qiskit_qubit_nr(nr_qubits, remaining_nr_qubits)
+        target_qubit_nr = to_qiskit_qubit_nr(nr_qubits, i)
+        denominator = remaining_nr_qubits - i
+        app_logger.log(f"controlled phase control qubit {ctrl_qubit_nr} and target qubit {target_qubit_nr} by angle pi/{2 ** denominator}")
+        qubits[ctrl_qubit_nr].crot_Z(qubits[target_qubit_nr], n=1, d=denominator)
+    apply_qft_rotations(app_logger, conn, qubits, nr_qubits, remaining_nr_qubits)
 
 
 def apply_qft_swaps(app_logger, conn, qubits, n):
@@ -48,9 +57,9 @@ def main(app_config=None):
     app_logger = get_new_app_logger(app_name=app_config.app_name,
                                     log_config=app_config.log_config)
     app_logger.log("qft starts")
-    n = 3
+    n = 4
     app_logger.log(f"{n=}")
-    value = 1
+    value = 9
     app_logger.log(f"{value=}")
     conn = NetQASMConnection("qft",
                              log_config=app_config.log_config,

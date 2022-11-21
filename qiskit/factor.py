@@ -23,7 +23,6 @@ def parse_command_line_arguments():
         action="store_true",
         help='Allow lucky guess of divisor')
     args = parser.parse_args()
-    print(f'{args=}')
     try:
         args.number = int(args.number)
     except ValueError:
@@ -52,16 +51,13 @@ class DivisorFinder:
         return divisor
 
     def try_find_divisor_for_a(self, a):
-        print(f'try_find_divisor_for_a {a=}')
         k = self.greatest_common_divisor(a, self.number)
-        print(f'{k=}')
         if k != 1:
             if self.allow_lucky_guess:
                 return k
             else:
                 return None
         period = self.find_period(a)
-        print(f'{period=}')
         if period % 2 == 1:
             return None
         power = a ** (period // 2)

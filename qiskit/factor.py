@@ -18,7 +18,7 @@ def parse_command_line_arguments():
         'number',
         help='The number for which to find a divisor')
     parser.add_argument(
-        '-a',
+        '-l',
         '--allow-lucky-guess',
         action="store_true",
         help='Allow lucky guess of divisor')

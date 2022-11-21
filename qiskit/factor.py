@@ -29,7 +29,7 @@ def find_divisor(args):
     divisor = None
     while divisor is None:
         a = random.randint(2, number-1)
-        divisor = try_find_divisor_for_a(a)
+        divisor = try_find_divisor_for_a(number, a)
     return number
 
 
@@ -48,9 +48,17 @@ def invalid_number_argument(number_str, reason):
     raise AttributeError(f'Invalid number argument {number_str}: {reason}')
 
 
-def try_find_divisor_for_a(a):
-    print(f'try_find_divisor_for_a {a=}')
+def try_find_divisor_for_a(number, a):
+    print(f'try_find_divisor_for_a {number=} {a=}')
+    k = greatest_common_divisor(a, number)
+    print(f'{k=}')
     return None
+
+
+def greatest_common_divisor(a, b):
+    while b != 0:
+        a, b = b, a % b
+    return a
 
 
 if __name__ == '__main__':

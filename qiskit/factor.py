@@ -80,5 +80,10 @@ class DivisorFinder:
         return a
 
 
+def find_divisor(number):
+    divisor_finder = DivisorFinder(number, allow_lucky_guess=False)
+    return divisor_finder.find_divisor()
+
+
 if __name__ == '__main__':
     main()

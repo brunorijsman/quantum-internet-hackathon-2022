@@ -6,6 +6,7 @@
         "hadamard",
         "multivector",
         "netqasm",
+        "primality",
         "QASM",
         "Qubit",
         "statevector"

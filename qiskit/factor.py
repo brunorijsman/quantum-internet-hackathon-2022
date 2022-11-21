@@ -70,10 +70,12 @@ class DivisorFinder:
         return self.greatest_common_divisor(power + 1, self.number)
 
     def find_period(self, a):
+        # Brute-force non-quantum algorithm for finding the period of: try every value r in
+        # 1 < r < N until we find the first r such that a ** r == 1 (mod N)
         for r in range(1, self.number):
             if a ** r % self.number == 1:
                 return r
-        assert False  # TODO: Can this happen?
+        assert False
 
     @staticmethod
     def greatest_common_divisor(a, b):

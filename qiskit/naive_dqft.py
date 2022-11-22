@@ -1,3 +1,4 @@
+from multi_processor import MultiProcessor
 from numpy import pi
 from qiskit import Aer, ClassicalRegister, QuantumCircuit, QuantumRegister, transpile
 from qiskit.quantum_info import DensityMatrix
@@ -5,78 +6,7 @@ from qiskit.visualization import plot_bloch_multivector, plot_state_city
 from qiskit_textbook.tools import array_to_latex
 
 
-class NaiveDQFTProcessor:
-
-    def __init__(self, qc, name, nr_qubits):
-        self.qc = qc
-        self.name = name
-        self.main_reg = QuantumRegister(nr_qubits, f'{name}_main')
-        qc.add_register(self.main_reg)
-        self.teleport_reg = QuantumRegister(1, f'{name}_teleport')
-        qc.add_register(self.teleport_reg)
-        self.entanglement_reg = QuantumRegister(1, f'{name}_entanglement')
-        qc.add_register(self.entanglement_reg)
-        self.measure_reg = ClassicalRegister(2, f'{name}_measure')
-        qc.add_register(self.measure_reg)
-
-    def make_entanglement(self, to_processor):
-        self.qc.reset(self.entanglement_reg)
-        self.qc.reset(to_processor.entanglement_reg)
-        self.qc.h(self.entanglement_reg)
-        self.qc.cnot(self.entanglement_reg, to_processor.entanglement_reg)
-
-    def teleport_to(self, to_processor):
-        self.make_entanglement(to_processor)
-        self.qc.cnot(self.teleport_reg, self.entanglement_reg)
-        self.qc.h(self.teleport_reg)
-        self.qc.measure(self.teleport_reg, self.measure_reg[0])
-        self.qc.measure(self.entanglement_reg, self.measure_reg[1])
-        self.qc.x(to_processor.entanglement_reg).c_if(self.measure_reg[1], 1)
-        self.qc.z(to_processor.entanglement_reg).c_if(self.measure_reg[0], 1)
-        self.qc.swap(to_processor.entanglement_reg, to_processor.teleport_reg)
-
-    def distributed_controlled_phase(self, angle, control_qubit_index, target_processor,
-                                     target_qubit_index):
-        # Teleport local control qubit to remote processor
-        self.qc.swap(self.main_reg[control_qubit_index], self.teleport_reg)
-        self.teleport_to(target_processor)
-        # Perform controlled phase gate on remote processor
-        self.qc.cp(angle, target_processor.teleport_reg,
-                   target_processor.main_reg[target_qubit_index])
-        # Teleport remote control qubit back to local processor
-        target_processor.teleport_to(self)
-        self.qc.swap(self.teleport_reg, self.main_reg[control_qubit_index])
-
-    def distributed_swap(self, local_qubit_index, remote_processor, remote_qubit_index):
-        # Teleport local control qubit to remote processor
-        self.qc.swap(self.main_reg[local_qubit_index], self.teleport_reg)
-        self.teleport_to(remote_processor)
-        # Perform swap gate on remote processor
-        self.qc.swap(remote_processor.teleport_reg, remote_processor.main_reg[remote_qubit_index])
-        # Teleport remote control qubit back to local processor
-        remote_processor.teleport_to(self)
-        self.qc.swap(self.teleport_reg, self.main_reg[local_qubit_index])
-
-    def local_hadamard(self, qubit_index):
-        self.qc.h(self.main_reg[qubit_index])
-
-    def local_controlled_phase(self, angle, control_qubit_index, target_qubit_index):
-        self.qc.cp(angle, self.main_reg[control_qubit_index], self.main_reg[target_qubit_index])
-
-    def local_swap(self, qubit_index_1, qubit_index_2):
-        self.qc.swap(self.main_reg[qubit_index_1], self.main_reg[qubit_index_2])
-
-    def clear_ancillary(self):
-        self.qc.reset(self.teleport_reg)
-        self.qc.reset(self.entanglement_reg)
-
-    def final_measure(self):
-        self.qc.measure(self.main_reg, self.measure_reg)
-
-
-class NaiveDQFT:
-
-    NR_PROCESSORS = 2
+class NaiveDQFT(MultiProcessor):
 
     def __init__(self, n, swaps=True):
         assert n % self.NR_PROCESSORS == 0, 'n must be divisible by ${self.NR_PROCESSORS}'

@@ -40,6 +40,7 @@ class Processor:
         self.qc.z(to_processor.entanglement_reg).c_if(self.measure_reg[0], 1)
         self.qc.swap(to_processor.entanglement_reg, to_processor.teleport_reg)
 
+    # TODO: Move this to derived class
     def distributed_controlled_phase(self, angle, control_qubit_index, target_processor,
                                      target_qubit_index):
         # Teleport local control qubit to remote processor
@@ -52,6 +53,7 @@ class Processor:
         target_processor.teleport_to(self)
         self.qc.swap(self.teleport_reg, self.main_reg[control_qubit_index])
 
+    # TODO: Move this to derived class
     def distributed_swap(self, local_qubit_index, remote_processor, remote_qubit_index):
         # Teleport local control qubit to remote processor
         self.qc.swap(self.main_reg[local_qubit_index], self.teleport_reg)

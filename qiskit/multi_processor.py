@@ -7,16 +7,21 @@ from qiskit_textbook.tools import array_to_latex
 
 class Processor:
 
-    def __init__(self, qc, name, nr_qubits):
+    def __init__(self, qc, index, nr_qubits):
         self.qc = qc
-        self.name = name
-        self.main_reg = QuantumRegister(nr_qubits, f'{name}_main')
+        self.index = index
+        names = ['alice', 'bob', 'charlie', 'david', 'eve', 'frank', 'george', 'harry']
+        if index > len(names):
+            self.name = str(index)
+        else:
+            self.name = names[index]
+        self.main_reg = QuantumRegister(nr_qubits, f'{self.name}_main')
         qc.add_register(self.main_reg)
-        self.teleport_reg = QuantumRegister(1, f'{name}_teleport')
+        self.teleport_reg = QuantumRegister(1, f'{self.name}_teleport')
         qc.add_register(self.teleport_reg)
-        self.entanglement_reg = QuantumRegister(1, f'{name}_entanglement')
+        self.entanglement_reg = QuantumRegister(1, f'{self.name}_entanglement')
         qc.add_register(self.entanglement_reg)
-        self.measure_reg = ClassicalRegister(2, f'{name}_measure')
+        self.measure_reg = ClassicalRegister(2, f'{self.name}_measure')
         qc.add_register(self.measure_reg)
 
     def make_entanglement(self, to_processor):
@@ -169,3 +174,24 @@ class MultiProcessor:
         self.qc_with_input.save_statevector()
         self.qc_with_input = transpile(self.qc_with_input, self.simulator)
         self.result = self.simulator.run(self.qc_with_input, shots=shots).result()
+
+
+class EntanglementExampleMultiProcessor(MultiProcessor):
+
+    def __init__(self):
+        MultiProcessor.__init__(self, nr_processors=2, total_nr_qubits=4)
+        self.processors[0].make_entanglement(self.processors[1])
+
+
+class TeleportExampleMultiProcessor(MultiProcessor):
+
+    def __init__(self):
+        MultiProcessor.__init__(self, nr_processors=2, total_nr_qubits=4)
+        self.processors[0].teleport_to(self.processors[1])
+
+
+class LocalControlledPhaseExampleMultiProcessor(MultiProcessor):
+
+    def __init__(self):
+        MultiProcessor.__init__(self, nr_processors=2, total_nr_qubits=4)
+        self.processors[0].local_controlled_phase(pi/8, 0, 1)

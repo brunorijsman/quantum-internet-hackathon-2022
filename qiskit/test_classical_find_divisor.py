@@ -1,4 +1,4 @@
-from factor import find_divisor
+from classical_find_divisor import find_divisor
 
 
 def test_two_divisors():

@@ -3,6 +3,7 @@
         "cnot",
         "crot",
         "crotz",
+        "dqft",
         "hadamard",
         "multivector",
         "netqasm",

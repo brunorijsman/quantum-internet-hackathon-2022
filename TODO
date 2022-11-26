@@ -1,0 +1,18 @@
+TODO Add counters for:
+     - How many quantum bits
+     - How many quantum gates
+     - How many steps in the circuit
+     - How many classical message transfers
+     - Etc.
+
+TODO Put all QNE ADK related code in its own subdirectory
+
+TODO Mention that instead of resetting qubits we can also perform an X operation controlled by
+     a classical measurement result
+
+TODO Start preparing
+     - Writeup blog
+     - Powerpoint slides
+     - Video perhaps?
+
+TODO Add references

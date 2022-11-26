@@ -8,8 +8,6 @@ from qiskit_textbook.tools import array_to_latex
 # TODO We should include the teleportation code in the base class. It should move to the 
 #      naive distributed QFT code (unless the cat-state based approach also ends up using it).
 
-# TODO Do we really need separate teleport and entanglement registers?
-
 class Processor:
 
     def __init__(self, qc, index, nr_qubits):

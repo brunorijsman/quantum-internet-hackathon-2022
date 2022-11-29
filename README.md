@@ -113,7 +113,7 @@ quantum computers at the level of pulses, circuits, and application modules.
 One of the components in Qiskit is [Aer](https://github.com/Qiskit/qiskit-aer), which provides
 high-performance quantum computing simulators with realistic noise models.
 
-In this project use the Qiskit SDK to develop three different implementations of the quantum
+In this project we use the Qiskit SDK to develop three different implementations of the quantum
 Fourier transformation:
 
  1. A monolithic (non-distributed) version of the quantum Fourier transformation.
@@ -139,5 +139,17 @@ be found in [`qiskit/instructions.md`](qiskit/instructions.md)
 
 # QNE-ADK Implementation
 
+The [Quantum Network Explorer (QNE)](https://www.quantum-network.com/)
+is a platform provided by
+[QuTech](https://qutech.nl/)
+where you can gain online access to our quantum internet demonstrator and learn
+about its applications and capabilities.
 
+The [QNE Application Development Kit (QNE-ADK)](https://www.quantum-network.com/adk/)
+allows users to develop quantum applications that run on the quantum network explorer.
 
+In this project we port the three implementation of the Quantum fourier transformation (see above)
+from Qiskit to QNE-ADK.
+
+A more detailed description of the QNE-ADK code and instructions on how to install and run it can
+be found in [`qne_adk/instructions.md`](qiskit/instructions.md)

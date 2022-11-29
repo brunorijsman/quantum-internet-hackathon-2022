@@ -14,7 +14,7 @@ Team Q-Harmonics participates in the quantum hackathon; it consists of the follo
 * B Akash Reddy
 * [Bruno Rijsman](https://www.linkedin.com/in/brunorijsman/)
 * Kiran Kaur
-* Manda Venkata Sai Ganesh
+* [Sai Ganesh Manda](https://www.linkedin.com/in/sai-ganesh-manda-bo2002/)
 * [Tyler Cowan](https://www.linkedin.com/in/tyler-cowan/)
 
 The name of the team, Q-Harmonics (for Quantum Harmonics) was chosen because we will be working

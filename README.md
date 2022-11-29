@@ -90,9 +90,6 @@ We will be using two approaches for implementing the distributed quantum Fourier
    two quantum processors, then we perform the controlled-unitary, and then we unshare the cat
    state.
 
-We will be implementing our distributed quantum Fourier transformation on two different simulation
-platforms: Qiskit and QNE-ADK (both are described in more detail below).
-
 Some existing resources that describe the distributed quantum Fourier transformation include:
 
  * [ArXiv paper "Distributed quantum computing: A distributed Shor algorithm" by
@@ -105,7 +102,40 @@ Note that some of these papers discuss a distributed implementation of Shor's al
 includes as a sub-problem a distributed quantum Fourier transformation, which is the easiest
 part of the problem.
 
+We will be implementing our distributed quantum Fourier transformation on two different simulation
+platforms: Qiskit and QNE-ADK (both are described in more detail below).
+
 # Qiskit Implementation
+
+[Qiskit](https://qiskit.org/) is an open-source software development kit (SDK) for working with
+quantum computers at the level of pulses, circuits, and application modules.
+
+One of the components in Qiskit is [Aer](https://github.com/Qiskit/qiskit-aer), which provides
+high-performance quantum computing simulators with realistic noise models.
+
+In this project use the Qiskit SDK to develop three different implementations of the quantum
+Fourier transformation:
+
+ 1. A monolithic (non-distributed) version of the quantum Fourier transformation.
+    We use this as a reference to check whether the results of the distributed versions (see below)
+    are correct.
+
+ 2. A distributed version of the quantum Fourier transformation based on teleportation.
+
+ 3. A distributed version of the quantum Fourier transformation based on cat states.
+
+In each case, the implementation takes the form of a Python module containing classes that generate
+the quantum circuit to compute the quantum Fourier transform, and a corresponding Jupyter notebook
+to execute the circuit and visualize the results.
+
+In the Qiskit implementation, we still have one single quantum circuit that simulates all quantum
+processors. This single large circuit is composed of several quantum registers, where each quantum
+register is understood to be owned by a specific quantum processor. Each processor has a _main_
+register which represents the local working memory as well as two extra registers
+(_entanglement_ and _teleport_) that are used for communications with other quantum processors.
+
+A more detailed description of the Qiskit code and instructions on how to install and run it can
+be found in [`qiskit/instructions.md`](qiskit/instructions.md)
 
 # QNE-ADK Implementation
 

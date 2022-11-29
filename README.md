@@ -23,11 +23,16 @@ on the quantum Fourier transformation. The Fourier transformation is also known 
 
 We chose "_Feasible and Doable_" as the motto for our team.
 
-# Project proposal: Distributed Quantum Fourier Transformation
+# Team Project: Distributed Quantum Fourier Transformation
 
-This Git repository contains a proposal for a QIH2022 project:
-to implement a distributed version of the Quantum Fourier Transformation (QFT) on two different
-simulation platforms, namely Qiskit and QNE-ADK.
+The team Q-Harmonics project for the QIH 2022 hackathon is to implement a distributed version of
+the Quantum Fourier Transformation (QFT) on two different simulation platforms, namely Qiskit
+and QNE-ADK.
+
+# This GitHub Repository
+
+This GitHub repository contains everything code and documentation that team Q-Harmonics produces
+for the hackathon.
 
 # The Quantum Fourier Transformation (QFT)
 

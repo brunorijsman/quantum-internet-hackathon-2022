@@ -6,6 +6,23 @@ is co-organizing the
 [Quantum Internet Hackathon (QIH) 2022](https://labs.ripe.net/author/karla-white/take-part-in-the-quantum-internet-hackathon-2022/)
 on 1 and 2 December 2022.
 
+# Team Q-Harmonics
+
+Team Q-Harmonics participates in the quantum hackathon; it consists of the following members
+(in alphabetical order):
+* Abdullah K
+* B Akash Reddy
+* [Bruno Rijsman](https://www.linkedin.com/in/brunorijsman/)
+* Kiran Kaur
+* Manda Venkata Sai Ganesh
+* [Tyler Cowan](https://www.linkedin.com/in/tyler-cowan/)
+
+The name of the team, Q-Harmonics (for Quantum Harmonics) was chosen because we will be working
+on the quantum Fourier transformation. The Fourier transformation is also known as
+[harmonic analysis](https://en.wikipedia.org/wiki/Harmonic_analysis).
+
+We chose "_Feasible and Doable_" as the motto for our team.
+
 # Project proposal: Distributed Quantum Fourier Transformation
 
 This Git repository contains a proposal for a QIH2022 project:

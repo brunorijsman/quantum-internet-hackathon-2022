@@ -33,16 +33,81 @@ including:
  * Chapter 5 "The quantum Fourier transformation and its applications" in the book
    [Quantum Computation and Quantum Information](https://www.amazon.com/Quantum-Computation-Information-10th-Anniversary/dp/1107002176).
 
+# Distributed Quantum Computation
+
+We are currently in the
+[Noisy Intermediate Scale Quantum era (NISQ)](https://en.wikipedia.org/wiki/Noisy_intermediate-scale_quantum_era).
+
+The circuit size that can be supported by current quantum computer technology is limited by the
+number of qubit memories and by the resilience to noise due gate infidelity and memory
+decoherence.
+
+Due to these limitations existing quantum computers are not yet able to execute quantum fourier
+transform based algorithms such as phase estimation and Shor's algorithm for input sizes that have
+practical relevance.
+For example, quantum computers are not yet powerful enough to use Shor's algorithm to break
+[RSA encryption](https://en.wikipedia.org/wiki/RSA_(cryptosystem)).
+
+Academia and industry are pursuing several different approaches to overcome this challenge:
+
+* Improving the capabilities of hardware platforms in terms of more qubits, better gate
+  fidelities, and longer memory coherence times.
+
+* The use of 
+  [Quantum Error Correction (QEC)](https://en.wikipedia.org/wiki/Quantum_error_correction)
+  to recover from errors.
+
+* The use of distributed quantum computation to implement quantum algorithms on a collection
+  of smaller quantum computers that are interconnected by a quantum network (as opposed to a large
+  monolithic quantum computer).
+
 # Distributing the Quantum Fourier Transformation
 
+The goal of this project is to implement a _distributed_ version of the quantum Fourier
+transformation.
 
+We want to compute the quantum Fourier transform on an _N_ qubit input value.
 
+We pretend that we only have access to quantum computers that have fewer than _N_ qubits of memory.
+(I say pretend because in our project we will use only small values of _N_ due to limitations
+of the simulators that we will be using.)
 
+We are going to distribute the quantum Fourier transform computation over _M_ separate smaller
+quantum processors, where each quantum processor has _N/M_ qubit memories plus a few extra qubit
+memories for communication with other quantum processors.
 
-# Qiskit implementation
+We will be using two approaches for implementing the distributed quantum Fourier transformation:
 
-# QNE-ADK implementation
+ * The fist approach is based on [teleportation](https://en.wikipedia.org/wiki/Quantum_teleportation).
+   Whenever we want to perform a two-qubit gate where one qubit is located on one quantum processor
+   A and the other qubit is located on another quantum processor B, we first teleport one
+   qubit from A to B, then perform the gate locally on processor B, and then teleport one qubit
+   back from B to A.
 
+ * The second approach is based on [quantum cat states](https://en.wikipedia.org/wiki/Cat_state).
+   This approach only works for controlled-unitary gates, which is the majority of two-qubit gates
+   in the quantum Fourier transform. We first create a cat state to share the control qubit among
+   two quantum processors, then we perform the controlled-unitary, and then we unshare the cat
+   state.
+
+We will be implementing our distributed quantum Fourier transformation on two different simulation
+platforms: Qiskit and QNE-ADK (both are described in more detail below).
+
+Some existing resources that describe the distributed quantum Fourier transformation include:
+
+ * [ArXiv paper "Distributed quantum computing: A distributed Shor algorithm" by
+   Anocha Yimsiriwattana and Samuel J. Lomonaco Jr.](https://arxiv.org/abs/quant-ph/0403146)
+
+ * [PhD thesis "Architecture of a Quantum Multicomputer Optimized for Shor's Factoring Algorithm"
+   by Rodney van Meter.](https://arxiv.org/pdf/quant-ph/0607065.pdf)
+
+Note that some of these papers discuss a distributed implementation of Shor's algorithm. This
+includes as a sub-problem a distributed quantum Fourier transformation, which is the easiest
+part of the problem.
+
+# Qiskit Implementation
+
+# QNE-ADK Implementation
 
 
 

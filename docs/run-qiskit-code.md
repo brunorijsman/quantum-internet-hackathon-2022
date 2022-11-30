@@ -151,6 +151,10 @@ only the most recent circuit execution (shot):
 
  * Function `statevector_latex` returns the statevector of the QFT output as a Latex vector.
 
+For example, the following figure shows the Bloch multi-vector diagram for a 4-bit QFT with input 3:
+
+![Bloch multi-vector diagram for a 4-bit QFT with input 3](figures/bloch-multi-vector-for-4-bit-qft-with-input-3)
+
 If you open the Jupyter notebook `qft.ipynb` and run it (e.g. using the Microsoft Jupyter
 plugin for Visual Studio Code) you will see example outputs for all of the above functions.
 

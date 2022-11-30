@@ -1,9 +1,10 @@
 # Installation
 
-This document contains the installation instructions for distribution quantum Fourier transform
+This chapter contains the installation instructions for distribution quantum Fourier transform
 project software developed by "team Q-Harmonics" as part of the
-[Quantum Internet Hackathon (QIH) 2022](https://labs.ripe.net/author/karla-white/take-part-in-the-quantum-internet-hackathon-2022/)
-.
+[Quantum Internet Hackathon (QIH) 2022](https://labs.ripe.net/author/karla-white/take-part-in-the-quantum-internet-hackathon-2022/).
+For a general overview of the QIH 2022 hackathon and the team Q-Harmonics project for this
+hackathon see the [README](../README.md) file.
 
 These installation instructions have been tested on a MacBook Air running macOS Catalina, but
 they should work with little or no changes on any other platform including Windows or Linux.
@@ -133,4 +134,4 @@ If you also want to run the QNE-ADK related code you must follow the additional 
 instruction described in this chapter. You must follow the minimal installation instructions
 before following the additional installation instructions.
 
-TODO Finish the additional installation instructions
+**TODO** Finish the additional installation instructions

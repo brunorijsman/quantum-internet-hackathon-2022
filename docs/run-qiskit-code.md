@@ -262,6 +262,8 @@ The following table shows an example to clarify the concept. Here we have 3 proc
 | 10 | 2 | 2 |
 | 11 | 2 | 3 |
 
+The `Cluster`
+
 
 
 

@@ -201,6 +201,11 @@ Within that single quantum circuit, each processor is modelled as a set of regis
 
  * There is a `measure` classical register containing 2 classical bits.
 
+ The following figure shows the quantum and classical registers that are generated for a cluster
+ that contains two processors:
+
+ ![Quantum Processor Registers](figures/quantum-processor-registers.png)
+
 ## The cluster module
 
 The Python module

@@ -7,8 +7,9 @@ from qiskit_textbook.tools import array_to_latex
 
 class Processor:
 
-    def __init__(self, qc, index, nr_qubits):
-        self.qc = qc
+    def __init__(self, cluster, index, nr_qubits):
+        self.cluster = cluster
+        self.qc = cluster.qc
         self.index = index
         names = ['alice', 'bob', 'charlie', 'david', 'eve', 'frank', 'george', 'harry']
         if index > len(names):
@@ -16,13 +17,13 @@ class Processor:
         else:
             self.name = names[index]
         self.main_reg = QuantumRegister(nr_qubits, f'{self.name}_main')
-        qc.add_register(self.main_reg)
+        self.qc.add_register(self.main_reg)
         self.teleport_reg = QuantumRegister(1, f'{self.name}_teleport')
-        qc.add_register(self.teleport_reg)
+        self.qc.add_register(self.teleport_reg)
         self.entanglement_reg = QuantumRegister(1, f'{self.name}_entanglement')
-        qc.add_register(self.entanglement_reg)
+        self.qc.add_register(self.entanglement_reg)
         self.measure_reg = ClassicalRegister(2, f'{self.name}_measure')
-        qc.add_register(self.measure_reg)
+        self.qc.add_register(self.measure_reg)
 
     def make_entanglement(self, to_processor):
         self.qc.reset(self.entanglement_reg)
@@ -91,7 +92,7 @@ class Cluster:
         self.qc_with_input = None
         self.processors = {}
         for processor_index in range(nr_processors):
-            self.processors[processor_index] = Processor(self.qc, processor_index, 
+            self.processors[processor_index] = Processor(self, processor_index, 
                                                          self.nr_qubits_per_processor)
 
     def clear_ancillary(self):

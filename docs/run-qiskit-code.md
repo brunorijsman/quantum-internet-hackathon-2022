@@ -180,6 +180,10 @@ Let's say we want to do a quantum Fourier transformation on an input of _N_ qubi
      processors. We refer to these qubits as the entanglement qubit and the teleport qubit. Their
      roles are described in more detail below.
 
+   * Finally, each processor also contains two classical bits that are used to store the measurement
+     results that are part of the teleportation procedure or cat-entangle / cat-disentangle
+     procedure.
+
 In real life, the processors in a cluster would be connected using some sort of quantum network.
 The quantum network is used to generate entanglement between the processors.
 That entanglement is used to teleport qubits or to create cat states to implement the distributed
@@ -187,18 +191,88 @@ computation.
 
 In our Qiskit code, we model the entire cluster as one single quantum circuit.
 
-Within that single quantum circuit, each processor is modelled as a set of quantum registers:
+Within that single quantum circuit, each processor is modelled as a set of registers:
 
- * There is a main register containing _N/M_ qubits.
+ * There is a `main` quantum register containing _N/M_ qubits.
 
- * There is an entanglement register containing 1 qubit.
+ * There is an `entanglement` quantum register containing 1 qubit.
 
- * There is a teleport register containing 1 qubit.
+ * There is a `teleport` quantum register containing 1 qubit.
 
-## The `Processor` and `Cluster` Python base classes
+ * There is a `measure` classical register containing 2 classical bits.
+
+## The cluster module
 
 The Python module
 [`cluster.py`](../qiskit/cluster.py)
 defines the following base classes that are used for implementing various variations of
 the distributed quantum Fourier transformation:
 
+ * The base class `Processor` implements a single processor in a cluster.
+
+ * The base class `Cluster` implements a cluster of processors.
+
+## The Cluster class
+
+
+The intention of the `Cluster` class is to provide all of the functionality that is necessary to
+implement all of the various flavors of the distributed quantum Fourier transformation, i.e. the
+teleportation-based flavor and the cat-state-based flavor.
+
+Behind the scenes, a `Cluster` object instantiates multiple `Processor` objects to represent each
+of the processors in the cluster. However, the various flavors of the distributed quantum Fourier
+transformation are not expected to interact with the `Processor` objects - they only interact with
+the `Cluster` object.
+
+The constructor for the `Cluster` class takes the following arguments:
+
+ * `nr_processors` (integer): The number of processors in the cluster.
+
+ * `total_nr_qubits` (integer): The total number of (main) qubits in the cluster. The cluster as
+   a whole will be able to compute the Fourier transformation on `total_nr_qubits` qubits. The
+   computation is distributed across all `nr_processors` processors. Each processor has
+   `total_nr_qubits` / `nr_processor` main qubits (plus extra two qubits and two classical bits
+   for computation).
+
+Logically speaking, the cluster has a total of `total_nr_qubits` which are index from 0 to
+`total_nr_qubits` - 1. We refer to this index as the _global index_ of the qubit.
+
+Each of these logical qubits is physically located on one of the processors. We use the term
+_local index_ to refer to the index of the qubit locally on the processor where it is located.
+
+The following table shows an example to clarify the concept. Here we have 3 processors, each with
+4 qubits, for a total of 12 qubits:
+
+| Qubit global index | Processor index | Qubit local index |
+|---|---|---|
+| 0 | 0 | 0 |
+| 1 | 0 | 1 |
+| 2 | 0 | 2 |
+| 3 | 0 | 3 |
+| 4 | 1 | 0 |
+| 5 | 1 | 1 |
+| 6 | 1 | 2 |
+| 7 | 1 | 3 |
+| 8 | 2 | 0 |
+| 9 | 2 | 1 |
+| 10 | 2 | 2 |
+| 11 | 2 | 3 |
+
+
+
+## The Processor class
+
+The constructor for the `Processor` class takes the following arguments:
+
+ * `cluster` (Cluster): The cluster that this processor is a part of.
+
+ * `index` (integer): The index of the processor within the cluster. The processors within a
+   clustered are numbered 0 through _M-1_, where _M_ is the number of processors in the cluster.
+
+ * `nr_qubits` (integer): The number of main qubits on this individual processor. If we have
+    _M_ processors in the cluster and each processor has `nr_qubits` main qubits, then the cluster
+    as a whole can perform a quantum Fourier transformation for _M_ * `nr_qubits` qubits.
+
+When you instantiate a `Processor` object, the constructor creates the all the quantum and
+classical registers for the processor and adds them to the one and only Qiskit quantum circuit
+for the cluster.

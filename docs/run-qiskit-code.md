@@ -1,4 +1,4 @@
-# Viewing and running the team Q-Harmonics Qiskit related code
+# Running the distributed quantum Fourier transformation implemented in Qiskit
 
 ## What is Qiskit?
 

@@ -317,6 +317,31 @@ methods that are intended to retrieve and visualize the simulation results in a 
 
 ## The Processor class
 
+The purpose of the `Processor` class is to work behind the scenes to execute a gate after
+the `Cluster` class has mapped a global (logical) qubit index to a local qubit index on a particular
+processor.
+
+For single qubit gates, the gate is simply executed locally. The `Processor` class provides the
+following functions for this:
+
+ * `local_hadamard`
+
+For two-qubit gates, the gate is executed locally if both qubits are located on the same processor.
+Otherwise, the dispatching logic in the `Cluster` class makes sure that one qubit is local on the
+processor and the other qubit is remote on some other processor (i.e. we don't have to worry about
+the case that both qubits are remote on some other processor). In that case,
+the `Processor` class uses some mechanism (e.g. teleportation or cat-states) to perform the gate
+remotely. 
+Correspondingly, the `Processor` class provides two functions for each two-qubit gate:
+
+ * `local_controlled_phase` and `distributed_controlled_phase`
+
+ * `local_swap` and `distributed_swap`
+
+**TODO** For now, the `Processor` code is hard-coded to assume that we use teleportation. We need
+some sort of virtual function to make the mechanism variable, i.e. to allow us to choose between
+teleportation and cat states.
+
 The constructor for the `Processor` class takes the following arguments:
 
  * `cluster` (Cluster): The cluster that this processor is a part of.
@@ -331,3 +356,4 @@ The constructor for the `Processor` class takes the following arguments:
 When you instantiate a `Processor` object, the constructor creates the all the quantum and
 classical registers for the processor and adds them to the one and only Qiskit quantum circuit
 for the cluster.
+

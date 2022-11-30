@@ -136,6 +136,13 @@ in the file `minimal-requirements.txt`:
 
 <pre>
 (venv) $ <b>pip install -r minimal-requirements.txt</b>
+Collecting qiskit-textbook@ git+https://github.com/qiskit-community/qiskit-textbook.git@7787075d0a02f7b6bacc2e624842902e1318621a#subdirectory=qiskit-textbook-src
+  Using cached qiskit_textbook-0.1.0-py3-none-any.whl
+Requirement already satisfied: appnope==0.1.3 in ./venv/lib/python3.8/site-packages (from -r minimal-requirements.txt (line 1)) (0.1.3)
+Collecting asgiref==3.5.2
+  Using cached asgiref-3.5.2-py3-none-any.whl (22 kB)
+...
+Successfully installed Django-4.0.6 Jinja2-3.1.2 MarkupSafe-2.1.1 PyYAML-6.0 asgiref-3.5.2 asttokens-2.1.0 attrs-22.1.0 backports.zoneinfo-0.2.1 certifi-2022.6.15 charset-normalizer-2.1.0 click-8.1.3 colorama-0.4.6 commonmark-0.9.1 coreapi-2.3.3 coreschema-0.0.4 cryptography-38.0.3 debugpy-1.6.3 djangorestframework-3.13.1 flake8-5.0.4 idna-3.3 importlib-resources-5.10.0 inflection-0.5.1 ipython-8.6.0 itypes-1.2.0 jedi-0.18.1 jsonpickle-2.2.0 jsonschema-4.17.0 jupyter_client-7.4.5 jupyter_core-5.0.0 lxml-4.9.1 mccabe-0.7.0 netqasm-0.12.2 numpy-1.22.4 pkgutil_resolve_name-1.3.10 prompt-toolkit-3.0.32 pyang-2.5.3 pycodestyle-2.9.1 pydantic-1.10.2 pyflakes-2.5.0 pylatexenc-2.10 pyrsistent-0.19.2 pytz-2022.1 qiskit-0.39.2 qiskit-terra-0.22.2 qlink-interface-1.0.0 qne-adk-0.1.0 retworkx-0.12.0 rich-12.6.0 ruamel.yaml-0.17.21 ruamel.yaml.clib-0.2.6 rustworkx-0.12.0 scipy-1.8.1 shellingham-1.5.0 sqlparse-0.4.2 stack-data-0.6.1 tabulate-0.9.0 traitlets-5.5.0 typer-0.7.0 typing_extensions-4.4.0 uritemplate-4.1.1 urllib3-1.26.11 zipp-3.11.0
 </pre>
 
 # Additional installation instructions for QNE-ADK related code

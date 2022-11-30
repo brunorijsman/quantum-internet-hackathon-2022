@@ -176,6 +176,8 @@ from Qiskit to QNE-ADK.
 
 # Running the code
 
+Enough theory talk! Let's get our hands dirty and actually run some code!
+
 ## Installation instructions
 
 Read the

@@ -151,15 +151,11 @@ Fourier transformation:
 
  3. A distributed version of the quantum Fourier transformation based on cat states.
 
-In each case, the implementation takes the form of a Python module containing classes that generate
-the quantum circuit to compute the quantum Fourier transform, and a corresponding Jupyter notebook
-to execute the circuit and visualize the results.
-
-In the Qiskit implementation, we still have one single quantum circuit that simulates all quantum
-processors. This single large circuit is composed of several quantum registers, where each quantum
-register is understood to be owned by a specific quantum processor. Each processor has a _main_
-register which represents the local working memory as well as two extra registers
-(_entanglement_ and _teleport_) that are used for communications with other quantum processors.
+Read the
+[viewing and running the team Q-Harmonics Qiskit related code](docs/run-qiskit-code.md)
+for more details on Qiskit and for more details on the team Q-Harmonics implementation of
+the distributed quantum Fourier transformation in Qiskit (including the structure of the code
+and instructions on how to install and run the code).
 
 # QNE-ADK Implementation
 

@@ -4,17 +4,16 @@
 
 [Qiskit](https://qiskit.org/) is an open-source software development kit (SDK) for working with
 quantum computers at the level of pulses, circuits, and application modules.
-
 One of the components in Qiskit is [Aer](https://github.com/Qiskit/qiskit-aer), which provides
 high-performance quantum computing simulators with realistic noise models.
 
 ## What do we use Qiskit for?
 
-In this project we use the Qiskit SDK to develop three different implementations of the quantum
-Fourier transformation:
+In this project we use the Qiskit SDK and Aer to develop three different implementations of the
+quantum Fourier transformation:
 
- 1. A monolithic (non-distributed) version of the quantum Fourier transformation.
-    We use this as a reference to check whether the results of the distributed versions (see below)
+ 1. A non-distributed (local) version of the quantum Fourier transformation.
+    We use this as a reference to check whether the results of the two distributed versions
     are correct.
 
  2. A distributed version of the quantum Fourier transformation based on teleportation.
@@ -72,8 +71,29 @@ actually produce the same results.
 The related code is in files `density_matrices.ipynb` and `utils.py`.
 **TODO** This is still a work in progress.
 
-
 ## Modeling multiple quantum processors in Qiskit
+
+We use the term _processor_ for each individual quantum processor that participates in the
+distributed quantum Fourier transformation.
+And we use the term _cluster_ for the collection of all processors that collectively perform
+the distributed quantum Fourier transformation.
+In other words, a cluster is group of processors.
+
+In real life, the processors in a cluster would be connected using some sort of quantum network.
+The quantum network is used to generate entanglement between the processors.
+That entanglement is used to teleport qubits or to create cat states to implement the distributed
+computation.
+
+In our Qiskit code, we model the entire cluster as one single quantum circuit.
+
+Within that single quantum circuit, each processor is modelled as a set of ...
+
+
+
+
+
+This single quantum circuit contains multiple registers of quantum memory: one set of registers
+for each quantum processor in the 
 
 In the Qiskit implementation, we still have one single quantum circuit that simulates all quantum
 processors. This single large circuit is composed of several quantum registers, where each quantum

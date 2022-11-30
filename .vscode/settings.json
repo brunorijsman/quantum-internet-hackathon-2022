@@ -3,6 +3,8 @@
         "Abdullah",
         "Akash",
         "Anocha",
+        "appnope",
+        "asyncio",
         "cnot",
         "Cowan",
         "crot",
@@ -19,8 +21,11 @@
         "Multicomputer",
         "multivector",
         "netqasm",
+        "netsquid",
         "NISQ",
         "primality",
+        "pyenv",
+        "pyproject",
         "QASM",
         "Qubit",
         "Reddy",
@@ -28,6 +33,7 @@
         "Shor's",
         "statevector",
         "Venkata",
+        "venv",
         "Yimsiriwattana"
     ]
 }

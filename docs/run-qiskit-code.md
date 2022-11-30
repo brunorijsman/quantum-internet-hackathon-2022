@@ -218,7 +218,6 @@ the distributed quantum Fourier transformation:
 
 ## The Cluster class
 
-
 The intention of the `Cluster` class is to provide all of the functionality that is necessary to
 implement all of the various flavors of the distributed quantum Fourier transformation, i.e. the
 teleportation-based flavor and the cat-state-based flavor.
@@ -262,10 +261,59 @@ The following table shows an example to clarify the concept. Here we have 3 proc
 | 10 | 2 | 2 |
 | 11 | 2 | 3 |
 
-The `Cluster`
+The `Cluster` class provides several methods to perform operations (e.g. one qubit gates or two
+qubit gates) on the cluster as a whole.
 
+ * `hadamard`: perform a Hadamard gate on a logical qubit in the cluster.
 
+ * `controlled_phase`: perform a controlled-phase gate (also known as a controlled-rotation-Z gate)
+   on two logical qubits in the cluster.
 
+ * `swap`: perform a swap gate on two logical qubits in the cluster.
+
+For single qubit gates, the `Cluster` class simply maps the global qubit index to a processor index
+and local qubit index (in other words, it figures out where the logical qubit is physically located)
+and instructs the relevant processor to perform the gate locally.
+
+For two qubit gates, the `Cluster` class figures out where each of the logical qubits is located by
+performing the same mapping as above. If the two qubits are located on the same processor, the
+cluster instructs the relevant processor to perform the two qubit gate locally. If the two qubits
+are located on different processors, the cluster instructs one of the processors to perform the
+gate "remotely". How exactly this "remote" gate execution is implemented depends on the flavor:
+whether we use teleportation or cat states.
+
+**TODO** I have not yet implemented the cat-state based implementation, and in the current
+implementation that base class still contains a lot of code that assumes we using teleportation.
+This code needs to be moved out of the base class and into the derived class.
+
+The basic idea is that the class that derives from the `Cluster` base class invokes the various
+gate member functions listed above to implement some circuit, in our case a quantum Fourier
+transformation circuit.
+
+The derived class does not need to know or care that the cluster is actually a collection of
+processors. Behind the scenes, the operations on logical (global) qubits are automatically
+translated to operations on local qubits, and all necessary teleportations and cat-state
+(dis-)entanglements are automatically performed by the `Processor` objects.
+
+Once the derived class has finished defining the circuit by calling a sequence of gate functions,
+it can call the `run` member function of the `Cluster` base class to execute the distributed
+quantum circuit. The `run` member function takes the 
+
+ * `input` (integer): The input value for the DQFT. For example, if
+   we have a 4-qubit DQFT object (`total_nr_qubits`=4) and the `input` value is 5, then the input
+   for the DQFT is state |0101>.
+
+ * `shots` (integer, default value 10000): How many times the Aer simulator should execute the
+   DQFT quantum circuit for the given input value to gather statistics for the output measurements.
+
+Finally, similar to the `QFT` base class described above, the `Cluster` class provides several
+methods that are intended to retrieve and visualize the simulation results in a Jupyter notebook:
+ * `circuit_diagram`
+ * `statevector`
+ * `statevector_latex`
+ * `bloch_multivector`
+ * `density_matrix`
+ * `density_matrix_city`
 
 ## The Processor class
 

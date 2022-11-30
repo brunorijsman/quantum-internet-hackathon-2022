@@ -63,7 +63,7 @@ including:
  * Chapter 5 "The quantum Fourier transformation and its applications" in the book
    [Quantum Computation and Quantum Information](https://www.amazon.com/Quantum-Computation-Information-10th-Anniversary/dp/1107002176).
 
-# Distributed Quantum Computation
+# Distributed Quantum Computation (DQC)
 
 We are currently in the
 [Noisy Intermediate Scale Quantum era (NISQ)](https://en.wikipedia.org/wiki/Noisy_intermediate-scale_quantum_era).
@@ -91,7 +91,7 @@ Academia and industry are pursuing several different approaches to overcome this
   of smaller quantum computers that are interconnected by a quantum network (as opposed to a large
   monolithic quantum computer).
 
-# Distributing the Quantum Fourier Transformation
+# The Distributed Quantum Fourier Transformation (DQFT)
 
 The goal of this project is to implement a _distributed_ version of the quantum Fourier
 transformation.

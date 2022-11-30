@@ -14,23 +14,23 @@ class QFT:
         self.qc_with_input = None
         self.simulator = None
         self.results = None
-        self.make_qft()
+        self._make_qft()
 
-    def make_qft(self):
-        self.add_qft_rotations(self.n)
+    def _make_qft(self):
+        self._add_qft_rotations(self.n)
         if self.swaps:
-            self.add_qft_swaps()
+            self._add_qft_swaps()
 
-    def add_qft_rotations(self, n):
+    def _add_qft_rotations(self, n):
         if n == 0:
             return
         n -= 1
         self.qc.h(n)
         for qubit in range(n):
             self.qc.cp(pi / 2 ** (n - qubit), qubit, n)
-        self.add_qft_rotations(n)
+        self._add_qft_rotations(n)
 
-    def add_qft_swaps(self):
+    def _add_qft_swaps(self):
         for qubit in range(self.n // 2):
             self.qc.swap(qubit, self.n - qubit - 1)
 

@@ -20,7 +20,7 @@ Team Q-Harmonics participates in the quantum hackathon; it consists of the follo
 | B Akash Reddy | | [GitHub](https://github.com/Akash6300) |
 | Bruno Rijsman | [LinkedIn](https://www.linkedin.com/in/brunorijsman/) | [GitHub](https://github.com/brunorijsman) |
 | Kiran Kaur | [LinkedIn](https://www.linkedin.com/in/kiran-kaur-b2922622a/) | [GitHub](https://github.com/KyranKaur) |
-| Sai Ganesh Manda | [LinkedIn](https://www.linkedin.com/in/sai-ganesh-manda-bo2002/) | |
+| Sai Ganesh Manda | [LinkedIn](https://www.linkedin.com/in/sai-ganesh-manda-bo2002/) | [GitHub](https://github.com/mvsg2) |
 | Tyler Cowan | [LinkedIn](https://www.linkedin.com/in/tyler-cowan/) | |
 
 The name of the team, Q-Harmonics (for Quantum Harmonics) was chosen because we will be working

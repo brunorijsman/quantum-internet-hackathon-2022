@@ -103,6 +103,11 @@ The constructor of the `QFT` class takes two arguments:
    Also, QNE-ADK does not yet support the swap gates, we want to skip the final swap gates if we
    want to compare the Qiskit results with the QNE-ADK results.
 
+The following example shows the quantum circuit that the `QFT` class generates for `n`=4 and
+`swaps`=True:
+
+![4-bit local quantum Fourier transformation](figures/4-bit-local-quantum-fourier-transformation.png)
+
 The `run` member function of the `QFT` class executes the quantum Fourier transformation for a
 specific input value. The `run` function takes two arguments:
 
@@ -188,6 +193,8 @@ In real life, the processors in a cluster would be connected using some sort of 
 The quantum network is used to generate entanglement between the processors.
 That entanglement is used to teleport qubits or to create cat states to implement the distributed
 computation.
+
+## Modeling a cluster using one Qiskit circuit with multiple registers
 
 In our Qiskit code, we model the entire cluster as one single quantum circuit.
 

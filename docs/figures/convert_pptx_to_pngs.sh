@@ -22,4 +22,5 @@ echo "Converting PDF to PNG"
 magick convert -density 300 -units pixelsperinch -trim +profile "icc" figures.pdf figures.png
 
 echo "Renaming files"
-mv figures-0.png quantum-processor-registers.png
+mv figures-0.png 4-bit-local-quantum-fourier-transformation.png
+mv figures-1.png quantum-processor-registers.png

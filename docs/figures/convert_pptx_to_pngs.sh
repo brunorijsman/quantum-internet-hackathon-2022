@@ -23,5 +23,6 @@ magick convert -density 300 -units pixelsperinch -trim +profile "icc" figures.pd
 
 echo "Renaming files"
 mv figures-0.png 4-bit-local-quantum-fourier-transformation.png
-mv figures-1.png bloch-multi-vector-for-4-bit-qft-with-input-3
-mv figures-2.png quantum-processor-registers.png
+mv figures-1.png bloch-multi-vector-for-4-bit-qft-with-input-3.png
+mv figures-2.png density-matrix-city-plot-for-4-bit-qft-with-input-3.png
+mv figures-3.png quantum-processor-registers.png

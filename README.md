@@ -14,12 +14,14 @@ on 1 and 2 December 2022.
 
 Team Q-Harmonics participates in the quantum hackathon; it consists of the following members
 (in alphabetical order):
-* Abdullah K
-* B Akash Reddy
-* [Bruno Rijsman](https://www.linkedin.com/in/brunorijsman/)
-* Kiran Kaur
-* [Sai Ganesh Manda](https://www.linkedin.com/in/sai-ganesh-manda-bo2002/)
-* [Tyler Cowan](https://www.linkedin.com/in/tyler-cowan/)
+| Name | LinkedIn | GitHub |
+|---|---|---|
+| Abdullah K | | [GitHub](https://github.com/AbdullahKazi500) |
+| B Akash Reddy | | [GitHub](https://github.com/Akash6300) |
+| Bruno Rijsman | [LinkedIn](https://www.linkedin.com/in/brunorijsman/) | [GitHub](https://github.com/brunorijsman) |
+| Kiran Kaur | | |
+| Sai Ganesh Manda | [LinkedIn](https://www.linkedin.com/in/sai-ganesh-manda-bo2002/) | |
+| Tyler Cowan | [LinkedIn](https://www.linkedin.com/in/tyler-cowan/) | |
 
 The name of the team, Q-Harmonics (for Quantum Harmonics) was chosen because we will be working
 on the quantum Fourier transformation. The Fourier transformation is also known as

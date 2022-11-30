@@ -5,9 +5,6 @@ from qiskit.visualization import plot_bloch_multivector, plot_state_city
 from qiskit_textbook.tools import array_to_latex
 
 
-# TODO We should include the teleportation code in the base class. It should move to the 
-#      naive distributed QFT code (unless the cat-state based approach also ends up using it).
-
 class Processor:
 
     def __init__(self, qc, index, nr_qubits):
@@ -43,7 +40,6 @@ class Processor:
         self.qc.z(to_processor.entanglement_reg).c_if(self.measure_reg[0], 1)
         self.qc.swap(to_processor.entanglement_reg, to_processor.teleport_reg)
 
-    # TODO: Move this to derived class
     def distributed_controlled_phase(self, angle, control_qubit_index, target_processor,
                                      target_qubit_index):
         # Teleport local control qubit to remote processor
@@ -56,7 +52,6 @@ class Processor:
         target_processor.teleport_to(self)
         self.qc.swap(self.teleport_reg, self.main_reg[control_qubit_index])
 
-    # TODO: Move this to derived class
     def distributed_swap(self, local_qubit_index, remote_processor, remote_qubit_index):
         # Teleport local control qubit to remote processor
         self.qc.swap(self.main_reg[local_qubit_index], self.teleport_reg)
@@ -84,7 +79,7 @@ class Processor:
         self.qc.measure(self.main_reg, self.measure_reg)
 
 
-class MultiProcessor:
+class Cluster:
 
     def __init__(self, nr_processors, total_nr_qubits):
         assert total_nr_qubits % nr_processors == 0, \
@@ -181,22 +176,22 @@ class MultiProcessor:
         self.result = self.simulator.run(self.qc_with_input, shots=shots).result()
 
 
-class EntanglementExampleMultiProcessor(MultiProcessor):
+class EntanglementExampleCluster(Cluster):
 
     def __init__(self):
-        MultiProcessor.__init__(self, nr_processors=2, total_nr_qubits=4)
+        Cluster.__init__(self, nr_processors=2, total_nr_qubits=4)
         self.processors[0].make_entanglement(self.processors[1])
 
 
-class TeleportExampleMultiProcessor(MultiProcessor):
+class TeleportExampleCluster(Cluster):
 
     def __init__(self):
-        MultiProcessor.__init__(self, nr_processors=2, total_nr_qubits=4)
+        Cluster.__init__(self, nr_processors=2, total_nr_qubits=4)
         self.processors[0].teleport_to(self.processors[1])
 
 
-class LocalControlledPhaseExampleMultiProcessor(MultiProcessor):
+class LocalControlledPhaseExampleCluster(Cluster):
 
     def __init__(self):
-        MultiProcessor.__init__(self, nr_processors=2, total_nr_qubits=4)
+        Cluster.__init__(self, nr_processors=2, total_nr_qubits=4)
         self.processors[0].local_controlled_phase(pi/8, 0, 1)

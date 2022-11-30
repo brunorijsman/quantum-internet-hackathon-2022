@@ -38,7 +38,7 @@ transformation:
 | Non-distributed (local) QFT | `qft.py` | `qft.ipynb` |
 | Distributed QFT using teleportation | `teleport_dqft.py` | `teleport_dqft.ipynb` |
 | Distributed QFT using cat states | **TODO** `cat_dqft.py` | **TODO** `cat_dqft.ipynb` |
-| Base classes for both DQFT implementations | `multi_processor.py` | `multi_processor.ipynb` |
+| `Processor` and `Cluster` base classes for both DQFT implementations | `cluster.py` | `cluster.ipynb` |
 
 In each case, the implementation takes the form of a Python module containing classes that generate
 the quantum circuit to compute the quantum Fourier transform, and a corresponding Jupyter notebook

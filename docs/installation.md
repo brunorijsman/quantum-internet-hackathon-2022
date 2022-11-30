@@ -1,22 +1,23 @@
 # Installation
 
-This chapter contains the installation instructions for distribution quantum Fourier transform
-project software developed by "team Q-Harmonics" as part of the
+This chapter contains the installation instructions for the distributed quantum Fourier
+transformation (DQFT)
+software developed by "team Q-Harmonics" as part of the
 [Quantum Internet Hackathon (QIH) 2022](https://labs.ripe.net/author/karla-white/take-part-in-the-quantum-internet-hackathon-2022/).
-For a general overview of the QIH 2022 hackathon and the team Q-Harmonics project for this
-hackathon see the [README](../README.md) file.
+For a general overview of the QIH 2022 hackathon and the team Q-Harmonics DQFT project
+see the [README](../README.md) file.
 
 These installation instructions have been tested on a MacBook Air running macOS Catalina, but
 they should work with little or no changes on any other platform including Windows or Linux.
 
-I assume you already have the following software installed on your computer.
-On macOS I recommend `brew` to install this software if you don't already have it:
+We assume that you already have the following software installed on your computer:
  * Python 3.8.x: Needed to run the Python code in the repo.
  * Pip: Needed to install [PyPI](https://pypi.org/) dependencies.
  * Git: Need to clone git repository from GitHub and work on it.
  * Some code editor: I use Visual Studio Code (VSC).
  * Some way to run Jupyter notebooks: I use the Microsoft Jupyter extension in Visual Studio Code.
 
+On macOS we recommend using `brew` to install this software if you don't already have it.
 
 # Minimal installation instructions
 
@@ -106,7 +107,8 @@ Successfully installed wheel-0.38.4
 </pre>
 
 
-Use `pip` to install the required [PyPI](https://pypi.org/) packages:
+Use `pip` to install the required [PyPI](https://pypi.org/) packages, which are specified in the
+file `minimal-requirements.txt`:
 
 <pre>
 (venv) $ <b>pip install -r minimal-requirements.txt</b>

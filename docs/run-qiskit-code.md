@@ -36,9 +36,9 @@ transformation:
 | Implementation | Python files | Jupyter notebook files |
 |---|---|---|
 | Non-distributed (local) QFT | `qft.py` | `qft.ipynb` |
+| `Processor` and `Cluster` base classes for both DQFT implementations | `cluster.py` | `cluster.ipynb` |
 | Distributed QFT using teleportation | `teleport_dqft.py` | `teleport_dqft.ipynb` |
 | Distributed QFT using cat states | **TODO** `cat_dqft.py` | **TODO** `cat_dqft.ipynb` |
-| `Processor` and `Cluster` base classes for both DQFT implementations | `cluster.py` | `cluster.ipynb` |
 
 In each case, the implementation takes the form of a Python module containing classes that generate
 the quantum circuit to compute the quantum Fourier transform, and a corresponding Jupyter notebook
@@ -149,18 +149,36 @@ only the most recent circuit execution (shot):
 If you open the Jupyter notebook `qft.ipynb` and run it (e.g. using the Microsoft Jupyter
 plugin for Visual Studio Code) you will see example outputs for all of the above functions.
 
-## Modeling multiple quantum processors in Qiskit
+## Processors and Clusters
 
-We use the term _processor_ for each individual quantum processor that participates in the
-distributed quantum Fourier transformation.
-And we use the term _cluster_ for the collection of all processors that collectively perform
-the distributed quantum Fourier transformation.
-In other words, a cluster is group of processors.
+We use the following terminology when implementing distributed versions of the quantum Fourier
+transformation:
+
+* The term _processor_ refers to one individual quantum processor that participates in the
+  distributed quantum Fourier transformation.
+
+* The term _cluster_ refers  the collection of all processors that collectively perform
+  the distributed quantum Fourier transformation.
+   In other words, a cluster is group of processors.
 
 Let's say we want to do a quantum Fourier transformation on an input of _N_ qubits.
 
- * In the non-distributed (local) 
+ * In the non-distributed (local) implementation of the distribute quantum Fourier transformation
+   we have a single processor that has _N_ input qubits and _N_ output qubits.
 
+ * If we want to distribute the quantum Fourier transformation across _M_ processors:
+
+   * We have a single cluster.
+
+   * The cluster consists of _M_ processors.
+
+   * Each processor in the cluster has _N/M_ qubits that contain the input before the circuit is
+     run and that contain the output after the circuit is run. We refer to these qubits as the main
+     qubits.
+
+   * Each processor also contains two additional qubits that are used to communicate with other
+     processors. We refer to these qubits as the entanglement qubit and the teleport qubit. Their
+     roles are described in more detail below.
 
 In real life, the processors in a cluster would be connected using some sort of quantum network.
 The quantum network is used to generate entanglement between the processors.
@@ -171,19 +189,16 @@ In our Qiskit code, we model the entire cluster as one single quantum circuit.
 
 Within that single quantum circuit, each processor is modelled as a set of quantum registers:
 
- * 
+ * There is a main register containing _N/M_ qubits.
 
+ * There is an entanglement register containing 1 qubit.
 
+ * There is a teleport register containing 1 qubit.
 
+## The `Processor` and `Cluster` Python base classes
 
-
-This single quantum circuit contains multiple registers of quantum memory: one set of registers
-for each quantum processor in the 
-
-In the Qiskit implementation, we still have one single quantum circuit that simulates all quantum
-processors. This single large circuit is composed of several quantum registers, where each quantum
-register is understood to be owned by a specific quantum processor. Each processor has a _main_
-register which represents the local working memory as well as two extra registers
-(_entanglement_ and _teleport_) that are used for communications with other quantum processors.
-
+The Python module
+[`cluster.py`](../qiskit/cluster.py)
+defines the following base classes that are used for implementing various variations of
+the distributed quantum Fourier transformation:
 

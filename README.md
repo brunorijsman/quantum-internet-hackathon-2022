@@ -37,7 +37,8 @@ and QNE-ADK.
 
 # This GitHub Repository
 
-This GitHub repository contains all code and documentation that team Q-Harmonics produced
+[This GitHub repository](https://github.com/brunorijsman/quantum-internet-hackathon-2022/)
+contains all code and documentation that team Q-Harmonics produced
 for the hackathon.
 Everything is open source (Apache 2.0 license).
 

@@ -1,3 +1,7 @@
+
+If you are impatient and just want to run the code, jump ahead to the
+[running the code](#running-the-code) section.
+
 # RIPE Labs Quantum Internet Hackathon 2022
 
 The
@@ -157,9 +161,6 @@ register is understood to be owned by a specific quantum processor. Each process
 register which represents the local working memory as well as two extra registers
 (_entanglement_ and _teleport_) that are used for communications with other quantum processors.
 
-A more detailed description of the Qiskit code and instructions on how to install and run it can
-be found in [`docs/qiskit_instructions.md`](docs/qiskit_instructions.md)
-
 # QNE-ADK Implementation
 
 The [Quantum Network Explorer (QNE)](https://www.quantum-network.com/)
@@ -174,5 +175,11 @@ allows users to develop quantum applications that run on the quantum network exp
 In this project we port the three implementation of the Quantum fourier transformation (see above)
 from Qiskit to QNE-ADK.
 
-A more detailed description of the QNE-ADK code and instructions on how to install and run it can
-be found in [`docs/qne_adk_instructions.md`](docs/qne_adk_instructions.md)
+# Running the code
+
+## Installation instructions
+
+Read the
+[installation instructions](docs/installation.md)
+for instructions on how to download and install the team Q-Harmonics code and its
+dependencies.

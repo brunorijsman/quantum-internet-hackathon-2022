@@ -158,7 +158,7 @@ register which represents the local working memory as well as two extra register
 (_entanglement_ and _teleport_) that are used for communications with other quantum processors.
 
 A more detailed description of the Qiskit code and instructions on how to install and run it can
-be found in [`qiskit/instructions.md`](qiskit/instructions.md)
+be found in [`docs/qiskit_instructions.md`](docs/qiskit_instructions.md)
 
 # QNE-ADK Implementation
 
@@ -175,4 +175,4 @@ In this project we port the three implementation of the Quantum fourier transfor
 from Qiskit to QNE-ADK.
 
 A more detailed description of the QNE-ADK code and instructions on how to install and run it can
-be found in [`qne_adk/instructions.md`](qiskit/instructions.md)
+be found in [`docs/qne_adk_instructions.md`](docs/qne_adk_instructions.md)

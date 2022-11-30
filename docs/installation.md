@@ -106,26 +106,36 @@ Installing collected packages: wheel
 Successfully installed wheel-0.38.4
 </pre>
 
+Use `pip` to install the Qiskit textbook package:
 
-Use `pip` to install the required [PyPI](https://pypi.org/) packages, which are specified in the
-file `minimal-requirements.txt`:
+<pre>
+$ <b>pip install git+https://github.com/qiskit-community/qiskit-textbook.git#subdirectory=qiskit-textbook-src</b>
+Collecting git+https://github.com/qiskit-community/qiskit-textbook.git#subdirectory=qiskit-textbook-src
+  Cloning https://github.com/qiskit-community/qiskit-textbook.git to /private/var/folders/fm/m9yystmd0673fvqd2811t_c00000gn/T/pip-req-build-n3w1vg5t
+  Running command git clone --filter=blob:none --quiet https://github.com/qiskit-community/qiskit-textbook.git /private/var/folders/fm/m9yystmd0673fvqd2811t_c00000gn/T/pip-req-build-n3w1vg5t
+  Resolved https://github.com/qiskit-community/qiskit-textbook.git to commit 7787075d0a02f7b6bacc2e624842902e1318621a
+  Preparing metadata (setup.py) ... done
+Collecting qiskit
+  Using cached qiskit-0.39.3-py3-none-any.whl
+...
+Building wheels for collected packages: qiskit-textbook
+  Building wheel for qiskit-textbook (setup.py) ... done
+  Created wheel for qiskit-textbook: filename=qiskit_textbook-0.1.0-py3-none-any.whl size=17557 sha256=f5ecc0782bf7f08c5ea26fb40d0ce48017fab34fb0ecd7c58814f46fa12ca6e4
+  Stored in directory: /private/var/folders/fm/m9yystmd0673fvqd2811t_c00000gn/T/pip-ephem-wheel-cache-w0b6e2y4/wheels/80/c4/dd/b7ea1ee2a7247e8997db78bc777bbe22e61ab1e5ed1c4b46e1
+Successfully built qiskit-textbook
+Installing collected packages: wcwidth, pure-eval, ptyprocess, ply, pickleshare, mpmath, executing, backcall, appnope, widgetsnbextension, 
+...
+jupyter-client, cryptography, requests-ntlm, qiskit-terra, ipython, qiskit-ibmq-provider, qiskit-aer, ipykernel, qiskit, ipywidgets, qiskit-textbook
+Successfully installed appnope-0.1.3 asttokens-2.2.0 backcall-0.2.0 certifi-2022.9.24 cffi-1.15.1 charset-normalizer-2.1.1 contourpy-1.0.6 cryptography-38.0.4 cycler-0.11.0 debugpy-1.6.4 decorator-5.1.1 dill-0.3.6 entrypoints-0.4 executing-1.2.0 fonttools-4.38.0 idna-3.4 
+...
+tweedledum-1.1.1 urllib3-1.26.13 wcwidth-0.2.5 websocket-client-1.4.2 websockets-10.4 widgetsnbextension-4.0.3
+</pre>
+
+Use `pip` to install the remaining required [PyPI](https://pypi.org/) packages, which are specified
+in the file `minimal-requirements.txt`:
 
 <pre>
 (venv) $ <b>pip install -r minimal-requirements.txt</b>
-Collecting certifi==2022.9.24
-  Using cached certifi-2022.9.24-py3-none-any.whl (161 kB)
-Collecting cffi==1.15.1
-  Using cached cffi-1.15.1-cp38-cp38-macosx_10_9_x86_64.whl (178 kB)
-...
-Collecting websockets==10.4
-  Using cached websockets-10.4-cp38-cp38-macosx_10_9_x86_64.whl (97 kB)
-Building wheels for collected packages: qiskit
-  Building wheel for qiskit (setup.py) ... done
-  Created wheel for qiskit: filename=qiskit-0.39.3-py3-none-any.whl size=12245 sha256=24ce18ea4fa11a2f415bc17bfc1f02535c45e4e73bab1da13d356cd4732d9445
-  Stored in directory: /Users/brunorijsman/Library/Caches/pip/wheels/ed/b2/74/9e8a20d11a6fc8b1b59cb16e73733e1cf14209a8f2b9b98abc
-Successfully built qiskit
-Installing collected packages: ply, mpmath, websockets, websocket-client, urllib3, tweedledum, sympy, symengine, six, pycparser, psutil, pbr, numpy, ntlm-auth, idna, dill, charset-normalizer, certifi, stevedore, scipy, rustworkx, requests, python-dateutil, cffi, retworkx, cryptography, requests-ntlm, qiskit-terra, qiskit-ibmq-provider, qiskit-aer, qiskit
-Successfully installed certifi-2022.9.24 cffi-1.15.1 charset-normalizer-2.1.1 cryptography-38.0.4 dill-0.3.6 idna-3.4 mpmath-1.2.1 ntlm-auth-1.5.0 numpy-1.23.5 pbr-5.11.0 ply-3.11 psutil-5.9.4 pycparser-2.21 python-dateutil-2.8.2 qiskit-0.39.3 qiskit-aer-0.11.1 qiskit-ibmq-provider-0.19.2 qiskit-terra-0.22.3 requests-2.28.1 requests-ntlm-1.1.0 retworkx-0.12.1 rustworkx-0.12.1 scipy-1.9.3 six-1.16.0 stevedore-4.1.1 symengine-0.9.2 sympy-1.11.1 tweedledum-1.1.1 urllib3-1.26.13 websocket-client-1.4.2 websockets-10.4
 </pre>
 
 # Additional installation instructions for QNE-ADK related code

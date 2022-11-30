@@ -1,12 +1,12 @@
-from multi_processor import MultiProcessor
+from multi_processor import MultiProcessor, Processor
 from numpy import pi
-from qiskit import Aer, ClassicalRegister, QuantumCircuit, QuantumRegister, transpile
+from qiskit import Aer, QuantumCircuit, transpile
 from qiskit.quantum_info import DensityMatrix
 from qiskit.visualization import plot_bloch_multivector, plot_state_city
 from qiskit_textbook.tools import array_to_latex
 
 
-class NaiveDQFT(MultiProcessor):
+class TeleportDQFT(MultiProcessor):
 
     def __init__(self, n, swaps=True):
         assert n % self.NR_PROCESSORS == 0, 'n must be divisible by ${self.NR_PROCESSORS}'
@@ -16,8 +16,8 @@ class NaiveDQFT(MultiProcessor):
         self.qc = QuantumCircuit()
         self.qc_with_input = None
         self.processors = {}
-        self.processors[0] = NaiveDQFTProcessor(self.qc, 'alice', self.qubits_per_processor)
-        self.processors[1] = NaiveDQFTProcessor(self.qc, 'bob', self.qubits_per_processor)
+        self.processors[0] = Processor(self.qc, 'alice', self.qubits_per_processor)
+        self.processors[1] = Processor(self.qc, 'bob', self.qubits_per_processor)
         self.make_qft()
 
     def make_qft(self):

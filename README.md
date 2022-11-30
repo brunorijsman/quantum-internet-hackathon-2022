@@ -183,3 +183,10 @@ Read the
 [installation instructions](docs/installation.md)
 for instructions on how to download and install the team Q-Harmonics code and its
 dependencies.
+
+## Running the Qiskit related code
+
+Read the
+[instructions for running the Qiskit related code](docs/run-qiskit-code.md)
+for instructions on how to run the team Q-Harmonics code for distributed quantum Fourier
+transformations implemented in Qiskit.

@@ -1,4 +1,4 @@
-# Run Qiskit related code
+# Viewing and running the team Q-Harmonics Qiskit related code
 
 ## What is Qiskit?
 

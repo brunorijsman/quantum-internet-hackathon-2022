@@ -31,14 +31,14 @@ class TeleportDQFT(MultiProcessor):
         if n == 0:
             return
         n -= 1
-        self.global_hadamard(n)
+        self.hadamard(n)
         for qubit in range(n):
-            self.global_controlled_phase(pi/2 ** (n - qubit), qubit, n)
+            self.controlled_phase(pi/2 ** (n - qubit), qubit, n)
         self.add_qft_rotations(n)
 
     def add_qft_swaps(self):
         for qubit in range(self.n // 2):
-            self.global_swap(qubit, self.n - qubit - 1)
+            self.swap(qubit, self.n - qubit - 1)
 
     def clear_ancillary(self):
         for processor in self.processors.values():
@@ -53,11 +53,11 @@ class TeleportDQFT(MultiProcessor):
         local_qubit_index = global_qubit_index % self.qubits_per_processor
         return (processor_index, local_qubit_index)
 
-    def global_hadamard(self, global_qubit_index):
+    def hadamard(self, global_qubit_index):
         (processor_index, local_qubit_index) = self.global_to_local_index(global_qubit_index)
         self.processors[processor_index].local_hadamard(local_qubit_index)
 
-    def global_controlled_phase(self, angle, global_control_qubit_index, global_target_qubit_index):
+    def controlled_phase(self, angle, global_control_qubit_index, global_target_qubit_index):
         (control_processor_index, local_control_qubit_index) = \
             self.global_to_local_index(global_control_qubit_index)
         (target_processor_index, local_target_qubit_index) = \
@@ -70,7 +70,7 @@ class TeleportDQFT(MultiProcessor):
                 angle, local_control_qubit_index, self.processors[target_processor_index],
                 local_target_qubit_index)
 
-    def global_swap(self, global_qubit_index_1, global_qubit_index_2):
+    def swap(self, global_qubit_index_1, global_qubit_index_2):
         (processor_index_1, local_qubit_index_1) = self.global_to_local_index(global_qubit_index_1)
         (processor_index_2, local_qubit_index_2) = self.global_to_local_index(global_qubit_index_2)
         if processor_index_1 == processor_index_2:

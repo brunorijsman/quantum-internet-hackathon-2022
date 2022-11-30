@@ -212,6 +212,10 @@ the distributed quantum Fourier transformation:
 
  * The base class `Cluster` implements a cluster of processors.
 
+ The module also contains some example classes that are used in the
+ [`cluster.ipynb`](../qiskit/cluster.ipynb)
+ to illustrate the design of the `Processor` and `Cluster` classes.
+
 ## The Cluster class
 
 
@@ -257,6 +261,7 @@ The following table shows an example to clarify the concept. Here we have 3 proc
 | 9 | 2 | 1 |
 | 10 | 2 | 2 |
 | 11 | 2 | 3 |
+
 
 
 

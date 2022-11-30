@@ -103,20 +103,20 @@ class Cluster:
         for processor in self.processors.values():
             processor.final_measure()
 
-    def global_to_local_index(self, global_qubit_index):
+    def _global_to_local_index(self, global_qubit_index):
         processor_index = global_qubit_index // self.nr_qubits_per_processor
         local_qubit_index = global_qubit_index % self.nr_qubits_per_processor
         return (processor_index, local_qubit_index)
 
-    def global_hadamard(self, global_qubit_index):
-        (processor_index, local_qubit_index) = self.global_to_local_index(global_qubit_index)
+    def hadamard(self, global_qubit_index):
+        (processor_index, local_qubit_index) = self._global_to_local_index(global_qubit_index)
         self.processors[processor_index].local_hadamard(local_qubit_index)
 
-    def global_controlled_phase(self, angle, global_control_qubit_index, global_target_qubit_index):
+    def controlled_phase(self, angle, global_control_qubit_index, global_target_qubit_index):
         (control_processor_index, local_control_qubit_index) = \
-            self.global_to_local_index(global_control_qubit_index)
+            self._global_to_local_index(global_control_qubit_index)
         (target_processor_index, local_target_qubit_index) = \
-            self.global_to_local_index(global_target_qubit_index)
+            self._global_to_local_index(global_target_qubit_index)
         if control_processor_index == target_processor_index:
             self.processors[control_processor_index].local_controlled_phase(
                 angle, local_control_qubit_index, local_target_qubit_index)
@@ -125,9 +125,9 @@ class Cluster:
                 angle, local_control_qubit_index, self.processors[target_processor_index],
                 local_target_qubit_index)
 
-    def global_swap(self, global_qubit_index_1, global_qubit_index_2):
-        (processor_index_1, local_qubit_index_1) = self.global_to_local_index(global_qubit_index_1)
-        (processor_index_2, local_qubit_index_2) = self.global_to_local_index(global_qubit_index_2)
+    def swap(self, global_qubit_index_1, global_qubit_index_2):
+        (processor_index_1, local_qubit_index_1) = self._global_to_local_index(global_qubit_index_1)
+        (processor_index_2, local_qubit_index_2) = self._global_to_local_index(global_qubit_index_2)
         if processor_index_1 == processor_index_2:
             self.processors[processor_index_1].local_swap(local_qubit_index_1, local_qubit_index_2)
         else:

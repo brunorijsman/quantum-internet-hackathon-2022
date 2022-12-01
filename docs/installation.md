@@ -160,12 +160,6 @@ Clone the unmodified QuTech `squidasm` repository:
 pip install squidasm --extra-index-url https://$NETSQUID_USERNAME:$NETSQUID_PASSWORD@pypi.netsquid.org
 ```
 
-Rename the clone to `squidasm_ORIGINAL`:
-
-```
-mv squidasm squidasm_ORIGINAL
-```
-
 Clone our fork of the `squidasm` repository:
 
 ```

@@ -82,6 +82,8 @@ class Processor:
 
 class Cluster:
 
+    # TODO Add a swap parameter to enable or disable the final swaps
+
     def __init__(self, nr_processors, total_nr_qubits):
         assert total_nr_qubits % nr_processors == 0, \
             'Total nr qubits {total_nr_qubits} must be multiple of nr processors {nr_processors}'

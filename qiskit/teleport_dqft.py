@@ -1,4 +1,4 @@
-from multi_processor import MultiProcessor, Processor
+from cluster import Cluster
 from numpy import pi
 from qiskit import Aer, QuantumCircuit, transpile
 from qiskit.quantum_info import DensityMatrix
@@ -6,22 +6,15 @@ from qiskit.visualization import plot_bloch_multivector, plot_state_city
 from qiskit_textbook.tools import array_to_latex
 
 
-class TeleportDQFT(MultiProcessor):
+class TeleportDQFT(Cluster):
 
-    def __init__(self, n, swaps=True):
-        assert n % self.NR_PROCESSORS == 0, 'n must be divisible by ${self.NR_PROCESSORS}'
-        self.n = n
-        self.qubits_per_processor = n // self.NR_PROCESSORS
-        self.swaps = swaps
-        self.qc = QuantumCircuit()
-        self.qc_with_input = None
-        self.processors = {}
-        self.processors[0] = Processor(self.qc, 'alice', self.qubits_per_processor)
-        self.processors[1] = Processor(self.qc, 'bob', self.qubits_per_processor)
+    def __init__(self, nr_processors, total_nr_qubits):
+        Cluster.__init__(self, nr_processors, total_nr_qubits)
+        self.swaps = True  # TODO Add this as a constructor parameter
         self.make_qft()
 
     def make_qft(self):
-        self.add_qft_rotations(self.n)
+        self.add_qft_rotations(self.total_nr_qubits)
         if self.swaps:
             self.add_qft_swaps()
         self.clear_ancillary()
@@ -37,8 +30,8 @@ class TeleportDQFT(MultiProcessor):
         self.add_qft_rotations(n)
 
     def add_qft_swaps(self):
-        for qubit in range(self.n // 2):
-            self.swap(qubit, self.n - qubit - 1)
+        for qubit in range(self.total_nr_qubits // 2):
+            self.swap(qubit, self.total_nr_qubits - qubit - 1)
 
     def clear_ancillary(self):
         for processor in self.processors.values():
@@ -49,8 +42,8 @@ class TeleportDQFT(MultiProcessor):
             processor.final_measure()
 
     def global_to_local_index(self, global_qubit_index):
-        processor_index = global_qubit_index // self.qubits_per_processor
-        local_qubit_index = global_qubit_index % self.qubits_per_processor
+        processor_index = global_qubit_index // self.nr_qubits_per_processor
+        local_qubit_index = global_qubit_index % self.nr_qubits_per_processor
         return (processor_index, local_qubit_index)
 
     def hadamard(self, global_qubit_index):

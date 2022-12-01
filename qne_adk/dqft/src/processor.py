@@ -84,12 +84,14 @@ class Processor:
             else:
                 self.distributed_controlled_phase(control_local_qubit_index,
                                                   target_processor_index,
-                                                  target_local_qubit_index)
+                                                  target_local_qubit_index,
+                                                  True)
         else:
-            if control_processor_index == self.processor_index:
+            if target_processor_index == self.processor_index:
                 self.distributed_controlled_phase(target_local_qubit_index,
                                                   control_processor_index,
-                                                  control_local_qubit_index)
+                                                  control_local_qubit_index,
+                                                  False)
             else:
                 pass  # both control and target qubit are remote
 
@@ -100,11 +102,12 @@ class Processor:
         # TODO
 
     def distributed_controlled_phase(self, local_qubit_index, remote_processor_index,
-                                     remote_local_qubit_index):
+                                     remote_local_qubit_index, am_teleport_receiver):
         self.logger.log(f"{self.name}: Distributed controlled phase "
                         f"{local_qubit_index=} "
                         f"{remote_processor_index=} "
-                        f"{remote_local_qubit_index=}")
+                        f"{remote_local_qubit_index=} "
+                        f"{am_teleport_receiver=}")
         # TODO
 
     def global_to_local_index(self, global_qubit_index):

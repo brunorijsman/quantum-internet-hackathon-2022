@@ -6,10 +6,10 @@ from qiskit.visualization import plot_bloch_multivector, plot_state_city
 from qiskit_textbook.tools import array_to_latex
 
 
-class TeleportDQFT(Cluster):
+class catDQFT(Cluster):
 
     def __init__(self, nr_processors, total_nr_qubits):
-        Cluster.__init__(self, nr_processors, total_nr_qubits,flag="teleport")
+        Cluster.__init__(self, nr_processors, total_nr_qubits,flag="cat")
         self.swaps = True  # TODO Add this as a constructor parameter
         self.make_qft()
 

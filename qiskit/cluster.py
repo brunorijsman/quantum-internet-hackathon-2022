@@ -7,7 +7,7 @@ from qiskit_textbook.tools import array_to_latex
 
 class Processor:
 
-    def __init__(self, cluster, index, nr_qubits):
+    def __init__(self, cluster, index, nr_qubits,flag):
         self.cluster = cluster
         self.qc = cluster.qc
         self.index = index
@@ -84,7 +84,7 @@ class Cluster:
 
     # TODO Add a swap parameter to enable or disable the final swaps
 
-    def __init__(self, nr_processors, total_nr_qubits):
+    def __init__(self, nr_processors, total_nr_qubits, flag):
         assert total_nr_qubits % nr_processors == 0, \
             'Total nr qubits {total_nr_qubits} must be multiple of nr processors {nr_processors}'
         self.nr_processors = nr_processors
@@ -95,7 +95,7 @@ class Cluster:
         self.processors = {}
         for processor_index in range(nr_processors):
             self.processors[processor_index] = Processor(self, processor_index, 
-                                                         self.nr_qubits_per_processor)
+                                                         self.nr_qubits_per_processor, flag)
 
     def clear_ancillary(self):
         for processor in self.processors.values():

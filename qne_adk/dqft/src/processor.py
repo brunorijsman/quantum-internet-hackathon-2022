@@ -45,7 +45,8 @@ class Processor:
     def create_qubits(self):
         for index in range(self.local_nr_qubits):
             self.main_qubit[index] = Qubit(self.conn)
-        # TODO more
+        # TODO teleport qubit
+        # TODO entanglement qubit
 
     def create_epr_sockets_to_other_processors(self):
         for remote_processor_index in range(self.nr_processors):
@@ -108,7 +109,25 @@ class Processor:
                         f"{remote_processor_index=} "
                         f"{remote_local_qubit_index=} "
                         f"{am_teleport_receiver=}")
-        # TODO
+        if am_teleport_receiver:
+            self.distributed_controlled_phase_here(local_qubit_index, remote_processor_index,
+                                                   remote_local_qubit_index, am_teleport_receiver)
+        else:
+            self.distributed_controlled_phase_there(local_qubit_index, remote_processor_index,
+                                                    remote_local_qubit_index, am_teleport_receiver)
+
+    def distributed_controlled_phase_here(self, local_qubit_index, remote_processor_index,
+                                          remote_local_qubit_index, am_teleport_receiver):
+        # TODO receive teleport
+        # TODO do local
+        # TODO send teleport back
+        pass
+
+    def distributed_controlled_phase_there(self, local_qubit_index, remote_processor_index,
+                                           remote_local_qubit_index, am_teleport_receiver):
+        # TODO send teleport
+        # TODO receive teleport back
+        pass
 
     def global_to_local_index(self, global_qubit_index):
         processor_index = global_qubit_index // self.local_nr_qubits

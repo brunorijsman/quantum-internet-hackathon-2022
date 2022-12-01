@@ -121,7 +121,6 @@ terms, choose a username and password and fill in the other information on the f
 Set the following environment variables to your NetSquid username and password:
 
 ```
-# Terminal 1
 export NETSQUID_USERNAME="Your NetSquid Username Here"
 export NETSQUID_PASSWORD="Your NetSquid Password Here"
 ```

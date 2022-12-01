@@ -5,6 +5,16 @@ set -e
 TOP=$(git rev-parse --show-toplevel)/qne_adk
 cd ${TOP}
 
+if [[ "$#" -eq 0 ]]; then
+    applications=$(cat ${TOP}/applications)
+else
+    applications=""
+    while [[ "$#" -gt 0 ]]; do
+        applications="$applications $1"
+        shift
+    done
+fi
+
 ./clean.sh
 
 if [[ ! -d ~/.qne ]]; then
@@ -12,7 +22,7 @@ if [[ ! -d ~/.qne ]]; then
 fi
 FIRST=1
 echo "{" > ~/.qne/applications.json
-for application in $(cat applications); do
+for application in $applications; do
     if [[ ${FIRST} == 0 ]]; then 
         echo "  ," >> ~/.qne/applications.json
     else
@@ -24,7 +34,7 @@ for application in $(cat applications); do
 done
 echo "}" >> ~/.qne/applications.json
 
-for application in $(cat applications); do
+for application in $applications; do
 
     echo "Running ${application}..."
     cd ${TOP}/${application}

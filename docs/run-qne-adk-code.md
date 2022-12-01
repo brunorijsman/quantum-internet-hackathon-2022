@@ -28,7 +28,7 @@ cd qne_adk
 Run the `qft` application (in this case I am including the output so that you know what to expect):
 
 <pre>
-$ <b>./run.sh</b>
+$ <b>./run.sh qft</b>
 Cleaning qft...
 Running qft...
 qne experiment create qft_experiment qft randstad

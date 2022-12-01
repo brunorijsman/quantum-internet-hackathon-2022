@@ -126,10 +126,12 @@ export NETSQUID_USERNAME="Your NetSquid Username Here"
 export NETSQUID_PASSWORD="Your NetSquid Password Here"
 ```
 
-Install the Quantum Network Explorer Application Development Kit (QNE-ADK):
+Install the Quantum Network Explorer Application Development Kit (QNE-ADK).
+We want version 0.1.0 because it is compatible with out modified versions of `squidasm` and
+`netqasm` (discussed below):
 
 ```
-pip install qne-adk
+pip install qne-adk==0.1.0
 ```
 
 Next we will install the `squidasm` and the `netqasm` packages.
@@ -145,6 +147,51 @@ feature branch.
 We have not yet submitted a pull request to merge this new functionality back into the QuTech
 repositories.
 The installation instructions below describe how to install our forked code:
+
+Go back to the parent directory where you cloned the `quantum-internet-hackathon-2022`
+repository:
+
+```
+cd $QIH_2022_ROOT
+```
+
+Clone the unmodified QuTech `squidasm` repository:
+
+```
+pip install squidasm --extra-index-url https://$NETSQUID_USERNAME:$NETSQUID_PASSWORD@pypi.netsquid.org
+```
+
+Rename the clone to `squidasm_ORIGINAL`:
+
+```
+mv squidasm squidasm_ORIGINAL
+```
+
+Clone our fork of the `squidasm` repository:
+
+```
+git clone https://github.com/brunorijsman/squidasm.git
+```
+
+Go into the cloned directory:
+
+```
+cd squidasm
+```
+
+Checkout the feature branch that contains our missing features:
+
+```
+git checkout issue-39-add-controlled-z-rotation-arbitrary-angle
+```
+
+Install the module in our virtual environment:
+(make sure that you set the `NETSQUID` environment variables
+to contain your NetSquid username and password as described above):
+
+```
+pip install .
+```
 
 Go back to the parent directory where you cloned the `quantum-internet-hackathon-2022`
 repository:
@@ -175,38 +222,6 @@ Install the module in our virtual environment
 (ignore the ERROR message about the incompatible version):
 
 ```
-pip install -e .
+pip install .
 ```
 
-Go back to the parent directory where you cloned the `quantum-internet-hackathon-2022`
-repository:
-
-```
-cd $QIH_2022_ROOT
-```
-
-Clone our fork of the `squidasm` repository:
-
-```
-git clone https://github.com/brunorijsman/squidasm.git
-```
-
-Go into the cloned directory:
-
-```
-cd squidasm
-```
-
-Checkout the feature branch that contains our missing features:
-
-```
-git checkout issue-39-add-controlled-z-rotation-arbitrary-angle
-```
-
-Install the module in our virtual environment:
-(make sure that you set the `NETSQUID` environment variables
-to contain your NetSquid username and password as described above):
-
-```
-pip install -e .
-```

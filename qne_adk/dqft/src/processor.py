@@ -1,3 +1,5 @@
+from netqasm.sdk import EPRSocket
+
 class Processor:
 
     def __init__(self, nr_processors, total_nr_qubits, processor_index, logger):
@@ -7,7 +9,8 @@ class Processor:
         self.processor_index = processor_index
         self.logger = logger
         self.name = self.processor_index_to_name(processor_index)
-        self.logger.log(f"Create processor {self.name}")
+        self.logger.log(f"{self.name}: Create processor index {self.processor_index}")
+        self.create_epr_sockets_to_other_processors()
 
     @staticmethod
     def processor_index_to_name(index):
@@ -17,6 +20,15 @@ class Processor:
         else:
             name = names[index]
         return name
+
+    def create_epr_sockets_to_other_processors(self):
+        self.epr_socket = {}
+        for remote_processor_index in range(self.nr_processors):
+            if remote_processor_index != self.processor_index:
+                remote_name = self.processor_index_to_name(remote_processor_index)
+                self.logger.log(f"{self.name}: Create EPR socket to remote processor "
+                                f"index {remote_processor_index}")
+                self.epr_socket[remote_processor_index] = EPRSocket(remote_name)
 
     def make_entanglement(self, to_processor_index):
         # TODO

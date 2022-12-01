@@ -1,7 +1,5 @@
 # Running the distributed quantum Fourier transformation implemented in QNE-ADK
 
-**TODO**
-
 This is just a minimal place holder so that everyone can try running a basic QNE-ADK program.
 
 I am assuming that the environment variable `QIH_2022_ROOT` is set to the 

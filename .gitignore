@@ -2,3 +2,4 @@ venv/**
 *.pyc
 **/*_experiment/**
 ~*.pptx
+*_dm.txt

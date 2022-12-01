@@ -1,6 +1,7 @@
 from netqasm.logging.output import get_new_app_logger
 from netqasm.sdk import EPRSocket
 from netqasm.sdk.external import NetQASMConnection
+from numpy import pi
 
 
 class Processor:
@@ -32,50 +33,81 @@ class Processor:
         for remote_processor_index in range(self.nr_processors):
             if remote_processor_index != self.processor_index:
                 remote_name = self.processor_index_to_name(remote_processor_index)
-                self.logger.log(f"{self.name}: Create EPR socket to remote processor "
-                                f"index {remote_processor_index}")
+                self.logger.log(f"{self.name}: Create EPR socket {remote_processor_index=}")
                 self.epr_socket[remote_processor_index] = EPRSocket(remote_name)
 
     def run(self):
         self.connect_to_netqasm()
-        
+        self.quantum_fourier_transform()
+
     def connect_to_netqasm(self):
         self.logger.log(f"{self.name}: Connect to NetQASM")
         self.conn = NetQASMConnection(self.name,
                                       log_config=self.app_config.log_config,
                                       epr_sockets=list(self.epr_socket.values()))
 
-    #####
+    def quantum_fourier_transform(self):
+        self.add_qft_rotations(self.total_nr_qubits)
 
-    def make_entanglement(self, to_processor_index):
-        # TODO
-        pass
+    def add_qft_rotations(self, n):
+        if n == 0:
+            return
+        n -= 1
+        self.hadamard(n)
+        for qubit in range(n):
+            self.controlled_phase(pi/2 ** (n - qubit), qubit, n)
+        self.add_qft_rotations(n)
 
-    def teleport_to(self, to_processor):
+    def hadamard(self, global_qubit_index):
+        (processor_index, local_qubit_index) = self.global_to_local_index(global_qubit_index)
+        if processor_index != self.processor_index:
+            return
+        self.logger.log(f"{self.name}: Local hadamard {local_qubit_index=}")
         # TODO
-        pass
 
-    def distributed_controlled_phase(self, angle, control_qubit_index, target_processor,
-                                     target_qubit_index):
-        # TODO
-        pass
+    def controlled_phase(self, angle, global_control_qubit_index, global_target_qubit_index):
+        (control_processor_index, control_local_qubit_index) = \
+            self.global_to_local_index(global_control_qubit_index)
+        (target_processor_index, target_local_qubit_index) = \
+            self.global_to_local_index(global_target_qubit_index)
+        if control_processor_index == self.processor_index:
+            if target_processor_index == self.processor_index:
+                self.local_controlled_phase(control_local_qubit_index, target_local_qubit_index)
+            else:
+                self.controlled_phase_remote_target(control_local_qubit_index,
+                                                    target_processor_index,
+                                                    target_local_qubit_index)
+        else:
+            if control_processor_index == self.processor_index:
+                self.controlled_phase_remote_control(control_processor_index,
+                                                     control_local_qubit_index,
+                                                     target_local_qubit_index)
+            else:
+                pass
 
-    def distributed_swap(self, local_qubit_index, remote_processor, remote_qubit_index):
+    def local_controlled_phase(self, local_control_qubit_index, target_local_qubit_index):
+        self.logger.log(f"{self.name}: Local controlled phase "
+                        f"{local_control_qubit_index=} "
+                        f"{target_local_qubit_index=}")
         # TODO
-        pass
 
-    def local_hadamard(self, qubit_index):
+    def controlled_phase_remote_target(self, control_local_qubit_index, target_processor_index,
+                                       target_local_qubit_index):
+        self.logger.log(f"{self.name}: Controlled phase remote target "
+                        f"{control_local_qubit_index=} "
+                        f"{target_processor_index=} "
+                        f"{target_local_qubit_index=}")
         # TODO
-        pass
 
-    def local_controlled_phase(self, angle, control_qubit_index, target_qubit_index):
+    def controlled_phase_remote_control(self, control_processor_index, control_local_qubit_index,
+                                        target_local_qubit_index):
+        self.logger.log(f"{self.name}: Controlled phase remote control "
+                        f"{control_processor_index=} "
+                        f"{control_local_qubit_index=} "
+                        f"{target_local_qubit_index=}")
         # TODO
-        pass
 
-    def local_swap(self, qubit_index_1, qubit_index_2):
-        # TODO
-        pass
-
-    def clear_ancillary(self):
-        # TODO
-        pass
+    def global_to_local_index(self, global_qubit_index):
+        processor_index = global_qubit_index // self.local_nr_qubits
+        local_qubit_index = global_qubit_index % self.local_nr_qubits
+        return (processor_index, local_qubit_index)

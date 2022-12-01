@@ -26,7 +26,7 @@ class catDQFT(Cluster):
         n -= 1
         self.hadamard(n)
         for qubit in range(n):
-            self.controlled_phase(pi/2 ** (n - qubit), qubit, n)
+            self.controlled_phase(pi/2 ** (n - qubit), qubit, n,flag="cat")
         self.add_qft_rotations(n)
 
     def add_qft_swaps(self):

@@ -31,7 +31,8 @@ def apply_qft_rotations(app_logger, conn, qubits, n):
     app_logger.log(f"hadamard qubit {n}")
     qubits[n].H()
     for i in range(n):
-        app_logger.log(f"controlled phase control qubit {i} and target qubit {n} by angle pi/{2 ** (n - i)}")
+        app_logger.log(f"controlled phase control qubit {i} and target qubit {n} "
+                       f"by angle pi/{2 ** (n - i)}")
         qubits[i].crot_Z(qubits[n], n=1, d=n-i)
     apply_qft_rotations(app_logger, conn, qubits, n)
 
@@ -68,7 +69,7 @@ def main(app_config=None):
         app_logger.log("writing density matrix to qne_dm.txt")
         dir = "/Users/brunorijsman/git-personal/quantum-internet-hackathon-2022"
         with open(f"{dir}/qne_dm.txt", "w") as f:
-            print(f"QNE-ADM density matrix", file=f)
+            print("QNE-ADM density matrix", file=f)
             print(f"{datetime.now()}", file=f)
             print(f"{n}", file=f)
             print(f"{value}", file=f)

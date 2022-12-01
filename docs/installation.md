@@ -153,6 +153,38 @@ repository:
 cd $QIH_2022_ROOT
 ```
 
+Clone our fork of the `netqasm` repository:
+
+```
+git clone https://github.com/brunorijsman/netqasm.git
+```
+
+Go into the cloned directory:
+
+```
+cd netqasm
+```
+
+Checkout the feature branch that contains our missing features:
+
+```
+git checkout issue-39-add-controlled-z-rotation-arbitrary-angle
+```
+
+Install the module in our virtual environment
+(ignore the ERROR message about the incompatible version):
+
+```
+pip install -e .
+```
+
+Go back to the parent directory where you cloned the `quantum-internet-hackathon-2022`
+repository:
+
+```
+cd $QIH_2022_ROOT
+```
+
 Clone our fork of the `squidasm` repository:
 
 ```
@@ -174,38 +206,6 @@ git checkout issue-39-add-controlled-z-rotation-arbitrary-angle
 Install the module in our virtual environment:
 (make sure that you set the `NETSQUID` environment variables
 to contain your NetSquid username and password as described above):
-
-```
-pip install -e .
-```
-
-Once again, go back to the parent directory where you cloned the `quantum-internet-hackathon-2022`
-repository:
-
-```
-cd $QIH_2022_ROOT
-```
-
-Clone our fork of the `netqasm` repository:
-
-```
-git clone https://github.com/brunorijsman/netqasm.git
-```
-
-Go into the cloned directory:
-
-```
-cd netqasm
-```
-
-Checkout the feature branch that contains our missing features:
-
-```
-git checkout issue-39-add-controlled-z-rotation-arbitrary-angle
-```
-
-Install the module in our virtual environment
-(ignore the ERROR message about the incompatible version):
 
 ```
 pip install -e .

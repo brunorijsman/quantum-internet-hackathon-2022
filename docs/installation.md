@@ -49,7 +49,7 @@ export QIH_2022_ROOT=$(pwd)
 Change directory to the newly created local clone:
 
 ```
-cd ${QIH_2022_ROOT}/quantum-internet-hackathon-2022
+cd $QIH_2022_ROOT/quantum-internet-hackathon-2022
 ```
 
 
@@ -106,7 +106,25 @@ The minimal installation instructions described above are sufficient for downloa
 all of the team Q-Harmonics code and for running all Qiskit related code.
 
 If you also want to run the QNE-ADK related code you must follow the additional installation steps
-listed below (make sure you execute the basic installation steps listed above first).
+listed below.
+
+Make sure you execute the basic installation steps listed above first.
+
+Also make sure that your virtual environment that you created above is still active (you should
+see `(venv)` in your prompt).
+
+You will need a NetSquid account to download some of the dependencies. If you don't already have
+a NetSquid account, go to the NetSquid website [https://netsquid.org/](https://netsquid.org/),
+click on the _Get NetSquid_ option in the menu, click on the _Register now_ button, agree to the
+terms, choose a username and password and fill in the other information on the form.
+
+Set the following environment variables to your NetSquid username and password:
+
+```
+# Terminal 1
+export NETSQUID_USERNAME="Your NetSquid Username Here"
+export NETSQUID_PASSWORD="Your NetSquid Password Here"
+```
 
 Install the Quantum Network Explorer Application Development Kit (QNE-ADK):
 
@@ -114,5 +132,81 @@ Install the Quantum Network Explorer Application Development Kit (QNE-ADK):
 pip install qne-adk
 ```
 
+Next we will install the `squidasm` and the `netqasm` packages.
 
-**TODO** Finish the additional installation instructions
+Normally you would install these from the QuTech repository.
+However, QNE-ADK was missing some functionality that we needed to implement a distributed quantum
+Fourier transformation, namely:
+ * The ability to have more than two qubits per node.
+ * Support for the CROTZ gate.
+
+We forked the `squidasm` and the `netqasm` repositories and added the needed functionality in a
+feature branch.
+We have not yet submitted a pull request to merge this new functionality back into the QuTech
+repositories.
+The installation instructions below describe how to install our forked code:
+
+Go back to the parent directory where you cloned the `quantum-internet-hackathon-2022`
+repository:
+
+```
+cd $QIH_2022_ROOT
+```
+
+Clone our fork of the `squidasm` repository:
+
+```
+git clone https://github.com/brunorijsman/squidasm.git
+```
+
+Go into the cloned directory:
+
+```
+cd squidasm
+```
+
+Checkout the feature branch that contains our missing features:
+
+```
+git checkout issue-39-add-controlled-z-rotation-arbitrary-angle
+```
+
+Install the module in our virtual environment:
+(make sure that you set the `NETSQUID` environment variables
+to contain your NetSquid username and password as described above):
+
+```
+pip install -e .
+```
+
+Once again, go back to the parent directory where you cloned the `quantum-internet-hackathon-2022`
+repository:
+
+```
+cd $QIH_2022_ROOT
+```
+
+Clone our fork of the `netqasm` repository:
+
+```
+git clone https://github.com/brunorijsman/netqasm.git
+```
+
+Go into the cloned directory:
+
+```
+cd netqasm
+```
+
+Checkout the feature branch that contains our missing features:
+
+```
+git checkout issue-39-add-controlled-z-rotation-arbitrary-angle
+```
+
+Install the module in our virtual environment
+(ignore the ERROR message about the incompatible version):
+
+```
+pip install -e .
+```

@@ -1,5 +1,6 @@
 from netqasm.logging.output import get_new_app_logger
 from netqasm.sdk import EPRSocket
+from netqasm.sdk import Qubit
 from netqasm.sdk.external import NetQASMConnection
 from numpy import pi
 
@@ -17,8 +18,8 @@ class Processor:
         self.name = self.processor_index_to_name(processor_index)
         self.logger.log(f"{self.name}: Create processor index {self.processor_index}")
         self.epr_socket = {}
+        self.main_qubit = {}
         self.conn = None
-        self.create_epr_sockets_to_other_processors()
 
     @staticmethod
     def processor_index_to_name(index):
@@ -29,15 +30,10 @@ class Processor:
             name = names[index]
         return name
 
-    def create_epr_sockets_to_other_processors(self):
-        for remote_processor_index in range(self.nr_processors):
-            if remote_processor_index != self.processor_index:
-                remote_name = self.processor_index_to_name(remote_processor_index)
-                self.logger.log(f"{self.name}: Create EPR socket {remote_processor_index=}")
-                self.epr_socket[remote_processor_index] = EPRSocket(remote_name)
-
     def run(self):
         self.connect_to_netqasm()
+        self.create_qubits()
+        self.create_epr_sockets_to_other_processors()
         self.quantum_fourier_transform()
 
     def connect_to_netqasm(self):
@@ -45,6 +41,19 @@ class Processor:
         self.conn = NetQASMConnection(self.name,
                                       log_config=self.app_config.log_config,
                                       epr_sockets=list(self.epr_socket.values()))
+
+    def create_qubits(self):
+        for index in range(self.local_nr_qubits):
+            self.main_qubit[index] = Qubit(self.conn)
+        # TODO teleport qubit
+        # TODO entanglement qubit
+
+    def create_epr_sockets_to_other_processors(self):
+        for remote_processor_index in range(self.nr_processors):
+            if remote_processor_index != self.processor_index:
+                remote_name = self.processor_index_to_name(remote_processor_index)
+                self.logger.log(f"{self.name}: Create EPR socket {remote_processor_index=}")
+                self.epr_socket[remote_processor_index] = EPRSocket(remote_name)
 
     def quantum_fourier_transform(self):
         self.add_qft_rotations(self.total_nr_qubits)
@@ -63,7 +72,7 @@ class Processor:
         if processor_index != self.processor_index:
             return
         self.logger.log(f"{self.name}: Local hadamard {local_qubit_index=}")
-        # TODO
+        self.main_qubit[local_qubit_index].H()
 
     def controlled_phase(self, angle, global_control_qubit_index, global_target_qubit_index):
         (control_processor_index, control_local_qubit_index) = \
@@ -74,16 +83,18 @@ class Processor:
             if target_processor_index == self.processor_index:
                 self.local_controlled_phase(control_local_qubit_index, target_local_qubit_index)
             else:
-                self.controlled_phase_remote_target(control_local_qubit_index,
-                                                    target_processor_index,
-                                                    target_local_qubit_index)
+                self.distributed_controlled_phase(control_local_qubit_index,
+                                                  target_processor_index,
+                                                  target_local_qubit_index,
+                                                  True)
         else:
-            if control_processor_index == self.processor_index:
-                self.controlled_phase_remote_control(control_processor_index,
-                                                     control_local_qubit_index,
-                                                     target_local_qubit_index)
+            if target_processor_index == self.processor_index:
+                self.distributed_controlled_phase(target_local_qubit_index,
+                                                  control_processor_index,
+                                                  control_local_qubit_index,
+                                                  False)
             else:
-                pass
+                pass  # both control and target qubit are remote
 
     def local_controlled_phase(self, local_control_qubit_index, target_local_qubit_index):
         self.logger.log(f"{self.name}: Local controlled phase "
@@ -91,21 +102,32 @@ class Processor:
                         f"{target_local_qubit_index=}")
         # TODO
 
-    def controlled_phase_remote_target(self, control_local_qubit_index, target_processor_index,
-                                       target_local_qubit_index):
-        self.logger.log(f"{self.name}: Controlled phase remote target "
-                        f"{control_local_qubit_index=} "
-                        f"{target_processor_index=} "
-                        f"{target_local_qubit_index=}")
-        # TODO
+    def distributed_controlled_phase(self, local_qubit_index, remote_processor_index,
+                                     remote_local_qubit_index, am_teleport_receiver):
+        self.logger.log(f"{self.name}: Distributed controlled phase "
+                        f"{local_qubit_index=} "
+                        f"{remote_processor_index=} "
+                        f"{remote_local_qubit_index=} "
+                        f"{am_teleport_receiver=}")
+        if am_teleport_receiver:
+            self.distributed_controlled_phase_here(local_qubit_index, remote_processor_index,
+                                                   remote_local_qubit_index, am_teleport_receiver)
+        else:
+            self.distributed_controlled_phase_there(local_qubit_index, remote_processor_index,
+                                                    remote_local_qubit_index, am_teleport_receiver)
 
-    def controlled_phase_remote_control(self, control_processor_index, control_local_qubit_index,
-                                        target_local_qubit_index):
-        self.logger.log(f"{self.name}: Controlled phase remote control "
-                        f"{control_processor_index=} "
-                        f"{control_local_qubit_index=} "
-                        f"{target_local_qubit_index=}")
-        # TODO
+    def distributed_controlled_phase_here(self, local_qubit_index, remote_processor_index,
+                                          remote_local_qubit_index, am_teleport_receiver):
+        # TODO receive teleport
+        # TODO do local
+        # TODO send teleport back
+        pass
+
+    def distributed_controlled_phase_there(self, local_qubit_index, remote_processor_index,
+                                           remote_local_qubit_index, am_teleport_receiver):
+        # TODO send teleport
+        # TODO receive teleport back
+        pass
 
     def global_to_local_index(self, global_qubit_index):
         processor_index = global_qubit_index // self.local_nr_qubits

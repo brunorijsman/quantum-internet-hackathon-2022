@@ -15,8 +15,6 @@ else
     done
 fi
 
-./clean.sh
-
 if [[ ! -d ~/.qne ]]; then
     mkdir ~/.qne
 fi
@@ -36,10 +34,23 @@ echo "}" >> ~/.qne/applications.json
 
 for application in $applications; do
 
-    echo "Running ${application}..."
+    echo "Cleaning ${application}..."
+    rm -rf ${application}/${application}_experiment
+
+    echo "Creating ${application}_experiment..."
     cd ${TOP}/${application}
     echo qne experiment create ${application}_experiment ${application} randstad
     qne experiment create ${application}_experiment ${application} randstad > /dev/null
+
+    for f in src/*.py; do
+        f=$(basename $f)
+        if [[ ! -e ${application}_experiment/input/$f ]]; then
+            echo "Copy common file ${f}..."
+            cp src/$f ${application}_experiment/input
+        fi
+    done
+
+    echo "Running ${application}_experiment..."
     cd ${application}_experiment
     qne experiment run | gsed 's/\\n/\n/g'
 

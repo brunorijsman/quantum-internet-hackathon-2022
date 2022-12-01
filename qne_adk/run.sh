@@ -2,7 +2,7 @@
 
 set -e
 
-TOP=$(git rev-parse --show-toplevel)
+TOP=$(git rev-parse --show-toplevel)/qne_adk
 cd ${TOP}
 
 ./clean.sh

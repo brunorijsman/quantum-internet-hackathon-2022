@@ -1,3 +1,4 @@
+from qiskit.quantum_info import DensityMatrix
 from datetime import datetime
 
 
@@ -11,7 +12,8 @@ def reverse_bit_order(nr_bits, value):
     return reversed_value
 
 
-def density_matrix_reverse_bit_order(nr_qubits, dm):
+def density_matrix_reverse_bit_order(density_matrix):
+    nr_qubits = len(density_matrix.dims())
     dm_size = nr_qubits ** 2
     reversed_dm = []
     for row_index in range(dm_size):
@@ -19,10 +21,10 @@ def density_matrix_reverse_bit_order(nr_qubits, dm):
         for column_index in range(dm_size):
             reversed_row_index = reverse_bit_order(nr_qubits, row_index)
             reversed_column_index = reverse_bit_order(nr_qubits, column_index)
-            value = dm[reversed_row_index][reversed_column_index]
+            value = density_matrix.data[reversed_row_index][reversed_column_index]
             row.append(value)
         reversed_dm.append(row)
-    return reversed_dm
+    return DensityMatrix(reversed_dm)
 
 
 def density_matrix_pretty_print(density_matrix):

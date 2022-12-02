@@ -52,10 +52,7 @@ There are numerous resources that describe the quantum Fourier transformation an
 including:
 
  * Several sections in the [Qiskit textbook](https://qiskit.org/textbook)
-   * (https://www.sciencedirect.com/science/article/pii/S1566253522000951)
-   
-   * (https://medium.com/@stephen.diadamo/distributed-quantum-computing-1c5d38a34c50)
-   
+
    * [Section 3.5: Quantum Fourier Transformation.](https://qiskit.org/textbook/ch-algorithms/quantum-fourier-transform.html)
 
    * [Section 3.6: Quantum Phase Estimation.](https://qiskit.org/textbook/ch-algorithms/quantum-phase-estimation.html)
@@ -94,6 +91,12 @@ Academia and industry are pursuing several different approaches to overcome this
 * The use of distributed quantum computation to implement quantum algorithms on a collection
   of smaller quantum computers that are interconnected by a quantum network (as opposed to a large
   monolithic quantum computer).
+
+The following blogs and papers discuss distributed quantum computing:
+
+* [Distributed Quantum Computing: A path to large scale quantum computing](https://medium.com/@stephen.diadamo/distributed-quantum-computing-1c5d38a34c50)
+
+* [D-NISQ: A reference model for Distributed Noisy Intermediate-Scale Quantum computers](https://www.sciencedirect.com/science/article/pii/S1566253522000951)
 
 # The Distributed Quantum Fourier Transformation (DQFT)
 

@@ -92,6 +92,12 @@ Academia and industry are pursuing several different approaches to overcome this
   of smaller quantum computers that are interconnected by a quantum network (as opposed to a large
   monolithic quantum computer).
 
+The following blogs and papers discuss distributed quantum computing:
+
+* [Distributed Quantum Computing: A path to large scale quantum computing](https://medium.com/@stephen.diadamo/distributed-quantum-computing-1c5d38a34c50)
+
+* [D-NISQ: A reference model for Distributed Noisy Intermediate-Scale Quantum computers](https://www.sciencedirect.com/science/article/pii/S1566253522000951)
+
 # The Distributed Quantum Fourier Transformation (DQFT)
 
 The goal of this project is to implement a _distributed_ version of the quantum Fourier

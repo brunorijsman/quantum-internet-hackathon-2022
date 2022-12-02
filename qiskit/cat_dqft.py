@@ -31,4 +31,4 @@ class catDQFT(Cluster):
 
     def add_qft_swaps(self):
         for qubit in range(self.total_nr_qubits // 2):
-            self.swap(qubit, self.total_nr_qubits - qubit - 1)
+            self.swap(qubit, self.total_nr_qubits - qubit - 1,flag="cat")

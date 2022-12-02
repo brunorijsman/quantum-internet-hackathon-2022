@@ -38,8 +38,8 @@ class QFT:
         if with_input:
             if self.qc_with_input is None:
                 return None
-            return self.qc_with_input.draw(fold=False)
-        return self.qc.draw(fold=False)
+            return self.qc_with_input.draw(fold=False, output="mpl")
+        return self.qc.draw(fold=False, output="mpl")
 
     def statevector(self):
         if self.result is None:

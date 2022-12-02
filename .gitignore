@@ -3,3 +3,4 @@ venv/**
 **/*_experiment/**
 ~*.pptx
 *_dm.txt
+qiskit/updated cat proof.py

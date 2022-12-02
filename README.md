@@ -52,7 +52,10 @@ There are numerous resources that describe the quantum Fourier transformation an
 including:
 
  * Several sections in the [Qiskit textbook](https://qiskit.org/textbook)
-
+   * (https://www.sciencedirect.com/science/article/pii/S1566253522000951)
+   
+   * (https://medium.com/@stephen.diadamo/distributed-quantum-computing-1c5d38a34c50)
+   
    * [Section 3.5: Quantum Fourier Transformation.](https://qiskit.org/textbook/ch-algorithms/quantum-fourier-transform.html)
 
    * [Section 3.6: Quantum Phase Estimation.](https://qiskit.org/textbook/ch-algorithms/quantum-phase-estimation.html)

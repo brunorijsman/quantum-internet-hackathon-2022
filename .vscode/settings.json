@@ -49,7 +49,7 @@
         "Yimsiriwattana"
     ],
     "editor.formatOnSave": true,
-    "editor.formatOnPaste": true,
+    "editor.formatOnPaste": false,
     "python.linting.pylintEnabled": true,
     "python.linting.flake8Enabled": true,
     "python.linting.enabled": true,

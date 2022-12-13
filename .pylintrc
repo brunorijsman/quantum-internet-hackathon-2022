@@ -1,0 +1,9 @@
+[FORMAT]
+max-line-length=100
+
+[BASIC]
+good-names=qc
+
+[MESSAGES CONTROL]
+disable=
+    too-many-instance-attributes

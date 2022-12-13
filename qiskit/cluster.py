@@ -1,18 +1,49 @@
+"""A cluster of quantum processors that can run distributed quantum algorithms."""
+
+from enum import Enum
+from qiskit_textbook.tools import array_to_latex
+from numpy import pi
 from qiskit import Aer, ClassicalRegister, QuantumCircuit, QuantumRegister, transpile
 from qiskit.quantum_info import DensityMatrix
 from qiskit.visualization import plot_bloch_multivector, plot_state_city
-from qiskit_textbook.tools import array_to_latex
-from numpy import pi
-from enum import Enum
 
 
 class Method(Enum):
+    """
+    The method that is used to implement a two-qubit controlled-unitary gate, where the control
+    qubit is on one processor and the target processor is on a different processor.
+    """
+
     TELEPORT = 1
+    """
+    Implement controlled-unitary gates using teleportation: teleport the control qubit from the
+    control processor to the target processor, perform the controlled-unitary gate on the target
+    processor, and teleport the control qubit back to the control processor.
+    """
+
     CAT_STATE = 2
+    """
+    Implement controlled-unitary gates using cat states. TODO Add reference
+    """
 
 
 class Processor:
+    """
+    A single quantum processor within a cluster of quantum processors that collectively run a
+    distributed quantum computation.
+    """
+
     def __init__(self, cluster, index, nr_qubits, method):
+        """
+        Constructor.
+
+        Parameters
+        ----------
+        cluster: The cluster of which the processor is a member.
+        index: The index of the processor within the cluster.
+        nr_qubits: The number of qubits in the main register of this processor.
+        method: The method that is used to implement distributed controlled-unitary gates.
+        """
         self.cluster = cluster
         self.method = method
         self.qc = cluster.qc
@@ -32,12 +63,27 @@ class Processor:
         self.qc.add_register(self.teleport_reg)
 
     def make_entanglement(self, to_processor):
+        """
+        Create a psi-plus entanglement between the entanglement register on this processor and the
+        entanglement register on to_processor.
+
+        Parameters
+        ----------
+        to_processor: The processor to create an entanglement with.
+        """
         self.qc.reset(self.entanglement_reg)
         self.qc.reset(to_processor.entanglement_reg)
         self.qc.h(self.entanglement_reg)
         self.qc.cnot(self.entanglement_reg, to_processor.entanglement_reg)
 
     def teleport_to(self, to_processor):
+        """
+        Teleport the teleport register on this processor to the teleport register on to_processor.
+
+        Parameters
+        ----------
+        to_processor: The processor to teleport the qubit to.
+        """
         self.make_entanglement(to_processor)
         self.qc.cnot(self.teleport_reg, self.entanglement_reg)
         self.qc.h(self.teleport_reg)
@@ -50,18 +96,34 @@ class Processor:
     def distributed_controlled_phase(
         self, angle, control_qubit_index, target_processor, target_qubit_index
     ):
+        """
+        Perform a distributed controlled gate phase.
+
+        The distributed controlled phase gate is implemented using teleportation or using cat-states
+        as indicated by the method passed to the constructor.
+
+        Parameters
+        ----------
+        angle: The angle (in radians) by which the target qubit needs to be rotated if the control
+            qubit is one.
+        control_qubit_index: The index of the qubit within the main register on this processor that
+            is used as the control qubit.
+        target_processor: The processor that contains the target qubit.
+        target_qubit_index: The index of the qubit within the main register on target_processor that
+            is used as the target qubit.
+        """
         if self.method == Method.TELEPORT:
-            self.distributed_controlled_phase_teleport(
+            self._distributed_controlled_phase_teleport(
                 angle, control_qubit_index, target_processor, target_qubit_index
             )
         elif self.method == Method.CAT_STATE:
-            self.distributed_controlled_phase_cat_state(
+            self._distributed_controlled_phase_cat_state(
                 angle, control_qubit_index, target_processor, target_qubit_index
             )
         else:
             assert False, "Unknown method"
 
-    def distributed_controlled_phase_teleport(
+    def _distributed_controlled_phase_teleport(
         self, angle, control_qubit_index, target_processor, target_qubit_index
     ):
         # Teleport local control qubit to remote processor
@@ -78,9 +140,17 @@ class Processor:
         self.qc.swap(self.teleport_reg, self.main_reg[control_qubit_index])
 
     def cat_entangle(self, target_processor, control_qubit_index):
-        # Create an entangled cat state between control_qubit_index on the local processor and the
-        # entanglement register on to_processor.
-        # TODO: Add a reference to a figure in a paper
+        """
+        Create an entangled cat state between control_qubit_index on this processor and the
+        entanglement register on target_processor.
+
+        Parameters
+        ----------
+        target_processor: The target processor to create a cat state with. The cat state is created
+            with the entanglement register on the target_processor.
+        control_qubit_index: The index of the control qubit within the main register on this
+            processor that the cat state is created from.
+        """
         self.make_entanglement(target_processor)
         self.qc.cnot(self.main_reg[control_qubit_index], self.entanglement_reg)
         self.qc.measure(self.entanglement_reg, self.measure_reg[0])
@@ -88,7 +158,16 @@ class Processor:
         self.qc.x(target_processor.entanglement_reg).c_if(self.measure_reg[0], 1)
 
     def cat_disentangle(self, target_processor, control_qubit_index):
-        # Disentangle the cat state that was created by cat_entangle.
+        """
+        Disentangle the cat state that was previously created by cat_entangle.
+
+        Parameters
+        ----------
+        target_processor: The target processor to disentangle the cat state from. The cat state is
+            stored in the entanglement register on the target_processor.
+        control_qubit_index: The index of the control qubit within the main register on this
+            processor that contains the cat state.
+        """
         self.qc.h(target_processor.entanglement_reg)
         self.qc.measure(
             target_processor.entanglement_reg, target_processor.measure_reg[0]
@@ -100,24 +179,33 @@ class Processor:
             target_processor.measure_reg[0], 1
         )
 
-    def distributed_controlled_phase_cat_state(
+    def _distributed_controlled_phase_cat_state(
         self, angle, control_qubit_index, target_processor, target_qubit_index
     ):
-        # Create a cat state to entangle the teleport register on the target_processor with the
-        # control qubit on this processor.
         self.cat_entangle(target_processor, control_qubit_index)
-        # Perform the controlled phase gate on the target processor.
         self.qc.cp(
             angle,
             target_processor.entanglement_reg,
             target_processor.main_reg[target_qubit_index],
         )
-        # Disentangle the cat state.
         self.cat_disentangle(target_processor, control_qubit_index)
 
     def distributed_swap(self, local_qubit_index, remote_processor, remote_qubit_index):
-        # Distributed swap is always implemented using teleportation, even if controlled-phase is
-        # implemented using cat states.
+        """
+        Perform a distributed swap gate.
+
+        Distributed swap is always implemented using teleportation, even if method is set to
+        CAT_STATE.
+
+        Parameters
+        ----------
+        local_qubit_index: The qubit index within the main register on this processor that is being
+            swapped.
+        remote_processor: The remote processor that contains the other qubit that the local qubit
+            is being swapped with.
+        remote_qubit_index: The qubit index within the main register on the remote processor that
+            contains the other qubit that the local qubit is being swapped with.
+        """
         # Teleport local control qubit to remote processor
         self.qc.swap(self.main_reg[local_qubit_index], self.teleport_reg)
         self.teleport_to(remote_processor)
@@ -129,18 +217,44 @@ class Processor:
         remote_processor.teleport_to(self)
         self.qc.swap(self.teleport_reg, self.main_reg[local_qubit_index])
 
-    def local_hadamard(self, qubit_index):
+    def hadamard(self, qubit_index):
+        """
+        Perform a Hadamard gate.
+
+        Parameters
+        ----------
+        qubit_index: The index of the qubit within the main register on this processor on which to
+            apply the Hadamard gate.
+        """
         self.qc.h(self.main_reg[qubit_index])
 
     def local_controlled_phase(self, angle, control_qubit_index, target_qubit_index):
+        """
+        Perform a local controlled phase gate, where the control and target qubits are both located
+        on this processor.
+
+        Parameters
+        ----------
+        angle: The angle (in radians) by which the target qubit needs to be rotated if the control
+            qubit is one.
+        control_qubit_index: The index of the qubit within the main register on this processor that
+            is used as the control qubit.
+        target_qubit_index: The index of the qubit within the main register on this processor that
+            is used as the target qubit.
+        """
         self.qc.cp(
             angle, self.main_reg[control_qubit_index], self.main_reg[target_qubit_index]
         )
 
     def local_swap(self, qubit_index_1, qubit_index_2):
+        """
+        Perform a local swap gate, where both swapped qubits are located on this processor.
+        """
         self.qc.swap(self.main_reg[qubit_index_1], self.main_reg[qubit_index_2])
 
     def clear_ancillary(self):
+        # TODO: More fancy, only if used
+        # TODO: Select reset method
         if self.method == Method.TELEPORT:
             self.qc.reset(self.teleport_reg)
         self.qc.reset(self.entanglement_reg)
@@ -183,7 +297,7 @@ class Cluster:
         (processor_index, local_qubit_index) = self._global_to_local_index(
             global_qubit_index
         )
-        self.processors[processor_index].local_hadamard(local_qubit_index)
+        self.processors[processor_index].hadamard(local_qubit_index)
 
     def controlled_phase(
         self, angle, global_control_qubit_index, global_target_qubit_index

@@ -13,7 +13,7 @@ class DistributedQFT(Cluster):
         if self.swaps:
             self.add_qft_swaps()
         self.clear_ancillary()
-        # TODO self.final_measure()
+        # TODO self.measure_main()
 
     def add_qft_rotations(self, n):
         if n == 0:

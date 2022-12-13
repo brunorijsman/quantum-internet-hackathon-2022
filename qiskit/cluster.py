@@ -249,22 +249,49 @@ class Processor:
     def local_swap(self, qubit_index_1, qubit_index_2):
         """
         Perform a local swap gate, where both swapped qubits are located on this processor.
+
+        Parameters
+        ----------
+        qubit_index_1: The index of the first qubit within the main register on this processor that
+            is being swapped.
+        qubit_index_2: The index of the second qubit within the main register on this processor that
+            is being swapped.
         """
         self.qc.swap(self.main_reg[qubit_index_1], self.main_reg[qubit_index_2])
 
     def clear_ancillary(self):
-        # TODO: More fancy, only if used
+        """
+        Clear (reset to zero) all ancillary qubits on this processor.
+        """
+        # TODO: Only reset a qubit if it was used (add a used variable to keep track of this)
         # TODO: Select reset method
-        if self.method == Method.TELEPORT:
-            self.qc.reset(self.teleport_reg)
+        self.qc.reset(self.teleport_reg)
         self.qc.reset(self.entanglement_reg)
 
-    def final_measure(self):
+    def measure_main(self):
+        """
+        Measure all qubits in the main register of this processor.
+        """
         self.qc.measure(self.main_reg, self.measure_reg)
 
 
 class Cluster:
+    """
+    A cluster of quantum processors that collectively run a distributed quantum computation.
+    """
+
     def __init__(self, nr_processors, total_nr_qubits, method):
+        """
+        Constructor.
+
+        Parameters
+        ----------
+        nr_processors: The number of quantum processors in the cluster.
+        total_nr_qubits: The total number of main qubits in the cluster. This must be a multiple of
+            nr_processors. The qubits in the cluster have a global index ranging from 0 through
+            total_nr_qubits-1.
+        method: The method that is used to implement distributed controlled-unitary gates.
+        """
         assert (
             total_nr_qubits % nr_processors == 0
         ), "Total nr qubits {total_nr_qubits} must be multiple of nr processors {nr_processors}"
@@ -281,12 +308,18 @@ class Cluster:
             )
 
     def clear_ancillary(self):
+        """
+        Clear (reset to zero) all ancillary qubits on all processor in the cluster.
+        """
         for processor in self.processors.values():
             processor.clear_ancillary()
 
-    def final_measure(self):
+    def measure_main(self):
+        """
+        Measure all qubits in the main registers of all processors in the cluster.
+        """
         for processor in self.processors.values():
-            processor.final_measure()
+            processor.measure_main()
 
     def _global_to_local_index(self, global_qubit_index):
         processor_index = global_qubit_index // self.nr_qubits_per_processor
@@ -294,6 +327,13 @@ class Cluster:
         return (processor_index, local_qubit_index)
 
     def hadamard(self, global_qubit_index):
+        """
+        Perform a Hadamard gate.
+
+        Parameters
+        ----------
+        global_qubit_index: The global index of the qubit to perform the Hadamard gate on.
+        """
         (processor_index, local_qubit_index) = self._global_to_local_index(
             global_qubit_index
         )
@@ -302,6 +342,21 @@ class Cluster:
     def controlled_phase(
         self, angle, global_control_qubit_index, global_target_qubit_index
     ):
+        """
+        Perform a controlled phase gate.
+
+        If the control and target qubits are located on the same processor, this performs a local
+        controlled phase gate on that processor. If the control and target qubits are located on
+        different processors, this performs a distributed controlled phase gate, using the method
+        specified in the cluster constructor.
+
+        Parameters
+        ----------
+        angle: The angle (in radians) by which the target qubit needs to be rotated if the control
+            qubit is one.
+        global_control_qubit_index: The global index of the control qubit.
+        global_target_qubit_index: The global index of the target qubit.
+        """
         (
             control_processor_index,
             local_control_qubit_index,
@@ -323,6 +378,19 @@ class Cluster:
             )
 
     def swap(self, global_qubit_index_1, global_qubit_index_2):
+        """
+        Perform a swap gate.
+
+        If the two swapped qubits are both located on the same processor, this performs a local
+        swap gate on that processor. If they are located on different processors, this performs a
+        distributed swap gate. Distributed swap gates are always implemented using teleportation,
+        regardless of what method was specified in the cluster constructor.
+
+        Parameters
+        ----------
+        global_qubit_index_1: The global index of the first swapped qubit.
+        global_qubit_index_2: The global index of the second swapped qubit.
+        """
         (processor_index_1, local_qubit_index_1) = self._global_to_local_index(
             global_qubit_index_1
         )
@@ -341,6 +409,21 @@ class Cluster:
             )
 
     def circuit_diagram(self, with_input=False):
+        """
+        Return a circuit diagram for the circuit that implements all processors in the cluster,
+        suitable for displaying in a Jupyter notebook.
+
+        Parameters
+        ---------
+        with_input: If with_input is False, display the circuit with all input qubits initialized to
+            their default value zero. If with_input is True, display the circuit with the input
+            values that were specified in the call to the run function (this assumes that the run
+            function was previously called; if not, this function returns None).
+
+        Returns
+        -------
+        The circuit diagram that can be displayed in a Jupyter notebook.
+        """
         if with_input:
             if self.qc_with_input is None:
                 return None

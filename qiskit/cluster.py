@@ -80,8 +80,6 @@ class Processor:
         self.qc.measure(self.entanglement_reg, self.measure_reg[0])
         self.qc.x(self.entanglement_reg).c_if(self.measure_reg[0], 1)
         self.qc.x(target_processor.entanglement_reg).c_if(self.measure_reg[0], 1)
-        # TODO: Do we really need a barrier here?
-        self.qc.barrier()
 
     def cat_disentangle(self, target_processor, control_qubit_index):
         # Disentangle the cat state that was created by cat_entangle.
@@ -89,8 +87,6 @@ class Processor:
         self.qc.measure(target_processor.entanglement_reg, target_processor.measure_reg[0])
         self.qc.z(self.main_reg[control_qubit_index]).c_if(target_processor.measure_reg[0], 1)
         self.qc.x(target_processor.entanglement_reg).c_if(target_processor.measure_reg[0], 1)
-        # TODO: Do we really need a barrier here?
-        self.qc.barrier()
 
     def distributed_controlled_phase_cat_state(self, angle, control_qubit_index, target_processor,
                                                target_qubit_index):
@@ -100,8 +96,6 @@ class Processor:
         # Perform the controlled phase gate on the target processor.
         self.qc.cp(angle, target_processor.entanglement_reg,
                    target_processor.main_reg[target_qubit_index])
-        # TODO: Do we really need a barrier here?
-        self.qc.barrier()
         # Disentangle the cat state.
         self.cat_disentangle(target_processor, control_qubit_index)
 

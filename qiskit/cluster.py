@@ -169,15 +169,9 @@ class Processor:
             processor that contains the cat state.
         """
         self.qc.h(target_processor.entanglement_reg)
-        self.qc.measure(
-            target_processor.entanglement_reg, target_processor.measure_reg[0]
-        )
-        self.qc.z(self.main_reg[control_qubit_index]).c_if(
-            target_processor.measure_reg[0], 1
-        )
-        self.qc.x(target_processor.entanglement_reg).c_if(
-            target_processor.measure_reg[0], 1
-        )
+        self.qc.measure(target_processor.entanglement_reg, target_processor.measure_reg[0])
+        self.qc.z(self.main_reg[control_qubit_index]).c_if(target_processor.measure_reg[0], 1)
+        self.qc.x(target_processor.entanglement_reg).c_if(target_processor.measure_reg[0], 1)
 
     def _distributed_controlled_phase_cat_state(
         self, angle, control_qubit_index, target_processor, target_qubit_index
@@ -210,9 +204,7 @@ class Processor:
         self.qc.swap(self.main_reg[local_qubit_index], self.teleport_reg)
         self.teleport_to(remote_processor)
         # Perform swap gate on remote processor
-        self.qc.swap(
-            remote_processor.teleport_reg, remote_processor.main_reg[remote_qubit_index]
-        )
+        self.qc.swap(remote_processor.teleport_reg, remote_processor.main_reg[remote_qubit_index])
         # Teleport remote control qubit back to local processor
         remote_processor.teleport_to(self)
         self.qc.swap(self.teleport_reg, self.main_reg[local_qubit_index])
@@ -242,9 +234,7 @@ class Processor:
         target_qubit_index: The index of the qubit within the main register on this processor that
             is used as the target qubit.
         """
-        self.qc.cp(
-            angle, self.main_reg[control_qubit_index], self.main_reg[target_qubit_index]
-        )
+        self.qc.cp(angle, self.main_reg[control_qubit_index], self.main_reg[target_qubit_index])
 
     def local_swap(self, qubit_index_1, qubit_index_2):
         """
@@ -301,6 +291,8 @@ class Cluster:
         self.nr_qubits_per_processor = total_nr_qubits // nr_processors
         self.qc = QuantumCircuit()
         self.qc_with_input = None
+        self.simulator = None
+        self.result = None
         self.processors = {}
         for processor_index in range(nr_processors):
             self.processors[processor_index] = Processor(
@@ -334,14 +326,10 @@ class Cluster:
         ----------
         global_qubit_index: The global index of the qubit to perform the Hadamard gate on.
         """
-        (processor_index, local_qubit_index) = self._global_to_local_index(
-            global_qubit_index
-        )
+        (processor_index, local_qubit_index) = self._global_to_local_index(global_qubit_index)
         self.processors[processor_index].hadamard(local_qubit_index)
 
-    def controlled_phase(
-        self, angle, global_control_qubit_index, global_target_qubit_index
-    ):
+    def controlled_phase(self, angle, global_control_qubit_index, global_target_qubit_index):
         """
         Perform a controlled phase gate.
 
@@ -391,16 +379,10 @@ class Cluster:
         global_qubit_index_1: The global index of the first swapped qubit.
         global_qubit_index_2: The global index of the second swapped qubit.
         """
-        (processor_index_1, local_qubit_index_1) = self._global_to_local_index(
-            global_qubit_index_1
-        )
-        (processor_index_2, local_qubit_index_2) = self._global_to_local_index(
-            global_qubit_index_2
-        )
+        (processor_index_1, local_qubit_index_1) = self._global_to_local_index(global_qubit_index_1)
+        (processor_index_2, local_qubit_index_2) = self._global_to_local_index(global_qubit_index_2)
         if processor_index_1 == processor_index_2:
-            self.processors[processor_index_1].local_swap(
-                local_qubit_index_1, local_qubit_index_2
-            )
+            self.processors[processor_index_1].local_swap(local_qubit_index_1, local_qubit_index_2)
         else:
             self.processors[processor_index_1].distributed_swap(
                 local_qubit_index_1,
@@ -431,33 +413,72 @@ class Cluster:
         return self.qc.draw(fold=False, output="mpl")
 
     def statevector(self):
+        """
+        Returns
+        -------
+        The statevector of the circuit (in the form of a numpy array) resulting from the most recent
+        run invocation, or None if run was never invoked.
+        """
         if self.result is None:
             return None
         return self.result.get_statevector().data
 
     def statevector_latex(self):
+        """
+        Returns
+        -------
+        The statevector of the circuit (in the form of a Latex vector) resulting from the most
+        recent run invocation, or None if run was never invoked.
+        """
         if self.result is None:
             return None
         return array_to_latex(self.result.get_statevector())
 
     def bloch_multivector(self):
+        """
+        Returns
+        -------
+        The Block multivector diagram (that can be displayed in a Jupyter notebook) resulting from
+        the most recent run invocation, or None if run was never invoked.
+        """
         if self.result is None:
             return None
         return plot_bloch_multivector(self.result.get_statevector())
 
     def density_matrix(self):
+        """
+        Returns
+        -------
+        The density matrix (in the form of a numpy matrix) resulting from the most recent run
+        invocation, or None if run was never invoked.
+        """
         if self.result is None:
             return None
         return DensityMatrix(self.result.get_statevector())
 
     def density_matrix_city(self):
+        """
+        The density matrix city diagram (that can be displayed in a Jupyter notebook) resulting from
+        the most recent run invocation, or None if run was never invoked.
+        """
         if self.result is None:
             return None
         return plot_state_city(self.result.get_statevector())
 
-    def run(self, input, shots=10000):
+    def run(self, input_value, shots=10000):
+        """
+        Run the quantum circuit defined for the cluster.
+
+        Parameters
+        ----------
+        input_value: An integer representing the input value for the quantum circuit. This value is
+            converted to a binary value, and the bits in this binary value are used as zero or one
+            initial values for each qubit cluster.
+            TODO Also allow arbitrary complex initial values for each qubit.
+        shots: How many times the circuit must be executed to collect statistics.
+        """
         self.qc_with_input = QuantumCircuit(self.total_nr_qubits)
-        bin_value = bin(input)[2:].zfill(self.qubits_per_processor)
+        bin_value = bin(input_value)[2:].zfill(self.nr_qubits_per_processor)
         self.qc_with_input.initialize(bin_value, self.qc_with_input.qubits)
         self.qc_with_input = self.qc_with_input.compose(self.qc)
         self.simulator = Aer.get_backend("aer_simulator")
@@ -467,24 +488,32 @@ class Cluster:
 
 
 class EntanglementExampleCluster(Cluster):
+    """
+    An example class to demonstrate which qubit registers exist in a cluster.
+    """
+
     def __init__(self):
-        Cluster.__init__(
-            self, nr_processors=2, total_nr_qubits=4, method=Method.TELEPORT
-        )
+        Cluster.__init__(self, nr_processors=2, total_nr_qubits=4, method=Method.TELEPORT)
         self.processors[0].make_entanglement(self.processors[1])
 
 
 class TeleportExampleCluster(Cluster):
+    """
+    An example class to demonstrate the circuit that is generated to implement a single
+    teleportation.
+    """
+
     def __init__(self):
-        Cluster.__init__(
-            self, nr_processors=2, total_nr_qubits=4, method=Method.TELEPORT
-        )
+        Cluster.__init__(self, nr_processors=2, total_nr_qubits=4, method=Method.TELEPORT)
         self.processors[0].teleport_to(self.processors[1])
 
 
 class LocalControlledPhaseExampleCluster(Cluster):
+    """
+    An example class to demonstrate the circuit that is generated to implement a local
+    controlled-phase gate between two qubits on the same processor in a cluster.
+    """
+
     def __init__(self):
-        Cluster.__init__(
-            self, nr_processors=2, total_nr_qubits=4, method=Method.TELEPORT
-        )
+        Cluster.__init__(self, nr_processors=2, total_nr_qubits=4, method=Method.TELEPORT)
         self.processors[0].local_controlled_phase(pi / 8, 0, 1)

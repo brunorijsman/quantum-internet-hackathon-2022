@@ -13,6 +13,12 @@ ALL_LINTS_OK=$TRUE
 
 for DIR in $LINTED_DIRS; do
 
+    echo "Lint $DIR using pylint"
+    pylint $REPO_ROOT_DIR/$DIR/*.py
+    if [ "$?" -ne 0 ]; then
+        ALL_LINTS_OK=$FALSE
+    fi
+
     echo "Lint $DIR using black"
     black --check $REPO_ROOT_DIR/$DIR
     if [ "$?" -ne 0 ]; then

@@ -29,9 +29,8 @@ class Processor:
         self.qc.add_register(self.entanglement_reg)
         self.measure_reg = ClassicalRegister(2, f'{self.name}_measure')
         self.qc.add_register(self.measure_reg)
-        if method == Method.TELEPORT:
-            self.teleport_reg = QuantumRegister(1, f'{self.name}_teleport')
-            self.qc.add_register(self.teleport_reg)
+        self.teleport_reg = QuantumRegister(1, f'{self.name}_teleport')
+        self.qc.add_register(self.teleport_reg)
 
     def make_entanglement(self, to_processor):
         self.qc.reset(self.entanglement_reg)
@@ -182,7 +181,7 @@ class Cluster:
                 angle, local_control_qubit_index, self.processors[target_processor_index],
                 local_target_qubit_index)
 
-    def swap(self, global_qubit_index_1, global_qubit_index_2, flag):
+    def swap(self, global_qubit_index_1, global_qubit_index_2):
         (processor_index_1, local_qubit_index_1) = self._global_to_local_index(global_qubit_index_1)
         (processor_index_2, local_qubit_index_2) = self._global_to_local_index(global_qubit_index_2)
         if processor_index_1 == processor_index_2:

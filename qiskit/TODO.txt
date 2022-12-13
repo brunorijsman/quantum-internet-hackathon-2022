@@ -1,0 +1,9 @@
+TODO Add type checking
+
+TODO Generate read-the-docs page
+
+TODO Add pylint to GitHub actions
+
+TODO Add pytest to GitHub actions
+
+TODO Implement pytest for Qiskit statevector checking

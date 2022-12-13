@@ -16,7 +16,6 @@ for DIR in $LINTED_DIRS; do
     echo "Lint $DIR using black"
     black --check $REPO_ROOT_DIR/$DIR
     if [ "$?" -ne 0 ]; then
-        echo $OUTPUT
         ALL_LINTS_OK=$FALSE
     fi
 
@@ -26,6 +25,6 @@ if [[ $ALL_LINTS_OK == $FALSE ]]; then
     echo "At least one lint failed"
     exit 1
 fi
-echo "All lint checks passed"
 
+echo "All lint checks passed"
 exit 0

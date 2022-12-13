@@ -2,7 +2,7 @@
 A non-distributed implementation of the Quantum Fourier Transformation (QFT).
 """
 
-from circuit_base import CircuitBase
+from cluster import CircuitBase
 from make_qft_circuit import make_qft_circuit
 
 

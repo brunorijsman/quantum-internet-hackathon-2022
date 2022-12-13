@@ -11,4 +11,7 @@ jobs:
             - uses: actions/setup-python@master
               with:
                   python-version: 3.8
+            - uses: py-actions/py-dependency-install@v4
+              with:
+                  path: 'minimal-requirements.txt'
             - run: scripts/all_checks.sh

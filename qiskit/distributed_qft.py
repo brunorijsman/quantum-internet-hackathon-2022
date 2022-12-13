@@ -3,7 +3,6 @@ from numpy import pi
 
 
 class DistributedQFT(Cluster):
-
     def __init__(self, nr_processors, total_nr_qubits, method):
         Cluster.__init__(self, nr_processors, total_nr_qubits, method)
         self.swaps = True  # TODO Add this as a constructor parameter
@@ -22,7 +21,7 @@ class DistributedQFT(Cluster):
         n -= 1
         self.hadamard(n)
         for qubit in range(n):
-            self.controlled_phase(pi/2 ** (n - qubit), qubit, n)
+            self.controlled_phase(pi / 2 ** (n - qubit), qubit, n)
         self.add_qft_rotations(n)
 
     def add_qft_swaps(self):

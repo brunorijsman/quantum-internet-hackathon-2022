@@ -6,7 +6,6 @@ from qiskit_textbook.tools import array_to_latex
 
 
 class QFT:
-
     def __init__(self, n, swaps=True):
         self.n = n
         self.swaps = swaps
@@ -71,7 +70,7 @@ class QFT:
         bin_value = bin(input)[2:].zfill(self.n)
         self.qc_with_input.initialize(bin_value, self.qc_with_input.qubits)
         self.qc_with_input = self.qc_with_input.compose(self.qc)
-        self.simulator = Aer.get_backend('aer_simulator')
+        self.simulator = Aer.get_backend("aer_simulator")
         self.qc_with_input.save_statevector()
         self.qc_with_input = transpile(self.qc_with_input, self.simulator)
         self.result = self.simulator.run(self.qc_with_input, shots=shots).result()

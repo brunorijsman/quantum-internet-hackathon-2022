@@ -1,7 +1,8 @@
 """
-A cluster of quantum processors that can run distributed quantum algorithms.
+Monolithic and clustered quantum computers.
 """
 
+from abc import ABC, abstractmethod
 from enum import Enum
 from numpy import pi
 from qiskit_textbook.tools import array_to_latex
@@ -11,28 +12,10 @@ from qiskit.visualization import plot_bloch_multivector, plot_state_city
 from qiskit import ClassicalRegister, QuantumRegister
 
 
-class Method(Enum):
+class QuantumComputer(ABC):
     """
-    The method that is used to implement a two-qubit controlled-unitary gate, where the control
-    qubit is on one processor and the target processor is on a different processor.
-    """
-
-    TELEPORT = 1
-    """
-    Implement controlled-unitary gates using teleportation: teleport the control qubit from the
-    control processor to the target processor, perform the controlled-unitary gate on the target
-    processor, and teleport the control qubit back to the control processor.
-    """
-
-    CAT_STATE = 2
-    """
-    Implement controlled-unitary gates using cat states. TODO Add reference
-    """
-
-
-class CircuitBase:
-    """
-    A base class for common behavior between local and distributed circuits.
+    A base class for the common interface and behavior of all quantum computers, both monolithic
+    and clustered.
     """
 
     def __init__(self, total_nr_qubits):
@@ -41,7 +24,7 @@ class CircuitBase:
 
         Parameters
         ----------
-        total_nr_qubits: The total number of main qubits in the circuit (not including ancillary
+        total_nr_qubits: The total number of main qubits in the processor (not including ancillary
             qubits, if any)
         """
         self.total_nr_qubits = total_nr_qubits
@@ -49,6 +32,65 @@ class CircuitBase:
         self.qc_with_input = None
         self.simulator = None
         self.result = None
+
+    @abstractmethod
+    def hadamard(self, qubit_index):
+        """
+        Perform a Hadamard gate.
+
+        Parameters
+        ----------
+        qubit_index: The index of the qubit within the main register on this processor on which
+            to apply the Hadamard gate.
+        """
+
+    @abstractmethod
+    def controlled_phase(self, angle, control_qubit_index, target_qubit_index):
+        """
+        Perform a controlled phase gate.
+
+        Parameters
+        ----------
+        angle: The angle (in radians) by which the target qubit needs to be rotated if the control
+            qubit is one.
+        control_qubit_index: The index of the control qubit.
+        target_qubit_index: The index of the target qubit.
+        """
+
+    @abstractmethod
+    def swap(self, qubit_index_1, qubit_index_2):
+        """
+        Perform a swap gate.
+
+        Parameters
+        ----------
+        qubit_index_1: The index of the first swapped qubit.
+        qubit_index_2: The index of the second swapped qubit.
+        """
+
+    def make_qft_circuit(self, final_swaps):
+        """
+        Make a quantum Fourier transform circuit.
+        """
+        self._add_rotations_to_qft_circuit(self.total_nr_qubits)
+        if final_swaps:
+            self._add_final_swaps_to_qft_circuit()
+        # TODO move this to run self.measure_main()
+
+    def _add_rotations_to_qft_circuit(self, remaining_nr_qubits):
+        if remaining_nr_qubits == 0:
+            return
+        remaining_nr_qubits -= 1
+        self.hadamard(remaining_nr_qubits)
+        for qubit in range(remaining_nr_qubits):
+            self.controlled_phase(
+                pi / 2 ** (remaining_nr_qubits - qubit), qubit, remaining_nr_qubits
+            )
+        self._add_rotations_to_qft_circuit(remaining_nr_qubits)
+
+    def _add_final_swaps_to_qft_circuit(self):
+        for qubit in range(self.total_nr_qubits // 2):
+            self.swap(qubit, self.total_nr_qubits - qubit - 1)
 
     def circuit_diagram(self, with_input=False):
         """
@@ -137,7 +179,8 @@ class CircuitBase:
         shots: How many times the circuit must be executed to collect statistics.
         """
         self.qc_with_input = QuantumCircuit(self.total_nr_qubits)
-        # TODO: This initialization is not correct for clusters
+        # TODO: This initialization is not correct for clusters; make initialization a pure virtual
+        #       function.
         bin_value = bin(input_value)[2:].zfill(self.total_nr_qubits)
         self.qc_with_input.initialize(bin_value, self.qc_with_input.qubits)
         self.qc_with_input = self.qc_with_input.compose(self.qc)
@@ -147,7 +190,44 @@ class CircuitBase:
         self.result = self.simulator.run(self.qc_with_input, shots=shots).result()
 
 
-class Processor:
+class MonolithicQuantumComputer(QuantumComputer):
+    """
+    A monolithic (non-distributed) quantum processor.
+    """
+
+    def __init__(self, total_nr_qubits):
+        QuantumComputer.__init__(self, total_nr_qubits)
+
+    def hadamard(self, qubit_index):
+        self.qc.h(qubit_index)
+
+    def controlled_phase(self, angle, control_qubit_index, target_qubit_index):
+        self.qc.cp(angle, control_qubit_index, target_qubit_index)
+
+    def swap(self, qubit_index_1, qubit_index_2):
+        self.qc.swap(qubit_index_1, qubit_index_2)
+
+
+class Method(Enum):
+    """
+    The method that is used to implement a two-qubit controlled-unitary gate, where the control
+    qubit is on one processor and the target processor is on a different processor.
+    """
+
+    TELEPORT = 1
+    """
+    Implement controlled-unitary gates using teleportation: teleport the control qubit from the
+    control processor to the target processor, perform the controlled-unitary gate on the target
+    processor, and teleport the control qubit back to the control processor.
+    """
+
+    CAT_STATE = 2
+    """
+    Implement controlled-unitary gates using cat states. TODO Add reference
+    """
+
+
+class ProcessorInClusteredQuantumComputer:
     """
     A single quantum processor within a cluster of quantum processors that collectively run a
     distributed quantum computation.
@@ -385,7 +465,7 @@ class Processor:
         self.qc.measure(self.main_reg, self.measure_reg)
 
 
-class Cluster(CircuitBase):
+class ClusteredQuantumComputer(QuantumComputer):
     """
     A cluster of quantum processors that collectively run a distributed quantum computation.
     """
@@ -402,7 +482,7 @@ class Cluster(CircuitBase):
             total_nr_qubits-1.
         method: The method that is used to implement distributed controlled-unitary gates.
         """
-        CircuitBase.__init__(self, total_nr_qubits)
+        QuantumComputer.__init__(self, total_nr_qubits)
         assert (
             total_nr_qubits % nr_processors == 0
         ), "Total nr qubits {total_nr_qubits} must be multiple of nr processors {nr_processors}"
@@ -411,7 +491,7 @@ class Cluster(CircuitBase):
         self.nr_qubits_per_processor = total_nr_qubits // nr_processors
         self.processors = {}
         for processor_index in range(nr_processors):
-            self.processors[processor_index] = Processor(
+            self.processors[processor_index] = ProcessorInClusteredQuantumComputer(
                 self, processor_index, self.nr_qubits_per_processor, method
             )
 
@@ -434,41 +514,17 @@ class Cluster(CircuitBase):
         local_qubit_index = global_qubit_index % self.nr_qubits_per_processor
         return (processor_index, local_qubit_index)
 
-    def hadamard(self, global_qubit_index):
-        """
-        Perform a Hadamard gate.
-
-        Parameters
-        ----------
-        global_qubit_index: The global index of the qubit to perform the Hadamard gate on.
-        """
-        (processor_index, local_qubit_index) = self._global_to_local_index(global_qubit_index)
+    def hadamard(self, qubit_index):
+        (processor_index, local_qubit_index) = self._global_to_local_index(qubit_index)
         self.processors[processor_index].hadamard(local_qubit_index)
 
-    def controlled_phase(self, angle, global_control_qubit_index, global_target_qubit_index):
-        """
-        Perform a controlled phase gate.
-
-        If the control and target qubits are located on the same processor, this performs a local
-        controlled phase gate on that processor. If the control and target qubits are located on
-        different processors, this performs a distributed controlled phase gate, using the method
-        specified in the cluster constructor.
-
-        Parameters
-        ----------
-        angle: The angle (in radians) by which the target qubit needs to be rotated if the control
-            qubit is one.
-        global_control_qubit_index: The global index of the control qubit.
-        global_target_qubit_index: The global index of the target qubit.
-        """
-        (
-            control_processor_index,
-            local_control_qubit_index,
-        ) = self._global_to_local_index(global_control_qubit_index)
-        (
-            target_processor_index,
-            local_target_qubit_index,
-        ) = self._global_to_local_index(global_target_qubit_index)
+    def controlled_phase(self, angle, control_qubit_index, target_qubit_index):
+        (control_processor_index, local_control_qubit_index) = self._global_to_local_index(
+            control_qubit_index
+        )
+        (target_processor_index, local_target_qubit_index) = self._global_to_local_index(
+            target_qubit_index
+        )
         if control_processor_index == target_processor_index:
             self.processors[control_processor_index].local_controlled_phase(
                 angle, local_control_qubit_index, local_target_qubit_index
@@ -481,22 +537,9 @@ class Cluster(CircuitBase):
                 local_target_qubit_index,
             )
 
-    def swap(self, global_qubit_index_1, global_qubit_index_2):
-        """
-        Perform a swap gate.
-
-        If the two swapped qubits are both located on the same processor, this performs a local
-        swap gate on that processor. If they are located on different processors, this performs a
-        distributed swap gate. Distributed swap gates are always implemented using teleportation,
-        regardless of what method was specified in the cluster constructor.
-
-        Parameters
-        ----------
-        global_qubit_index_1: The global index of the first swapped qubit.
-        global_qubit_index_2: The global index of the second swapped qubit.
-        """
-        (processor_index_1, local_qubit_index_1) = self._global_to_local_index(global_qubit_index_1)
-        (processor_index_2, local_qubit_index_2) = self._global_to_local_index(global_qubit_index_2)
+    def swap(self, qubit_index_1, qubit_index_2):
+        (processor_index_1, local_qubit_index_1) = self._global_to_local_index(qubit_index_1)
+        (processor_index_2, local_qubit_index_2) = self._global_to_local_index(qubit_index_2)
         if processor_index_1 == processor_index_2:
             self.processors[processor_index_1].local_swap(local_qubit_index_1, local_qubit_index_2)
         else:
@@ -505,35 +548,3 @@ class Cluster(CircuitBase):
                 self.processors[processor_index_2],
                 local_qubit_index_2,
             )
-
-
-class EntanglementExampleCluster(Cluster):
-    """
-    An example class to demonstrate which qubit registers exist in a cluster.
-    """
-
-    def __init__(self):
-        Cluster.__init__(self, nr_processors=2, total_nr_qubits=4, method=Method.TELEPORT)
-        self.processors[0].make_entanglement(self.processors[1])
-
-
-class TeleportExampleCluster(Cluster):
-    """
-    An example class to demonstrate the circuit that is generated to implement a single
-    teleportation.
-    """
-
-    def __init__(self):
-        Cluster.__init__(self, nr_processors=2, total_nr_qubits=4, method=Method.TELEPORT)
-        self.processors[0].teleport_to(self.processors[1])
-
-
-class LocalControlledPhaseExampleCluster(Cluster):
-    """
-    An example class to demonstrate the circuit that is generated to implement a local
-    controlled-phase gate between two qubits on the same processor in a cluster.
-    """
-
-    def __init__(self):
-        Cluster.__init__(self, nr_processors=2, total_nr_qubits=4, method=Method.TELEPORT)
-        self.processors[0].local_controlled_phase(pi / 8, 0, 1)

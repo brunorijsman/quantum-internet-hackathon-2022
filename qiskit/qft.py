@@ -2,11 +2,10 @@
 A non-distributed implementation of the Quantum Fourier Transformation (QFT).
 """
 
-from cluster import CircuitBase
-from make_qft_circuit import make_qft_circuit
+from quantum_computer import MonolithicQuantumComputer
 
 
-class QFT(CircuitBase):
+class QFT(MonolithicQuantumComputer):
     """
     A non-distributed implementation of the Quantum Fourier Transformation (QFT).
     """
@@ -21,5 +20,5 @@ class QFT(CircuitBase):
         final_swaps: Should the final qubit reordering swaps be performed at the end of the quantum
             Fourier transform.
         """
-        CircuitBase.__init__(self, total_nr_qubits)
-        make_qft_circuit(self, total_nr_qubits, final_swaps)
+        MonolithicQuantumComputer.__init__(self, total_nr_qubits)
+        self.make_qft_circuit(final_swaps)

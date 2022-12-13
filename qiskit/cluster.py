@@ -1,15 +1,21 @@
-from numpy import pi
 from qiskit import Aer, ClassicalRegister, QuantumCircuit, QuantumRegister, transpile
 from qiskit.quantum_info import DensityMatrix
 from qiskit.visualization import plot_bloch_multivector, plot_state_city
 from qiskit_textbook.tools import array_to_latex
+from numpy import pi
+from enum import Enum
+
+
+class Method(Enum):
+    TELEPORT = 1
+    CAT_STATE = 2
 
 
 class Processor:
 
-    def __init__(self, cluster, index, nr_qubits,flag):
+    def __init__(self, cluster, index, nr_qubits, method):
         self.cluster = cluster
-        self.flag=flag
+        self.method = method
         self.qc = cluster.qc
         self.index = index
         names = ['alice', 'bob', 'charlie', 'david', 'eve', 'frank', 'george', 'harry']
@@ -17,34 +23,21 @@ class Processor:
             self.name = str(index)
         else:
             self.name = names[index]
-
-        if flag == "teleport":
-            self.main_reg = QuantumRegister(nr_qubits, f'{self.name}_main')
-            self.qc.add_register(self.main_reg)
+        self.main_reg = QuantumRegister(nr_qubits, f'{self.name}_main')
+        self.qc.add_register(self.main_reg)
+        self.entanglement_reg = QuantumRegister(1, f'{self.name}_entanglement')
+        self.qc.add_register(self.entanglement_reg)
+        self.measure_reg = ClassicalRegister(2, f'{self.name}_measure')
+        self.qc.add_register(self.measure_reg)
+        if method == Method.TELEPORT:
             self.teleport_reg = QuantumRegister(1, f'{self.name}_teleport')
             self.qc.add_register(self.teleport_reg)
-            self.entanglement_reg = QuantumRegister(1, f'{self.name}_entanglement')
-            self.qc.add_register(self.entanglement_reg)
-            self.measure_reg = ClassicalRegister(2, f'{self.name}_measure')
-            self.qc.add_register(self.measure_reg)
-
-        if flag == "cat":
-
-            # note: teleport_reg has been removed
-            self.main_reg = QuantumRegister(nr_qubits, f'{self.name}_main')
-            self.qc.add_register(self.main_reg)
-            self.entanglement_reg = QuantumRegister(1, f'{self.name}_entanglement')
-            self.qc.add_register(self.entanglement_reg)
-            self.measure_reg = ClassicalRegister(2, f'{self.name}_measure')
-            self.qc.add_register(self.measure_reg)
-
 
     def make_entanglement(self, to_processor):
         self.qc.reset(self.entanglement_reg)
         self.qc.reset(to_processor.entanglement_reg)
         self.qc.h(self.entanglement_reg)
         self.qc.cnot(self.entanglement_reg, to_processor.entanglement_reg)
-
 
     def teleport_to(self, to_processor):
         self.make_entanglement(to_processor)
@@ -56,9 +49,19 @@ class Processor:
         self.qc.z(to_processor.entanglement_reg).c_if(self.measure_reg[0], 1)
         self.qc.swap(to_processor.entanglement_reg, to_processor.teleport_reg)
 
-    def distributed_controlled_phase_tp(self, angle, control_qubit_index, target_processor,
+    def distributed_controlled_phase(self, angle, control_qubit_index, target_processor,
                                      target_qubit_index):
-        print("tp cp occuring")
+        if self.method == Method.TELEPORT:
+            self.distributed_controlled_phase_teleport(angle, control_qubit_index, 
+                                                       target_processor, target_qubit_index)
+        elif self.method == Method.CAT_STATE:
+            self.distributed_controlled_phase_cat_state(angle, control_qubit_index,
+                                                        target_processor, target_qubit_index)
+        else:
+            assert False, "Unknown method"
+
+    def distributed_controlled_phase_teleport(self, angle, control_qubit_index, target_processor,
+                                              target_qubit_index):
         # Teleport local control qubit to remote processor
         self.qc.swap(self.main_reg[control_qubit_index], self.teleport_reg)
         self.teleport_to(target_processor)
@@ -69,62 +72,43 @@ class Processor:
         target_processor.teleport_to(self)
         self.qc.swap(self.teleport_reg, self.main_reg[control_qubit_index])
 
-    def cat_entangler(self, to_processor, control_qubit_index):
-
-        # create the cat state across 2 processors using the entanglement register on each
-        self.make_entanglement(to_processor)
-
-        # cnot with desired control qubit and the local entanglement register qubit
+    def cat_entangle(self, target_processor, control_qubit_index):
+        # Create an entangled cat state between control_qubit_index on the local processor and the
+        # entanglement register on to_processor.
+        # TODO: Add a reference to a figure in a paper
+        self.make_entanglement(target_processor)
         self.qc.cnot(self.main_reg[control_qubit_index], self.entanglement_reg)
-
-        # make one measurement on cat state component (entanglement register) in local processor
         self.qc.measure(self.entanglement_reg, self.measure_reg[0])
-
-        # use the above measurement to control x gates on both of the entanglement qubits (one on each processor)
         self.qc.x(self.entanglement_reg).c_if(self.measure_reg[0], 1)
-        self.qc.x(to_processor.entanglement_reg).c_if(self.measure_reg[0], 1)
-
-        # cat entangling is now completed
+        self.qc.x(target_processor.entanglement_reg).c_if(self.measure_reg[0], 1)
+        # TODO: Do we really need a barrier here?
         self.qc.barrier()
 
-    def cat_detangler(self, to_processor, control_qubit_index):
-
-        # hadamard on target processor's entanglement register qubit
-        self.qc.h(to_processor.entanglement_reg)
-
-        # measure the target processor's entanglement register (note the target processor's classical register is used)
-        self.qc.measure(to_processor.entanglement_reg, to_processor.measure_reg[0])
-
-        # use the above measurement to control a Z gate on the local control qubit
-        self.qc.z(self.main_reg[control_qubit_index]).c_if(to_processor.measure_reg[0], 1)
-
-        # use the above measurement to control an X gate on the target processor's entanglement register qubit
-        self.qc.x(to_processor.entanglement_reg).c_if(to_processor.measure_reg[0], 1)
-
-        # cat disentangling is now completed
+    def cat_disentangle(self, target_processor, control_qubit_index):
+        # Disentangle the cat state that was created by cat_entangle.
+        self.qc.h(target_processor.entanglement_reg)
+        self.qc.measure(target_processor.entanglement_reg, target_processor.measure_reg[0])
+        self.qc.z(self.main_reg[control_qubit_index]).c_if(target_processor.measure_reg[0], 1)
+        self.qc.x(target_processor.entanglement_reg).c_if(target_processor.measure_reg[0], 1)
+        # TODO: Do we really need a barrier here?
         self.qc.barrier()
 
-        return
-
-    def distributed_controlled_phase_cat(self, angle, control_qubit_index, target_processor,
-                                     target_qubit_index):
-        print("cat cp occuring")
-        # perform cat entanglement
-        self.cat_entangler(target_processor, control_qubit_index)
-
-        # perform cp gate with new control qubit,
-        # (which is the other half of the cat state on the target processor)
+    def distributed_controlled_phase_cat_state(self, angle, control_qubit_index, target_processor,
+                                               target_qubit_index):
+        # Create a cat state to entangle the teleport register on the target_processor with the
+        # control qubit on this processor.
+        self.cat_entangle(target_processor, control_qubit_index)
+        # Perform the controlled phase gate on the target processor.
         self.qc.cp(angle, target_processor.entanglement_reg,
                    target_processor.main_reg[target_qubit_index])
+        # TODO: Do we really need a barrier here?
         self.qc.barrier()
+        # Disentangle the cat state.
+        self.cat_disentangle(target_processor, control_qubit_index)
 
-        # perform cat_disentanglement
-        self.cat_detangler(target_processor, control_qubit_index)
-
-
-
-
-    def distributed_swap_tp(self, local_qubit_index, remote_processor, remote_qubit_index):
+    def distributed_swap(self, local_qubit_index, remote_processor, remote_qubit_index):
+        # Distributed swap is always implemented using teleportation, even if controlled-phase is
+        # implemented using cat states.
         # Teleport local control qubit to remote processor
         self.qc.swap(self.main_reg[local_qubit_index], self.teleport_reg)
         self.teleport_to(remote_processor)
@@ -133,10 +117,6 @@ class Processor:
         # Teleport remote control qubit back to local processor
         remote_processor.teleport_to(self)
         self.qc.swap(self.teleport_reg, self.main_reg[local_qubit_index])
-
-    def distributed_swap_cat(self, local_qubit_index, remote_processor, remote_qubit_index):
-        # placeholder. Also change distributed_swap to distributed_swap_tp
-        return
 
     def local_hadamard(self, qubit_index):
         self.qc.h(self.main_reg[qubit_index])
@@ -148,11 +128,8 @@ class Processor:
         self.qc.swap(self.main_reg[qubit_index_1], self.main_reg[qubit_index_2])
 
     def clear_ancillary(self):
-        try:
+        if self.method == Method.TELEPORT:
             self.qc.reset(self.teleport_reg)
-        except:
-            pass
-
         self.qc.reset(self.entanglement_reg)
 
     def final_measure(self):
@@ -161,19 +138,19 @@ class Processor:
 
 class Cluster:
 
-    def __init__(self, nr_processors, total_nr_qubits, flag):
+    def __init__(self, nr_processors, total_nr_qubits, method):
         assert total_nr_qubits % nr_processors == 0, \
             'Total nr qubits {total_nr_qubits} must be multiple of nr processors {nr_processors}'
         self.nr_processors = nr_processors
-        self.flag=flag
         self.total_nr_qubits = total_nr_qubits
+        self.method = method
         self.nr_qubits_per_processor = total_nr_qubits // nr_processors
         self.qc = QuantumCircuit()
         self.qc_with_input = None
         self.processors = {}
         for processor_index in range(nr_processors):
             self.processors[processor_index] = Processor(self, processor_index, 
-                                                         self.nr_qubits_per_processor, flag)
+                                                         self.nr_qubits_per_processor, method)
 
     def clear_ancillary(self):
         for processor in self.processors.values():
@@ -192,7 +169,7 @@ class Cluster:
         (processor_index, local_qubit_index) = self._global_to_local_index(global_qubit_index)
         self.processors[processor_index].local_hadamard(local_qubit_index)
 
-    def controlled_phase(self, angle, global_control_qubit_index, global_target_qubit_index,flag):
+    def controlled_phase(self, angle, global_control_qubit_index, global_target_qubit_index):
         (control_processor_index, local_control_qubit_index) = \
             self._global_to_local_index(global_control_qubit_index)
         (target_processor_index, local_target_qubit_index) = \
@@ -201,19 +178,9 @@ class Cluster:
             self.processors[control_processor_index].local_controlled_phase(
                 angle, local_control_qubit_index, local_target_qubit_index)
         else:
-            # call the distributed controlled phase gate using teleportation or cat state
-            if flag=="teleport":
-                self.processors[control_processor_index].distributed_controlled_phase_tp(
-                    angle, local_control_qubit_index, self.processors[target_processor_index],
-                    local_target_qubit_index)
-            elif flag=="cat":
-                self.processors[control_processor_index].distributed_controlled_phase_cat(
-                    angle, local_control_qubit_index, self.processors[target_processor_index],
-                    local_target_qubit_index)
-            else:
-                print("flag must be set to teleport or cat, abort")
-                exit(1)
-
+            self.processors[control_processor_index].distributed_controlled_phase(
+                angle, local_control_qubit_index, self.processors[target_processor_index],
+                local_target_qubit_index)
 
     def swap(self, global_qubit_index_1, global_qubit_index_2, flag):
         (processor_index_1, local_qubit_index_1) = self._global_to_local_index(global_qubit_index_1)
@@ -221,16 +188,8 @@ class Cluster:
         if processor_index_1 == processor_index_2:
             self.processors[processor_index_1].local_swap(local_qubit_index_1, local_qubit_index_2)
         else:
-            # call the distributed controlled phase gate using teleportation or cat state
-            if flag=="teleport":
-                self.processors[processor_index_1].distributed_swap_tp(
-                    local_qubit_index_1, self.processors[processor_index_2], local_qubit_index_2)
-            elif flag=="cat":
-                self.processors[processor_index_1].distributed_swap_cat(
-                    local_qubit_index_1, self.processors[processor_index_2], local_qubit_index_2)
-            else:
-                print("flag must be set to teleport or cat, abort")
-                exit(1)
+            self.processors[processor_index_1].distributed_swap(local_qubit_index_1,
+                self.processors[processor_index_2], local_qubit_index_2)
 
     def circuit_diagram(self, with_input=False):
         if with_input:
@@ -278,19 +237,19 @@ class Cluster:
 class EntanglementExampleCluster(Cluster):
 
     def __init__(self):
-        Cluster.__init__(self, nr_processors=2, total_nr_qubits=4)
+        Cluster.__init__(self, nr_processors=2, total_nr_qubits=4, method=Method.TELEPORT)
         self.processors[0].make_entanglement(self.processors[1])
 
 
 class TeleportExampleCluster(Cluster):
 
     def __init__(self):
-        Cluster.__init__(self, nr_processors=2, total_nr_qubits=4,flag="teleport")
+        Cluster.__init__(self, nr_processors=2, total_nr_qubits=4, method=Method.TELEPORT)
         self.processors[0].teleport_to(self.processors[1])
 
 
 class LocalControlledPhaseExampleCluster(Cluster):
 
     def __init__(self):
-        Cluster.__init__(self, nr_processors=2, total_nr_qubits=4)
+        Cluster.__init__(self, nr_processors=2, total_nr_qubits=4, method=Method.TELEPORT)
         self.processors[0].local_controlled_phase(pi/8, 0, 1)

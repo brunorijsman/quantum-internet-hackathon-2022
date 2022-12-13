@@ -7,4 +7,5 @@ good-names=qc
 [MESSAGES CONTROL]
 disable=
     fixme,
+    too-few-public-methods,
     too-many-instance-attributes

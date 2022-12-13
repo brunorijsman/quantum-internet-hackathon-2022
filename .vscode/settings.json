@@ -33,6 +33,7 @@
         "pyplot",
         "pyproject",
         "QASM",
+        "QFT",
         "qnode",
         "Qubit",
         "Reddy",

@@ -1,9 +1,15 @@
+TODO Add pytest to GitHub actions
+
+TODO Add hackathon logo and some figures to README on GitHub pages
+
 TODO Add type checking
+
+TODO Update docs/run-qiskit-code.md
+
+TODO Run doxygen to generate documentation
 
 TODO Generate read-the-docs page
 
 TODO Add pylint to GitHub actions
-
-TODO Add pytest to GitHub actions
 
 TODO Implement pytest for Qiskit statevector checking

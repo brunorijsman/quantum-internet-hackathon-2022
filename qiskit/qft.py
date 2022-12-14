@@ -2,7 +2,7 @@
 A non-distributed implementation of the Quantum Fourier Transformation (QFT).
 """
 
-from quantum_computer import MonolithicQuantumComputer
+from quantum_computer import ClusteredQuantumComputer, MonolithicQuantumComputer
 
 
 class QFT(MonolithicQuantumComputer):
@@ -21,4 +21,14 @@ class QFT(MonolithicQuantumComputer):
             Fourier transform.
         """
         MonolithicQuantumComputer.__init__(self, total_nr_qubits)
+        self.make_qft_circuit(final_swaps)
+
+
+class DistributedQFT(ClusteredQuantumComputer):
+    """
+    A distributed implementation of the Quantum Fourier Transformation (QFT).
+    """
+
+    def __init__(self, nr_processors, total_nr_qubits, method, final_swaps=True):
+        ClusteredQuantumComputer.__init__(self, nr_processors, total_nr_qubits, method)
         self.make_qft_circuit(final_swaps)

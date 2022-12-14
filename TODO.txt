@@ -1,5 +1,3 @@
-TODO Add pytest to GitHub actions
-
 TODO Add hackathon logo and some figures to README on GitHub pages
 
 TODO Add type checking

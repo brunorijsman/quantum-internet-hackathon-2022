@@ -79,7 +79,7 @@ def density_matrix_pretty_print(density_matrix):
 
 
 def density_matrix_print_to_file(
-    file_name, producer_name, nr_qubits, density_matrix, input_value, final_swaps
+    file_name, producer_name, nr_qubits, density_matrix, input_number, final_swaps
 ):
     """
     Print a density matrix to a file. This is used to compare one density matrix with another
@@ -91,14 +91,14 @@ def density_matrix_print_to_file(
     producer_name: The name of the algorithm that produced the density matrix.
     nr_qubits: The number of qubits that the density matrix describes.
     density_matrix: The density matrix to be printed.
-    input_value: The input value to the algorithm that produced the density matrix.
+    input_number: The input value to the algorithm that produced the density matrix.
     final_swap: Whether the QFT algorithm that produced the density matrix did final swaps.
     """
     with open(file_name, "w", encoding="utf-8") as file:
         print(producer_name, file=file)
         print(f"{datetime.now()}", file=file)
         print(f"{nr_qubits}", file=file)
-        print(f"{input_value}", file=file)
+        print(f"{input_number}", file=file)
         print(f"{final_swaps}", file=file)
         for row in range(nr_qubits):
             for column in range(nr_qubits):

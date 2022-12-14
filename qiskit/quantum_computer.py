@@ -10,6 +10,8 @@ from qiskit.quantum_info import DensityMatrix
 from qiskit.visualization import plot_bloch_multivector, plot_state_city
 from qiskit import ClassicalRegister, QuantumRegister
 
+### from qiskit.providers.aer.library import save_statevector
+
 
 class QuantumComputer(ABC):
     """
@@ -27,7 +29,7 @@ class QuantumComputer(ABC):
             qubits, if any)
         """
         self.total_nr_qubits = total_nr_qubits
-        self.qc = QuantumCircuit(total_nr_qubits)
+        self.qc = QuantumCircuit()
         self.qc_with_input = None
         self.simulator = None
         self.result = None
@@ -65,6 +67,17 @@ class QuantumComputer(ABC):
         ----------
         qubit_index_1: The index of the first swapped qubit.
         qubit_index_2: The index of the second swapped qubit.
+        """
+
+    @abstractmethod
+    def set_input_number(self, number):
+        """
+        Convert number to a binary value, and initialize each input qubit of the circuit to the
+        classical bits in this binary value.
+
+        Parameters
+        ----------
+        number: The classical number to be used as input to the quantum circuit.
         """
 
     def circuit_diagram(self, with_input=False):
@@ -141,7 +154,7 @@ class QuantumComputer(ABC):
             return None
         return plot_state_city(self.result.get_statevector())
 
-    def run(self, input_value, shots=10000):
+    def run(self, input_number, shots=10000):
         """
         Run the quantum circuit.
 
@@ -153,14 +166,8 @@ class QuantumComputer(ABC):
             TODO Also allow arbitrary complex initial values for each qubit.
         shots: How many times the circuit must be executed to collect statistics.
         """
-        self.qc_with_input = QuantumCircuit(self.total_nr_qubits)
-        # TODO: This initialization is not correct for clusters; make initialization a pure virtual
-        #       function.
-        bin_value = bin(input_value)[2:].zfill(self.total_nr_qubits)
-        self.qc_with_input.initialize(bin_value, self.qc_with_input.qubits)
-        self.qc_with_input = self.qc_with_input.compose(self.qc)
         self.simulator = Aer.get_backend("aer_simulator")
-        self.qc_with_input.save_statevector()
+        self.set_input_number(input_number)
         self.qc_with_input = transpile(self.qc_with_input, self.simulator)
         self.result = self.simulator.run(self.qc_with_input, shots=shots).result()
 
@@ -172,6 +179,10 @@ class MonolithicQuantumComputer(QuantumComputer):
 
     def __init__(self, total_nr_qubits):
         QuantumComputer.__init__(self, total_nr_qubits)
+        ###
+        # self.main_reg = QuantumRegister(total_nr_qubits, "main")
+        # self.qc.add_register(self.main_reg)
+        self.qc = QuantumCircuit(total_nr_qubits)
 
     def hadamard(self, qubit_index):
         self.qc.h(qubit_index)
@@ -181,6 +192,13 @@ class MonolithicQuantumComputer(QuantumComputer):
 
     def swap(self, qubit_index_1, qubit_index_2):
         self.qc.swap(qubit_index_1, qubit_index_2)
+
+    def set_input_number(self, number):
+        self.qc_with_input = QuantumCircuit(self.total_nr_qubits)
+        bin_value = bin(number)[2:].zfill(self.total_nr_qubits)
+        self.qc_with_input.initialize(bin_value, self.qc_with_input.qubits)
+        self.qc_with_input = self.qc_with_input.compose(self.qc)
+        self.qc_with_input.save_statevector()
 
 
 class Method(Enum):
@@ -220,6 +238,8 @@ class ProcessorInClusteredQuantumComputer:
         method: The method that is used to implement distributed controlled-unitary gates.
         """
         self.cluster = cluster
+        self.index = index
+        self.nr_qubits = nr_qubits
         self.method = method
         self.qc = cluster.qc
         self.index = index
@@ -232,10 +252,10 @@ class ProcessorInClusteredQuantumComputer:
         self.qc.add_register(self.main_reg)
         self.entanglement_reg = QuantumRegister(1, f"{self.name}_entanglement")
         self.qc.add_register(self.entanglement_reg)
-        self.measure_reg = ClassicalRegister(2, f"{self.name}_measure")
-        self.qc.add_register(self.measure_reg)
         self.teleport_reg = QuantumRegister(1, f"{self.name}_teleport")
         self.qc.add_register(self.teleport_reg)
+        self.measure_reg = ClassicalRegister(2, f"{self.name}_measure")
+        self.qc.add_register(self.measure_reg)
 
     def make_entanglement(self, to_processor):
         """
@@ -437,7 +457,28 @@ class ProcessorInClusteredQuantumComputer:
         """
         Measure all qubits in the main register of this processor.
         """
+        # TODO: Also make this a pure virtual function in the base class
         self.qc.measure(self.main_reg, self.measure_reg)
+
+    def set_input_number(self, number):
+        """
+        Convert number to a binary value, and initialize each input qubit of this processor's main
+        register to the classical bits in this binary value.
+
+        Parameters
+        ----------
+        number: The classical number to be used as input to the quantum circuit.
+        """
+        input_main_reg = QuantumRegister(self.nr_qubits, f"{self.name}_main")
+        self.cluster.qc_with_input.add_register(input_main_reg)
+        input_entanglement_reg = QuantumRegister(1, f"{self.name}_entanglement")
+        self.cluster.qc_with_input.add_register(input_entanglement_reg)
+        input_teleport_reg = QuantumRegister(1, f"{self.name}_teleport")
+        self.cluster.qc_with_input.add_register(input_teleport_reg)
+        input_measure_reg = ClassicalRegister(2, f"{self.name}_measure")
+        self.cluster.qc_with_input.add_register(input_measure_reg)
+        bin_value = bin(number)[2:].zfill(self.nr_qubits)
+        self.cluster.qc_with_input.initialize(bin_value, input_main_reg)
 
 
 class ClusteredQuantumComputer(QuantumComputer):
@@ -523,3 +564,13 @@ class ClusteredQuantumComputer(QuantumComputer):
                 self.processors[processor_index_2],
                 local_qubit_index_2,
             )
+
+    def set_input_number(self, number):
+        self.qc_with_input = QuantumCircuit()
+        one_processor_mask = 2**self.nr_qubits_per_processor - 1
+        for processor in self.processors.values():
+            number_for_processor = number & one_processor_mask
+            number >>= self.nr_qubits_per_processor
+            processor.set_input_number(number_for_processor)
+        self.qc_with_input = self.qc_with_input.compose(self.qc)
+        # TODO self.qc_with_input.save_statevector()

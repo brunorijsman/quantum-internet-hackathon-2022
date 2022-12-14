@@ -4,7 +4,6 @@ Monolithic and clustered quantum computers.
 
 from abc import ABC, abstractmethod
 from enum import Enum
-from numpy import pi
 from qiskit_textbook.tools import array_to_latex
 from qiskit import Aer, QuantumCircuit, transpile
 from qiskit.quantum_info import DensityMatrix
@@ -67,30 +66,6 @@ class QuantumComputer(ABC):
         qubit_index_1: The index of the first swapped qubit.
         qubit_index_2: The index of the second swapped qubit.
         """
-
-    def make_qft_circuit(self, final_swaps):
-        """
-        Make a quantum Fourier transform circuit.
-        """
-        self._add_rotations_to_qft_circuit(self.total_nr_qubits)
-        if final_swaps:
-            self._add_final_swaps_to_qft_circuit()
-        # TODO move this to run self.measure_main()
-
-    def _add_rotations_to_qft_circuit(self, remaining_nr_qubits):
-        if remaining_nr_qubits == 0:
-            return
-        remaining_nr_qubits -= 1
-        self.hadamard(remaining_nr_qubits)
-        for qubit in range(remaining_nr_qubits):
-            self.controlled_phase(
-                pi / 2 ** (remaining_nr_qubits - qubit), qubit, remaining_nr_qubits
-            )
-        self._add_rotations_to_qft_circuit(remaining_nr_qubits)
-
-    def _add_final_swaps_to_qft_circuit(self):
-        for qubit in range(self.total_nr_qubits // 2):
-            self.swap(qubit, self.total_nr_qubits - qubit - 1)
 
     def circuit_diagram(self, with_input=False):
         """

@@ -1,3 +1,5 @@
+TODO Trace out ancillary qubits when visualizing main qubits in DQFT
+
 TODO Add run (with input) and display statevector and density matrix to DQFT notebooks
 
 TODO Add hackathon logo and some figures to README on GitHub pages

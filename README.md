@@ -1,4 +1,3 @@
-
 If you are impatient and just want to run the code, jump ahead to the
 [running the code](#running-the-code) section.
 
@@ -15,7 +14,7 @@ on 1 and 2 December 2022.
 Team Q-Harmonics participates in the quantum hackathon; it consists of the following members
 (in alphabetical order):
 | Name | LinkedIn | GitHub |
-|---|---|---|
+| --- | --- | --- |
 | Abdullah K | | [GitHub](https://github.com/AbdullahKazi500) |
 | B Akash Reddy | [LinkedIn](https://www.linkedin.com/in/akash-reddy-501909250/) | [GitHub](https://github.com/Akash6300) |
 | Bruno Rijsman | [LinkedIn](https://www.linkedin.com/in/brunorijsman/) | [GitHub](https://github.com/brunorijsman) |
@@ -51,18 +50,18 @@ algorithms including factoring prime numbers using Shor's algorithm and phase es
 There are numerous resources that describe the quantum Fourier transformation and its applications,
 including:
 
- * Several sections in the [Qiskit textbook](https://qiskit.org/textbook)
+-   Several sections in the [Qiskit textbook](https://qiskit.org/textbook)
 
-   * [Section 3.5: Quantum Fourier Transformation.](https://qiskit.org/textbook/ch-algorithms/quantum-fourier-transform.html)
+    -   [Section 3.5: Quantum Fourier Transformation.](https://qiskit.org/textbook/ch-algorithms/quantum-fourier-transform.html)
 
-   * [Section 3.6: Quantum Phase Estimation.](https://qiskit.org/textbook/ch-algorithms/quantum-phase-estimation.html)
+    -   [Section 3.6: Quantum Phase Estimation.](https://qiskit.org/textbook/ch-algorithms/quantum-phase-estimation.html)
 
-   * [Section 3.7: Shor's Algorithm.](https://qiskit.org/textbook/ch-algorithms/shor.html)
- 
- * [The Wikipedia article on the quantum Fourier transform.](https://en.wikipedia.org/wiki/Quantum_Fourier_transform)
+    -   [Section 3.7: Shor's Algorithm.](https://qiskit.org/textbook/ch-algorithms/shor.html)
 
- * Chapter 5 "The quantum Fourier transformation and its applications" in the book
-   [Quantum Computation and Quantum Information](https://www.amazon.com/Quantum-Computation-Information-10th-Anniversary/dp/1107002176).
+-   [The Wikipedia article on the quantum Fourier transform.](https://en.wikipedia.org/wiki/Quantum_Fourier_transform)
+
+-   Chapter 5 "The quantum Fourier transformation and its applications" in the book
+    [Quantum Computation and Quantum Information](https://www.amazon.com/Quantum-Computation-Information-10th-Anniversary/dp/1107002176).
 
 # Distributed Quantum Computation (DQC)
 
@@ -77,26 +76,26 @@ Due to these limitations existing quantum computers are not yet able to execute 
 transform based algorithms such as phase estimation and Shor's algorithm for input sizes that have
 practical relevance.
 For example, quantum computers are not yet powerful enough to use Shor's algorithm to break
-[RSA encryption](https://en.wikipedia.org/wiki/RSA_(cryptosystem)).
+[RSA encryption](<https://en.wikipedia.org/wiki/RSA_(cryptosystem)>).
 
 Academia and industry are pursuing several different approaches to overcome this challenge:
 
-* Improving the capabilities of hardware platforms in terms of more qubits, better gate
-  fidelities, and longer memory coherence times.
+-   Improving the capabilities of hardware platforms in terms of more qubits, better gate
+    fidelities, and longer memory coherence times.
 
-* The use of 
-  [Quantum Error Correction (QEC)](https://en.wikipedia.org/wiki/Quantum_error_correction)
-  to recover from errors.
+-   The use of
+    [Quantum Error Correction (QEC)](https://en.wikipedia.org/wiki/Quantum_error_correction)
+    to recover from errors.
 
-* The use of distributed quantum computation to implement quantum algorithms on a collection
-  of smaller quantum computers that are interconnected by a quantum network (as opposed to a large
-  monolithic quantum computer).
+-   The use of distributed quantum computation to implement quantum algorithms on a collection
+    of smaller quantum computers that are interconnected by a quantum network (as opposed to a large
+    monolithic quantum computer).
 
 The following blogs and papers discuss distributed quantum computing:
 
-* [Distributed Quantum Computing: A path to large scale quantum computing](https://medium.com/@stephen.diadamo/distributed-quantum-computing-1c5d38a34c50)
+-   [Distributed Quantum Computing: A path to large scale quantum computing](https://medium.com/@stephen.diadamo/distributed-quantum-computing-1c5d38a34c50)
 
-* [D-NISQ: A reference model for Distributed Noisy Intermediate-Scale Quantum computers](https://www.sciencedirect.com/science/article/pii/S1566253522000951)
+-   [D-NISQ: A reference model for Distributed Noisy Intermediate-Scale Quantum computers](https://www.sciencedirect.com/science/article/pii/S1566253522000951)
 
 # The Distributed Quantum Fourier Transformation (DQFT)
 
@@ -115,25 +114,25 @@ memories for communication with other quantum processors.
 
 We will be using two approaches for implementing the distributed quantum Fourier transformation:
 
- * The fist approach is based on [teleportation](https://en.wikipedia.org/wiki/Quantum_teleportation).
-   Whenever we want to perform a two-qubit gate where one qubit is located on one quantum processor
-   A and the other qubit is located on another quantum processor B, we first teleport one
-   qubit from A to B, then perform the gate locally on processor B, and then teleport one qubit
-   back from B to A.
+-   The fist approach is based on [teleportation](https://en.wikipedia.org/wiki/Quantum_teleportation).
+    Whenever we want to perform a two-qubit gate where one qubit is located on one quantum processor
+    A and the other qubit is located on another quantum processor B, we first teleport one
+    qubit from A to B, then perform the gate locally on processor B, and then teleport one qubit
+    back from B to A.
 
- * The second approach is based on [quantum cat states](https://en.wikipedia.org/wiki/Cat_state).
-   This approach only works for controlled-unitary gates, which is the majority of two-qubit gates
-   in the quantum Fourier transform. We first create a cat state to share the control qubit among
-   two quantum processors, then we perform the controlled-unitary, and then we unshare the cat
-   state.
+-   The second approach is based on [quantum cat states](https://en.wikipedia.org/wiki/Cat_state).
+    This approach only works for controlled-unitary gates, which is the majority of two-qubit gates
+    in the quantum Fourier transform. We first create a cat state to share the control qubit among
+    two quantum processors, then we perform the controlled-unitary, and then we unshare the cat
+    state.
 
 Some existing resources that describe the distributed quantum Fourier transformation include:
 
- * [ArXiv paper "Distributed quantum computing: A distributed Shor algorithm" by
-   Anocha Yimsiriwattana and Samuel J. Lomonaco Jr.](https://arxiv.org/abs/quant-ph/0403146)
+-   [ArXiv paper "Distributed quantum computing: A distributed Shor algorithm" by
+    Anocha Yimsiriwattana and Samuel J. Lomonaco Jr.](https://arxiv.org/abs/quant-ph/0403146)
 
- * [PhD thesis "Architecture of a Quantum Multicomputer Optimized for Shor's Factoring Algorithm"
-   by Rodney van Meter.](https://arxiv.org/pdf/quant-ph/0607065.pdf)
+-   [PhD thesis "Architecture of a Quantum Multicomputer Optimized for Shor's Factoring Algorithm"
+    by Rodney van Meter.](https://arxiv.org/pdf/quant-ph/0607065.pdf)
 
 Note that some of these papers discuss a distributed implementation of Shor's algorithm. This
 includes as a sub-problem a distributed quantum Fourier transformation, which is the easiest
@@ -153,13 +152,13 @@ high-performance quantum computing simulators with realistic noise models.
 In this project we use the Qiskit SDK to develop three different implementations of the quantum
 Fourier transformation:
 
- 1. A monolithic (non-distributed) version of the quantum Fourier transformation.
+1.  A monolithic (non-distributed) version of the quantum Fourier transformation.
     We use this as a reference to check whether the results of the distributed versions (see below)
     are correct.
 
- 2. A distributed version of the quantum Fourier transformation based on teleportation.
+2.  A distributed version of the quantum Fourier transformation based on teleportation.
 
- 3. A distributed version of the quantum Fourier transformation based on cat states.
+3.  A distributed version of the quantum Fourier transformation based on cat states.
 
 Read the
 [viewing and running the team Q-Harmonics Qiskit related code](docs/run-qiskit-code.md)
@@ -199,8 +198,7 @@ instructions on how to run the Qiskit-based DQFT code cand be found [here](docs/
 
 ## Running the distributed quantum Fourier transformation implemented in QNE-ADK
 
-A description of how the distributed quantum Fourier transformation is implemented in 
+A description of how the distributed quantum Fourier transformation is implemented in
 the **Quantum Network Explorer (QNE) Application Development Kit (ADK)** and
 instructions on how to run the QNE-ADK-based DQFT code cand be found
 [here](docs/run-qne-adk-code.md).
-

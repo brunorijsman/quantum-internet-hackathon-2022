@@ -28,7 +28,7 @@ class QuantumComputer(ABC):
             qubits, if any)
         """
         self.total_nr_qubits = total_nr_qubits
-        self.qc = QuantumCircuit()
+        self.qc = QuantumCircuit(total_nr_qubits)
         self.qc_with_input = None
         self.simulator = None
         self.result = None

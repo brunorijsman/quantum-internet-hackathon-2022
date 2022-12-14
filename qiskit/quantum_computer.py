@@ -10,8 +10,6 @@ from qiskit.quantum_info import DensityMatrix
 from qiskit.visualization import plot_bloch_multivector, plot_state_city
 from qiskit import ClassicalRegister, QuantumRegister
 
-### from qiskit.providers.aer.library import save_statevector
-
 
 class QuantumComputer(ABC):
     """
@@ -179,10 +177,8 @@ class MonolithicQuantumComputer(QuantumComputer):
 
     def __init__(self, total_nr_qubits):
         QuantumComputer.__init__(self, total_nr_qubits)
-        ###
-        # self.main_reg = QuantumRegister(total_nr_qubits, "main")
-        # self.qc.add_register(self.main_reg)
-        self.qc = QuantumCircuit(total_nr_qubits)
+        self.main_reg = QuantumRegister(total_nr_qubits, "main")
+        self.qc.add_register(self.main_reg)
 
     def hadamard(self, qubit_index):
         self.qc.h(qubit_index)
@@ -194,7 +190,9 @@ class MonolithicQuantumComputer(QuantumComputer):
         self.qc.swap(qubit_index_1, qubit_index_2)
 
     def set_input_number(self, number):
-        self.qc_with_input = QuantumCircuit(self.total_nr_qubits)
+        self.qc_with_input = QuantumCircuit()
+        input_main_reg = QuantumRegister(self.total_nr_qubits, "main")
+        self.qc_with_input.add_register(input_main_reg)
         bin_value = bin(number)[2:].zfill(self.total_nr_qubits)
         self.qc_with_input.initialize(bin_value, self.qc_with_input.qubits)
         self.qc_with_input = self.qc_with_input.compose(self.qc)

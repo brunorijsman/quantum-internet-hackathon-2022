@@ -1,5 +1,5 @@
 theme: jekyll-theme-slate
-title: A Distributed Implementation of the Quantum Fourier Transformation in Qiskit and QNE-ADK
+title: Distributed Quantum Fourier Transformation in Qiskit and QNE-ADK
 description: RIPE Quantum Internet Hackathon 2022
 author: Bruno Rijsman
 plugins:

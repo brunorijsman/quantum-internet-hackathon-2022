@@ -566,9 +566,10 @@ class ClusteredQuantumComputer(QuantumComputer):
     def set_input_number(self, number):
         self.qc_with_input = QuantumCircuit()
         one_processor_mask = 2**self.nr_qubits_per_processor - 1
-        for processor in self.processors.values():
+        for index in reversed(range(self.nr_processors)):
+            processor = self.processors[index]
             number_for_processor = number & one_processor_mask
             number >>= self.nr_qubits_per_processor
             processor.set_input_number(number_for_processor)
         self.qc_with_input = self.qc_with_input.compose(self.qc)
-        # TODO self.qc_with_input.save_statevector()
+        self.qc_with_input.save_statevector()

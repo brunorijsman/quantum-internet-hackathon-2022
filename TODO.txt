@@ -15,3 +15,5 @@ TODO Generate read-the-docs page
 TODO Add pylint to GitHub actions
 
 TODO Implement pytest for Qiskit statevector checking
+
+TODO Add more text to the Jupyter notebooks to explain what is being shown

@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from qiskit_textbook.tools import array_to_latex
 from qiskit import Aer, QuantumCircuit, transpile
-from qiskit.quantum_info import DensityMatrix
+from qiskit.quantum_info import DensityMatrix, partial_trace
 from qiskit.visualization import plot_bloch_multivector, plot_state_city
 from qiskit import ClassicalRegister, QuantumRegister
 
@@ -78,6 +78,15 @@ class QuantumComputer(ABC):
         number: The classical number to be used as input to the quantum circuit.
         """
 
+    @abstractmethod
+    def main_statevector(self):
+        """
+        Returns
+        -------
+        The reduced statevector that represents only the main registers and that traces out all of
+        the ancillary registers.
+        """
+
     def circuit_diagram(self, with_input=False):
         """
         Return a circuit diagram suitable for displaying in a Jupyter notebook.
@@ -106,6 +115,7 @@ class QuantumComputer(ABC):
         The statevector of the circuit (in the form of a numpy array) resulting from the most recent
         run invocation, or None if run was never invoked.
         """
+        # TODO Inconsistent naming; this returns the data
         if self.result is None:
             return None
         return self.result.get_statevector().data
@@ -197,6 +207,11 @@ class MonolithicQuantumComputer(QuantumComputer):
         self.qc_with_input.initialize(bin_value, self.qc_with_input.qubits)
         self.qc_with_input = self.qc_with_input.compose(self.qc)
         self.qc_with_input.save_statevector()
+
+    def main_statevector(self):
+        if self.result is None:
+            return None
+        return self.result.get_statevector()
 
 
 class Method(Enum):
@@ -573,3 +588,13 @@ class ClusteredQuantumComputer(QuantumComputer):
             processor.set_input_number(number_for_processor)
         self.qc_with_input = self.qc_with_input.compose(self.qc)
         self.qc_with_input.save_statevector()
+
+    def main_statevector(self):
+        if self.result is None:
+            return None
+        main_registers = []
+        for index in range(self.nr_processors):
+            processor = self.processors[index]
+            main_registers.append(processor.main_register)
+        reduced_density_matrix = partial_trace(self.result.get_statevector(), main_registers)
+        return reduced_density_matrix.to_statevector()

@@ -79,6 +79,15 @@ class QuantumComputer(ABC):
         """
 
     @abstractmethod
+    def main_density_matrix(self):
+        """
+        Returns
+        -------
+        The reduced density matrix that represents only the main registers and that traces out all
+        of the ancillary registers.
+        """
+
+    @abstractmethod
     def main_statevector(self):
         """
         Returns
@@ -108,17 +117,16 @@ class QuantumComputer(ABC):
             return self.qc_with_input.draw(fold=False, output="mpl")
         return self.qc.draw(fold=False, output="mpl")
 
-    def statevector(self):
+    def statevector_data(self):
         """
         Returns
         -------
         The statevector of the circuit (in the form of a numpy array) resulting from the most recent
         run invocation, or None if run was never invoked.
         """
-        # TODO Inconsistent naming; this returns the data
         if self.result is None:
             return None
-        return self.result.get_statevector().data
+        return self.main_statevector().data
 
     def statevector_latex(self):
         """
@@ -129,7 +137,7 @@ class QuantumComputer(ABC):
         """
         if self.result is None:
             return None
-        return array_to_latex(self.result.get_statevector())
+        return array_to_latex(self.main_statevector())
 
     def bloch_multivector(self):
         """
@@ -140,7 +148,7 @@ class QuantumComputer(ABC):
         """
         if self.result is None:
             return None
-        return plot_bloch_multivector(self.result.get_statevector())
+        return plot_bloch_multivector(self.main_statevector())
 
     def density_matrix(self):
         """
@@ -151,7 +159,7 @@ class QuantumComputer(ABC):
         """
         if self.result is None:
             return None
-        return DensityMatrix(self.result.get_statevector())
+        return DensityMatrix(self.main_statevector())
 
     def density_matrix_city(self):
         """
@@ -207,6 +215,11 @@ class MonolithicQuantumComputer(QuantumComputer):
         self.qc_with_input.initialize(bin_value, self.qc_with_input.qubits)
         self.qc_with_input = self.qc_with_input.compose(self.qc)
         self.qc_with_input.save_statevector()
+
+    def main_density_matrix(self):
+        if self.result is None:
+            return None
+        return DensityMatrix(self.result.get_statevector())
 
     def main_statevector(self):
         if self.result is None:
@@ -589,12 +602,19 @@ class ClusteredQuantumComputer(QuantumComputer):
         self.qc_with_input = self.qc_with_input.compose(self.qc)
         self.qc_with_input.save_statevector()
 
+    def main_density_matrix(self):
+        if self.result is None:
+            return None
+        total_nr_qubits = self.total_nr_qubits + self.nr_processors * 2
+        traced_qubits = list(range(0, total_nr_qubits))
+        for index in range(self.nr_processors):
+            processor = self.processors[index]
+            for qubit in processor.main_reg[:]:
+                qubit_index = self.qc_with_input.qubits.index(qubit)
+                traced_qubits.remove(qubit_index)
+        return partial_trace(self.result.get_statevector(), traced_qubits)
+
     def main_statevector(self):
         if self.result is None:
             return None
-        main_registers = []
-        for index in range(self.nr_processors):
-            processor = self.processors[index]
-            main_registers.append(processor.main_register)
-        reduced_density_matrix = partial_trace(self.result.get_statevector(), main_registers)
-        return reduced_density_matrix.to_statevector()
+        return self.main_density_matrix().to_statevector()

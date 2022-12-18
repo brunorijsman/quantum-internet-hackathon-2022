@@ -3,7 +3,6 @@ See StackOverflow question:
 https://quantumcomputing.stackexchange.com/questions/29405/how-to-do-a-partial-trace-over-registers-rather-than-individual-qubits-in-qisk
 """
 from qiskit import Aer, QuantumCircuit, QuantumRegister, transpile
-from qiskit.providers.aer.library import save_statevector
 from qiskit.quantum_info import partial_trace
 
 

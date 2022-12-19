@@ -20,7 +20,7 @@ of Qiskit:
 In this project we implement three different versions of the quantum Fourier transformation (QFT)
 using Qiskit:
 
-1.  A monolothic (non-distributed) version of the quantum Fourier transformation.
+1.  A monolithic (non-distributed) version of the quantum Fourier transformation.
     We use this as a reference to check whether the results of the two distributed versions
     are correct.
 

@@ -1,4 +1,4 @@
-TODO Trace out ancillary qubits when visualizing main qubits in DQFT
+TODO Update docs/run-qiskit-code.md
 
 TODO Add run (with input) and display statevector and density matrix to DQFT notebooks
 
@@ -6,14 +6,8 @@ TODO Add hackathon logo and some figures to README on GitHub pages
 
 TODO Add type checking
 
-TODO Update docs/run-qiskit-code.md
-
 TODO Run doxygen to generate documentation
 
 TODO Generate read-the-docs page
-
-TODO Add pylint to GitHub actions
-
-TODO Implement pytest for Qiskit statevector checking
 
 TODO Add more text to the Jupyter notebooks to explain what is being shown

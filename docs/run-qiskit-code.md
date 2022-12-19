@@ -1,17 +1,23 @@
-TODO Update this according to the refactored code
-
 # Running the distributed quantum Fourier transformation implemented in Qiskit
 
 ## What is Qiskit?
 
 [Qiskit](https://qiskit.org/) is an open-source software development kit (SDK) for working with
 quantum computers at the level of pulses, circuits, and application modules.
-One of the components in Qiskit is [Aer](https://github.com/Qiskit/qiskit-aer), which provides
-high-performance quantum computing simulators with realistic noise models.
+Qiskit consists of several
+[elements](https://qiskit.org/documentation/stable/0.24/the_elements.html)
+. We use the following two elements:
+
+-   [Qiskit Terra](https://github.com/Qiskit/qiskit-terra),
+    the core component of Qiskit, which contains the building blocks for creating and working with
+    quantum circuits, programs, and algorithms.
+
+-   [Qiskit Aer](https://github.com/Qiskit/qiskit-aer)
+    which provides high-performance quantum computing simulators with realistic noise models.
 
 ## What do we use Qiskit for?
 
-In this project we use the Qiskit SDK and Aer to develop three different implementations of the
+In this project we use the Qiskit Terra and Aer to develop three different implementations of the
 quantum Fourier transformation:
 
 1.  A non-distributed (local) version of the quantum Fourier transformation.

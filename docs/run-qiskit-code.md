@@ -104,8 +104,7 @@ easily be added for other algorithms):
 
 ## Class `MonolithicQuantumComputer`
 
-The concrete derived class `MonolithicQuantumComputer` models a monolithic (i.e. non-distributed)
-quantum computer.
+The class `MonolithicQuantumComputer` models a monolithic (i.e. non-distributed) quantum computer.
 
 Under the hood, the implementation of `MonolithicQuantumComputer` does a simple one-to-one mapping
 of logical qubits to underlying concrete qubits.
@@ -152,6 +151,46 @@ The Jupyter notebook `monolithic_quantum_computer.ipynb` contains a more detaile
 of how to use the class `MonolithicQuantumComputer`.
 
 ## Class `ClusteredQuantumComputer`
+
+The class `ClusteredQuantumComputer` models a clustered (i.e. distributed) quantum computer.
+
+The clustered quantum computer consists of several processors connected by an entanglement-based
+quantum network.
+
+The `ClusteredQuantumComputer` takes the following parameters:
+
+-   `nr_processors`: The number of quantum processors in the cluster.
+
+-   `total_nr_qubits`: The total number of main qubits in the cluster. This must be a multiple of
+    `nr_processors`.
+
+-   `method`: The method that is used to implement distributed controlled-unitary gates, either
+    `Method.TELEPORT` or `Method.CAT_STATE`
+
+Each processor in the cluster is modeled by a `ProcessorInClusteredQuantumComputer` object.
+
+Each processor has the following qubits and classical bits:
+
+-   The **main** qubits store the state for the quantum algorithm.
+
+-   The **ancillary** qubits are used for quantum communication between the processors:
+
+    -   The **entanglement** qubit holds one half of an entanglement with another processor.
+        The entanglement is used to teleport another qubit or to entangle a cat state.
+
+    -   The **teleport** qubit is used to temporarily store the sent or received qubit during
+        teleportation.
+
+-   The classical **measurement** bits are used to measured classical bits during teleportation,
+    cat state entanglement, or cat state dis-entanglement.
+
+In the following example we have a clustered quantum computer with two processors (Alice and Bob).
+There is a total of 4 main qubits, 2 on each of the processors. Each processor also has some
+ancillary qubits and classical bits for communication.
+
+![Quantum Processor Registers](figures/quantum-processor-registers.png)
+
+> > >
 
 The concrete derived class `ClusteredQuantumComputer` provides the exact same set of abstract
 operations, but the mapping of these abstract operations to concrete operations on the underlying
@@ -369,7 +408,7 @@ The module also contains some example classes that are used in the
 [`cluster.ipynb`](../qiskit/cluster.ipynb)
 to illustrate the design of the `Processor` and `Cluster` classes.
 
-## The Cluster class
+## >>> The Cluster class
 
 The intention of the `Cluster` class is to provide all of the functionality that is necessary to
 implement all of the various flavors of the distributed quantum Fourier transformation, i.e. the

@@ -133,6 +133,16 @@ to operations on the underlying concrete qubits:
 display(computer.circuit_diagram(with_input=True))
 ```
 
+![monolithic-quantum-computer-circuit-example](figures/monolithic-quantum-computer-circuit-example.png)
+
+Display the output density matrix of the circuit as a city plot:
+
+```python
+computer.density_matrix_city()
+```
+
+![monolithic-quantum-computer-city-plot](figures/monolithic-quantum-computer-city-plot.png)
+
 The Jupyter notebook `monolithic_quantum_computer.ipynb` contains a more detailed example
 of how to use the class `MonolithicQuantumComputer`.
 

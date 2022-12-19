@@ -38,7 +38,7 @@ to install the quantum Fourier transformation implementations, Qiskit, and other
 The Qiskit implementation of the distributed quantum Fourier transformation is stored in the
 [`qiskit`](../qiskit/) subdirectory of this repository.
 
-There are Python modules that implement abstractions of a quantum computer on which to run the
+There are Python modules that implement abstractions of quantum computers on which to run the
 quantum Fourier transformation algorithm.
 The class `MonolithicQuantumComputer` abstracts a monolithic (non-distributed) quantum computer.
 The class `ClusteredQuantumComputer` abstracts a clustered (distributed) quantum computer.

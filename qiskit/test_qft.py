@@ -2,7 +2,8 @@
 Unit tests for quantum Fourier transformation (monolithic and distributed) implemented in Qiskit.
 """
 from math import sqrt
-from qft import QFT
+from qft import DistributedQFT, QFT
+from quantum_computer import Method
 from utils import state_vectors_are_same
 from qiskit.quantum_info import Statevector
 
@@ -46,3 +47,30 @@ def test_monolithic_qft_four_qubits():
     qft.run(input_number=0)
     statevector = qft.main_statevector()
     assert state_vectors_are_same(statevector, PLUS_PLUS_PLUS_PLUS_STATE)
+
+
+def test_dqft_same_as_qft():
+    """
+    Test whether statevector computed by a distributed QFT is the same as the one computed by a
+    monolothic QFT.
+    """
+    nr_processors = 2
+    test_cases = [
+        (Method.TELEPORT, 2, 2, 0),
+        (Method.TELEPORT, 2, 2, 1),
+        (Method.TELEPORT, 2, 4, 0),
+        (Method.TELEPORT, 2, 4, 3),
+        (Method.TELEPORT, 2, 4, 12),
+        (Method.TELEPORT, 2, 4, 15),
+        (Method.TELEPORT, 2, 6, 3),
+        (Method.TELEPORT, 3, 6, 11),
+        (Method.CAT_STATE, 2, 4, 9),
+    ]
+    for method, nr_processors, total_nr_qubits, input_number in test_cases:
+        qft = QFT(total_nr_qubits)
+        qft.run(input_number)
+        qft_statevector = qft.main_statevector()
+        dqft = DistributedQFT(nr_processors, total_nr_qubits, method)
+        dqft.run(input_number)
+        dqft_statevector = qft.main_statevector()
+        assert state_vectors_are_same(qft_statevector, dqft_statevector)

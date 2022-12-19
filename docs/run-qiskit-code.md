@@ -35,7 +35,8 @@ to install the quantum Fourier transformation implementations, Qiskit, and other
 
 ## Directory structure
 
-All Qiskit related code is stored in the [`qiskit`](../qiskit/) subdirectory of this repository.
+The Qiskit implementation of the distributed quantum Fourier transformation is stored in the
+[`qiskit`](../qiskit/) subdirectory of this repository.
 
 There are Python modules that implement abstractions of a quantum computer on which to run the
 quantum Fourier transformation algorithm.

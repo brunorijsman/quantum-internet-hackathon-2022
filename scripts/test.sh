@@ -6,7 +6,7 @@ FALSE=0
 SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
 REPO_ROOT_DIR=${SCRIPT_DIR}/..
 
-TESTED_DIRS="purely_classical"
+TESTED_DIRS="purely_classical qiskit"
 ALL_TESTS_OK=$TRUE
 
 for DIR in $TESTED_DIRS; do

@@ -55,7 +55,7 @@ There are Python modules that implement the three flavors of quantum Fourier tra
 | qft.py      | Implements classes `QFT` and `DQFT` |
 | test_qft.py | Unit tests for `qft.py`             |
 
-There are also Jupyter notebooks to demonstrate the code.
+There are also Jupyter notebooks to demonstrate the code.defines the operations
 
 | File                              | Function                                                        |
 | --------------------------------- | --------------------------------------------------------------- |
@@ -83,8 +83,8 @@ Python module `quantum_computer.py` defines three classes that model quantum com
 
 ## Abstract base class `QuantumComputer`
 
-The base class `QuantumComputer` defines the operations that are used to implement a quantum
-algorithm. The set of operations that is currently supported is (these are all we need for
+The base class `QuantumComputer` defines the abstract operations that are used to implement a
+quantum algorithm. The set of operations that is currently supported is (these are all we need for
 implementing quantum Fourier transformations, but more gates can easily be added):
 
 | Function              | Description                                                    |

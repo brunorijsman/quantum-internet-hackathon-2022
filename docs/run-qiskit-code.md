@@ -1,4 +1,4 @@
-# Running the distributed quantum Fourier transformation (DQFT) implemented in Qiskit
+# The distributed quantum Fourier transformation (DQFT) implementation in Qiskit
 
 ## What is Qiskit?
 

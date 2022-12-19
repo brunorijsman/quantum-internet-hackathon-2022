@@ -39,7 +39,7 @@ to install our quantum Fourier transformation implementations, Qiskit, and other
 All Qiskit related code is stored in the [`qiskit`](../qiskit/) subdirectory.
 
 There are Python modules that implement abstractions of a monolithic quantum computer and a
-distributed quantum computer and that implement all three flavors of quantum Fourier transformation
+distributed quantum computer and that implement the three flavors of quantum Fourier transformation
 on these abstractions:
 
 | File                | Function                                                                        |

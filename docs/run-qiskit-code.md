@@ -51,10 +51,10 @@ The class `ClusteredQuantumComputer` abstracts a clustered (distributed) quantum
 
 There are Python modules that implement the three flavors of quantum Fourier transformation.
 
-| File        | Function                            |
-| ----------- | ----------------------------------- |
-| qft.py      | Implements classes `QFT` and `DQFT` |
-| test_qft.py | Unit tests for `qft.py`             |
+| File        | Function                                                                    |
+| ----------- | --------------------------------------------------------------------------- |
+| qft.py      | Implements classes `QFT` (non-distributed QFT) and `DQFT` (distributed QFT) |
+| test_qft.py | Unit tests for `qft.py`                                                     |
 
 There are also Jupyter notebooks to demonstrate the code.defines the operations
 
@@ -62,9 +62,9 @@ There are also Jupyter notebooks to demonstrate the code.defines the operations
 | --------------------------------- | --------------------------------------------------------------- |
 | monolithic_quantum_computer.ipynb | Demonstrates class `MonolithicQuantumComputer`                  |
 | clustered_quantum_computer.ipynb  | Demonstrates class `DistributedQuantumComputer`                 |
-| qft.ipynb                         | Demonstrates monolithic (non-distributed) QFT                   |
-| teleport_distributed_qft.ipynb    | Demonstrates distributed QFT using teleportation                |
-| cat_state_distributed_qft.ipynb   | Demonstrates distributed QFT using cat states                   |
+| qft.ipynb                         | Demonstrates class `QFT`                                        |
+| teleport_distributed_qft.ipynb    | Demonstrates class `DQFT` using teleportation                   |
+| cat_state_distributed_qft.ipynb   | Demonstrates class `DQFT` using cat states                      |
 | density_matrices.ipynb            | Some basic examples of density matrices                         |
 | just_crotz.ipynb                  | Some basic examples of controlled rotation-Z                    |
 | find_period.ipynb                 | An example quantum circuit for finding the period of a function |

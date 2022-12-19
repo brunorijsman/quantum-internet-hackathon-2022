@@ -104,8 +104,11 @@ easily be added for other algorithms):
 
 ## Class `MonolithicQuantumComputer`
 
-The concrete derived class `MonolithicQuantumComputer` provides a direct one-to-one mapping of the
-above abstract operations to corresponding concrete operations on qubits in a circuit.
+The concrete derived class `MonolithicQuantumComputer` models a monolithic (i.e. non-distributed)
+quantum computer.
+
+Under the hood, the implementation of `MonolithicQuantumComputer` does a simple one-to-one mapping
+of logical qubits to underlying concrete qubits.
 
 Create an instance of a monolithic quantum computer:
 

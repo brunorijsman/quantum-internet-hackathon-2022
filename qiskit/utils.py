@@ -6,6 +6,39 @@ from datetime import datetime
 from qiskit.quantum_info import DensityMatrix
 
 
+def are_state_vectors_same(state_vector_1, state_vector_2, max_delta=0.001):
+    """
+    Are two state vectors the same, ignoring any difference in global phase and allowing for
+    rounding errors.
+
+    Parameters
+    ----------
+    state_vector_1: The first state vector to be compared.
+    state_vector_2: The second state vector to be compared.
+    max_delta: The maximum difference in the norm of any component in both state vectors.
+
+    Returns
+    -------
+    True if the two state vectors are the same, ignoring global phase and rounding errors. False
+    if they are different.
+    """
+    assert state_vector_1.dim == state_vector_2.dim, "State vectors must have same dimension"
+    max_index = 0
+    max_value = state_vector_1[0]
+    for index in range(1, state_vector_1.dim):
+        if state_vector_1[index] > max_value:
+            max_value = state_vector_1[index]
+            max_index = index
+    global_phase_difference = state_vector_2[max_index] / state_vector_1[max_index]
+    for index in range(state_vector_1.dim):
+        value_1 = state_vector_1[index]
+        value_2 = state_vector_2[index]
+        adjusted_value_2 = global_phase_difference * value_2
+        if abs(value_1 - adjusted_value_2) > max_delta:
+            return False
+    return True
+
+
 def reverse_bit_order(nr_bits, value):
     """
     Reverse the bits in a value.

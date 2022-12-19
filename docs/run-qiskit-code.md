@@ -38,7 +38,7 @@ to install our quantum Fourier transformation implementations, Qiskit, and other
 
 All Qiskit related code is stored in the [`qiskit`](../qiskit/) subdirectory.
 
-There are Python scripts that implement abstractions of a monolithic quantum computer and a
+There are Python modules that implement abstractions of a monolithic quantum computer and a
 distributed quantum computer and that implement all three flavors of quantum Fourier transformation
 on these abstractions:
 
@@ -61,6 +61,88 @@ There are also Jupyter notebooks to demonstrate the code:
 | density_matrices.ipynb          | Some basic examples of density matrices                                               |
 | just_crotz.ipynb                | Some basic examples of controlled rotation-Z                                          |
 | find_period.ipynb               | An example quantum circuit for finding the period of a function                       |
+
+## Classes that model quantum computers
+
+Python module `quantum_computer.py` defines three classes that model quantum computers:
+
+-   Class `QuantumComputer` is an abstract base class that defines the common interface and
+    behavior for following two types of quantum computers.
+
+-   Class `MonolithicQuantumComputer` models a monolithic (i.e. non-distributed) quantum computer.
+
+-   Class `ClusteredQuantumComputer` models a distributed quantum computer. It is implemented as a
+    cluster of processors connected by a entanglement-based quantum network. Each processor in the
+    cluster is modeled by the `ProcessorInClusteredQuantumComputer` class.
+
+The base class `QuantumComputer` defines the operations that are used to implement a quantum
+algorithm. The set of operations that is currently supported is (these are all we need for
+implementing quantum Fourier transformations, but more gates can easily be added):
+
+| Function              | Description                                                    |
+| --------------------- | -------------------------------------------------------------- |
+| `hadamard`            | Perform a Hadamard gate on one qubit in the circuit            |
+| `controlled_phase`    | Perform a controlled-phase gate on two qubits in the circuit   |
+| `swap`                | Perform a swap gate on two qubits in the circuit               |
+| `set_input_number`    | Set the input of the circuit to a numeric value                |
+| `run`                 | Run the circuit                                                |
+| `circuit_diagram`     | Display the circuit diagram                                    |
+| `statevector_data`    | Return the circuit output statevector                          |
+| `statevector_latex`   | Display the circuit output statevector using LaTeX             |
+| `bloch_multivector`   | Display the circuit output state as a Bloch multivector        |
+| `density_matrix_city` | Display the circuit output state as a density matrix city plot |
+
+The concrete derived class `MonolithicQuantumComputer` provides a direct one-to-one mapping of the
+above abstract operations to corresponding concrete operations on qubits in a circuit.
+
+The concrete derived class `ClusteredQuantumComputer` provides the exact same set of abstract
+operations, but the mapping of these abstract operations to concrete operations on the underlying
+hardware is more complicated:
+
+-   The clustered quantum computer consists of `nr_processors` quantum processors.
+
+-   The total number of qubits that are available for running quantum algorithms (we call these
+    the main qubits) across all processors is `total_nr_qubits`. These qubits are assumed to be
+    equally divided across the processors, which means that each processor has `total_nr_qubits` /
+    `nr_processors` main qubits.
+
+-   Each processor also has some additional ancillary qubits (which are called the entanglement
+    qubit and the teleport qubit) in addition to the main qubits to implement teleportation and
+    cat states.
+
+-   As far as the algorithm developer is concerned, the class `ClusteredQuantumComputer` provides
+    the abstraction of a single logical quantum computer that has `total_nr_qubits` qubits. The
+    exact same algorithm code can run on either a monolithic or a clustered quantum computer. Under
+    the hood, operations on logical qubits are mapped to operations on the underlying physical
+    qubits. In the case of a clustered quantum computer this mapping is as follows.
+
+-   For single-qubit operations (e.g. `hadamard`) the mapping figures out which physical qubit on
+    which physical processor the logical qubit maps to, and performs the single-qubit operation on
+    that physical qubit.
+
+-   For two-qubit operations (e.g. `controlled_phase` and `swap`) there are multiple steps:
+
+    -   First the mapping determines whether both involved logical qubits map to the same processor
+        or to different processors.
+
+    -   If the two logical qubits map to the same processor, the two-qubit operation is executed
+        locally on that processor, using the two physical qubits that the two logical qubits map to.
+
+    -   If the two logical qubits map to different processors, we use either teleportation or cat
+        states to implement the two qubit operation remotely. For controlled-unitary (e.g.
+        controlled-phase) operations, the `method` parameter for the `ClusteredQuantumComputer`
+        constructor determines whether teleportation or cat states are used. For remote swap gates,
+        we always use teleportation.
+
+    -   When using teleportation to implement a two qubit operation, we first use teleportation
+        to teleport one qubit to the processor where the other qubit is located (at this point both
+        qubits are on the same processor), then we perform the two qubit operation locally on that
+        processor, and then we teleport the first qubit back to its original location.
+
+    -   When using cat states to implement a two qubit controlled-unitary operation, we first
+        create a cat state to create an entangled control qubit on the same processor as the
+        target processor, then we perform the controlled unitary operational locally on that
+        processor, and then we dis-entangle the control qubit.
 
 ## The non-distributed (local) implementation of the quantum Fourier transformation
 

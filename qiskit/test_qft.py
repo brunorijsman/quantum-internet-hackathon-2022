@@ -14,7 +14,8 @@ MINUS_STATE = Statevector([ONE_OVER_SQRT2, -1.0 * ONE_OVER_SQRT2])
 
 def test_monolithic_qft_one_qubit():
     """
-    Test monolothic (non-distributed) QFT, one qubit.
+    Test monolothic (non-distributed) QFT, one qubit. A single-qubit QFT is the same as a
+    Hadamard gate.
     """
     qft = QFT(total_nr_qubits=1)
     qft.run(input_number=0)

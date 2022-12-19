@@ -6,27 +6,27 @@ from numpy import pi
 from quantum_computer import ClusteredQuantumComputer, MonolithicQuantumComputer
 
 
-def _add_qft_circuit(processor, final_swaps):
-    _add_qft_circuit_rotations(processor, processor.total_nr_qubits)
+def _add_qft_circuit(computer, final_swaps):
+    _add_qft_circuit_rotations(computer, computer.total_nr_qubits)
     if final_swaps:
-        _add_qft_circuit_final_swaps(processor)
+        _add_qft_circuit_final_swaps(computer)
 
 
-def _add_qft_circuit_rotations(processor, remaining_nr_qubits):
+def _add_qft_circuit_rotations(computer, remaining_nr_qubits):
     if remaining_nr_qubits == 0:
         return
     remaining_nr_qubits -= 1
-    processor.hadamard(remaining_nr_qubits)
+    computer.hadamard(remaining_nr_qubits)
     for qubit in range(remaining_nr_qubits):
-        processor.controlled_phase(
+        computer.controlled_phase(
             pi / 2 ** (remaining_nr_qubits - qubit), qubit, remaining_nr_qubits
         )
-    _add_qft_circuit_rotations(processor, remaining_nr_qubits)
+    _add_qft_circuit_rotations(computer, remaining_nr_qubits)
 
 
-def _add_qft_circuit_final_swaps(processor):
-    for qubit in range(processor.total_nr_qubits // 2):
-        processor.swap(qubit, processor.total_nr_qubits - qubit - 1)
+def _add_qft_circuit_final_swaps(computer):
+    for qubit in range(computer.total_nr_qubits // 2):
+        computer.swap(qubit, computer.total_nr_qubits - qubit - 1)
 
 
 class QFT(MonolithicQuantumComputer):

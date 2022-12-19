@@ -52,15 +52,16 @@ on these abstractions:
 
 There are also Jupyter notebooks to demonstrate the code:
 
-| File                            | Function                                                                              |
-| ------------------------------- | ------------------------------------------------------------------------------------- |
-| quantum_computer.ipynb          | Demonstrates the classes `MonolithicQuantumComputer` and `DistributedQuantumComputer` |
-| qft.ipynb                       | Demonstrates monolithic (non-distributed) QFT                                         |
-| teleport_distributed_qft.ipynb  | Demonstrates distributed QFT using teleportation                                      |
-| cat_state_distributed_qft.ipynb | Demonstrates distributed QFT using cat states                                         |
-| density_matrices.ipynb          | Some basic examples of density matrices                                               |
-| just_crotz.ipynb                | Some basic examples of controlled rotation-Z                                          |
-| find_period.ipynb               | An example quantum circuit for finding the period of a function                       |
+| File                              | Function                                                        |
+| --------------------------------- | --------------------------------------------------------------- |
+| monolithic_quantum_computer.ipynb | Demonstrates class `MonolithicQuantumComputer`                  |
+| clustered_quantum_computer.ipynb  | Demonstrates class `DistributedQuantumComputer`                 |
+| qft.ipynb                         | Demonstrates monolithic (non-distributed) QFT                   |
+| teleport_distributed_qft.ipynb    | Demonstrates distributed QFT using teleportation                |
+| cat_state_distributed_qft.ipynb   | Demonstrates distributed QFT using cat states                   |
+| density_matrices.ipynb            | Some basic examples of density matrices                         |
+| just_crotz.ipynb                  | Some basic examples of controlled rotation-Z                    |
+| find_period.ipynb                 | An example quantum circuit for finding the period of a function |
 
 ## Classes that model quantum computers
 
@@ -74,6 +75,8 @@ Python module `quantum_computer.py` defines three classes that model quantum com
 -   Class `ClusteredQuantumComputer` models a distributed quantum computer. It is implemented as a
     cluster of processors connected by a entanglement-based quantum network. Each processor in the
     cluster is modeled by the `ProcessorInClusteredQuantumComputer` class.
+
+## Abstract base class `QuantumComputer`
 
 The base class `QuantumComputer` defines the operations that are used to implement a quantum
 algorithm. The set of operations that is currently supported is (these are all we need for
@@ -92,8 +95,15 @@ implementing quantum Fourier transformations, but more gates can easily be added
 | `bloch_multivector`   | Display the circuit output state as a Bloch multivector        |
 | `density_matrix_city` | Display the circuit output state as a density matrix city plot |
 
+## Class `MonolithicQuantumComputer`
+
 The concrete derived class `MonolithicQuantumComputer` provides a direct one-to-one mapping of the
 above abstract operations to corresponding concrete operations on qubits in a circuit.
+
+The Jupyter notebook `monolithic_quantum_computer.ipynb` demonstrates how to use the class
+`MonolithicQuantumComputer`.
+
+## Class `ClusteredQuantumComputer`
 
 The concrete derived class `ClusteredQuantumComputer` provides the exact same set of abstract
 operations, but the mapping of these abstract operations to concrete operations on the underlying

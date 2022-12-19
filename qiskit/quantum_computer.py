@@ -170,7 +170,7 @@ class QuantumComputer(ABC):
             return None
         return plot_state_city(self.result.get_statevector())
 
-    def run(self, input_number, shots=10000):
+    def run(self, input_number, shots=1):
         """
         Run the quantum circuit.
 

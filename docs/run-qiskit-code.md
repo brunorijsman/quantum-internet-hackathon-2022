@@ -105,8 +105,36 @@ implementing quantum Fourier transformations, but more gates can easily be added
 The concrete derived class `MonolithicQuantumComputer` provides a direct one-to-one mapping of the
 above abstract operations to corresponding concrete operations on qubits in a circuit.
 
-The Jupyter notebook `monolithic_quantum_computer.ipynb` demonstrates how to use the class
-`MonolithicQuantumComputer`.
+Create an instance of a monolithic quantum computer:
+
+```python
+computer = MonolithicQuantumComputer(total_nr_qubits)
+```
+
+Add a few gates to the circuit:
+
+```python
+computer.hadamard(0)
+computer.controlled_phase(pi/8, 0, 1)
+computer.controlled_phase(pi/4, 0, 2)
+computer.swap(0, 3)
+```
+
+Run the circuit with input value 5 (binary 0101):
+
+```python
+computer.run(input_number=5)
+```
+
+Display the circuit. Here we can see that the operations on the logical qubits are mapped one-to-one
+to operations on the underlying concrete qubits:
+
+```python
+display(computer.circuit_diagram(with_input=True))
+```
+
+The Jupyter notebook `monolithic_quantum_computer.ipynb` contains a more detailed example
+of how to use the class `MonolithicQuantumComputer`.
 
 ## Class `ClusteredQuantumComputer`
 

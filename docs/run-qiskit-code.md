@@ -85,8 +85,9 @@ Python module `quantum_computer.py` defines three classes that model quantum com
 ## Abstract base class `QuantumComputer`
 
 The base class `QuantumComputer` defines the abstract operations that are used to implement a
-quantum algorithm. The set of operations that is currently supported is (these are all we need for
-implementing quantum Fourier transformations, but more gates can easily be added):
+quantum algorithm. The table below lists the set of operations that is currently supported
+(these are all we need for implementing quantum Fourier transformations, but more operations can
+easily be added for other algorithms):
 
 | Function              | Description                                                    |
 | --------------------- | -------------------------------------------------------------- |

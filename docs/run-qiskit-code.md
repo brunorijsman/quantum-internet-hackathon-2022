@@ -67,7 +67,7 @@ There are also Jupyter notebooks to demonstrate the code:
 Python module `quantum_computer.py` defines three classes that model quantum computers:
 
 -   Class `QuantumComputer` is an abstract base class that defines the common interface and
-    behavior for following two types of quantum computers.
+    behavior for the following two types of quantum computers.
 
 -   Class `MonolithicQuantumComputer` models a monolithic (i.e. non-distributed) quantum computer.
 

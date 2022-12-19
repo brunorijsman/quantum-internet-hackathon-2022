@@ -1,3 +1,5 @@
+![All checks](https://github.com/brunorijsman/quantum-internet-hackathon-2022/actions/workflows/actions.yaml/badge.svg)
+
 If you are impatient and just want to run the code, jump ahead to the
 [running the code](#running-the-code) section.
 

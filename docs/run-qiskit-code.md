@@ -15,10 +15,9 @@ of Qiskit:
 -   [Qiskit Aer](https://github.com/Qiskit/qiskit-aer)
     which provides high-performance quantum computing simulators with realistic noise models.
 
-## What do we use Qiskit for?
+## Implementing the quantum Fourier transformation using Qiskit
 
-In this project we implement three different versions of the quantum Fourier transformation (QFT)
-using Qiskit:
+We implement three different versions of the quantum Fourier transformation (QFT) using Qiskit:
 
 1.  A monolithic (non-distributed) version of the quantum Fourier transformation.
     We use this as a reference to check whether the results of the two distributed versions
@@ -32,25 +31,31 @@ using Qiskit:
 
 Follow
 [these installation instructions](installation.md)
-to install our quantum Fourier transformation implementations, Qiskit, and other dependencies.
+to install the quantum Fourier transformation implementations, Qiskit, and other dependencies.
 
 ## Directory structure
 
-All Qiskit related code is stored in the [`qiskit`](../qiskit/) subdirectory.
+All Qiskit related code is stored in the [`qiskit`](../qiskit/) subdirectory of this repository.
 
-There are Python modules that implement abstractions of a monolithic quantum computer and a
-distributed quantum computer and that implement the three flavors of quantum Fourier transformation
-on these abstractions:
+There are Python modules that implement abstractions of a quantum computer on which to run the
+quantum Fourier transformation algorithm.
+The class `MonolithicQuantumComputer` abstracts a monolithic (non-distributed) quantum computer.
+The class `ClusteredQuantumComputer` abstracts a clustered (distributed) quantum computer.
 
-| File                | Function                                                                        |
-| ------------------- | ------------------------------------------------------------------------------- |
-| quantum_computer.py | Implements classes `MonolithicQuantumComputer` and `DistributedQuantumComputer` |
-| qft.py              | Implements classes `QFT` and `DQFT`                                             |
-| test_qft.py         | Unit tests for `qft.py`                                                         |
-| utils.py            | Common utilities                                                                |
-| examples.py         | Implements examples that are used in the demonstration Jupyter notebooks        |
+| File                | Function                                                                      |
+| ------------------- | ----------------------------------------------------------------------------- |
+| quantum_computer.py | Implements classes `MonolithicQuantumComputer` and `ClusteredQuantumComputer` |
+| utils.py            | Common utilities                                                              |
+| examples.py         | Implements examples that are used in the demonstration Jupyter notebooks      |
 
-There are also Jupyter notebooks to demonstrate the code:
+There are Python modules that implement the three flavors of quantum Fourier transformation.
+
+| File        | Function                            |
+| ----------- | ----------------------------------- |
+| qft.py      | Implements classes `QFT` and `DQFT` |
+| test_qft.py | Unit tests for `qft.py`             |
+
+There are also Jupyter notebooks to demonstrate the code.
 
 | File                              | Function                                                        |
 | --------------------------------- | --------------------------------------------------------------- |

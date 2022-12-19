@@ -4,11 +4,11 @@ Monolithic and clustered quantum computers.
 
 from abc import ABC, abstractmethod
 from enum import Enum
+from qiskit_aer import Aer
 from qiskit_textbook.tools import array_to_latex
-from qiskit import Aer, QuantumCircuit, transpile
+from qiskit import ClassicalRegister, QuantumCircuit, QuantumRegister, transpile
 from qiskit.quantum_info import DensityMatrix, partial_trace
 from qiskit.visualization import plot_bloch_multivector, plot_state_city
-from qiskit import ClassicalRegister, QuantumRegister
 
 
 class QuantumComputer(ABC):

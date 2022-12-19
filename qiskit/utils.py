@@ -6,7 +6,7 @@ from datetime import datetime
 from qiskit.quantum_info import DensityMatrix
 
 
-def are_state_vectors_same(state_vector_1, state_vector_2, max_delta=0.001):
+def state_vectors_are_same(state_vector_1, state_vector_2, max_delta=0.001):
     """
     Are two state vectors the same, ignoring any difference in global phase and allowing for
     rounding errors.

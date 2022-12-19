@@ -2,8 +2,8 @@
 Example processors for Jupyter notebooks.
 """
 
-from quantum_computer import ClusteredQuantumComputer, Method
 from numpy import pi
+from quantum_computer import ClusteredQuantumComputer, Method
 
 
 class EntanglementExampleCluster(ClusteredQuantumComputer):

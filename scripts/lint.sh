@@ -12,7 +12,7 @@ ALL_LINTS_OK=$TRUE
 for DIR in $LINTED_DIRS; do
 
     echo "Lint $DIR using pylint"
-    pylint $REPO_ROOT_DIR/$DIR/*.py
+    pylint --rcfile $REPO_ROOT_DIR/.pylintrc $REPO_ROOT_DIR/$DIR/*.py
     if [ "$?" -ne 0 ]; then
         ALL_LINTS_OK=$FALSE
     fi

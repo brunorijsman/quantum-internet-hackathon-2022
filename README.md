@@ -29,8 +29,6 @@ The name of the team, Q-Harmonics (for Quantum Harmonics) was chosen because we 
 on the quantum Fourier transformation. The Fourier transformation is also known as
 [harmonic analysis](https://en.wikipedia.org/wiki/Harmonic_analysis).
 
-We chose "_Feasible and Doable_" as the motto for our team.
-
 # Team Project: Distributed Quantum Fourier Transformation
 
 The team Q-Harmonics project for the QIH 2022 hackathon is to implement a distributed version of

@@ -1,12 +1,12 @@
-# Running the distributed quantum Fourier transformation implemented in Qiskit
+# Running the distributed quantum Fourier transformation (DQFT) implemented in Qiskit
 
 ## What is Qiskit?
 
 [Qiskit](https://qiskit.org/) is an open-source software development kit (SDK) for working with
 quantum computers at the level of pulses, circuits, and application modules.
-Qiskit consists of several
+We use the following two
 [elements](https://qiskit.org/documentation/stable/0.24/the_elements.html)
-. We use the following two elements:
+of Qiskit:
 
 -   [Qiskit Terra](https://github.com/Qiskit/qiskit-terra),
     the core component of Qiskit, which contains the building blocks for creating and working with
@@ -17,10 +17,10 @@ Qiskit consists of several
 
 ## What do we use Qiskit for?
 
-In this project we use the Qiskit Terra and Aer to develop three different implementations of the
-quantum Fourier transformation:
+In this project we implement three different versions of the quantum Fourier transformation (QFT)
+using Qiskit:
 
-1.  A non-distributed (local) version of the quantum Fourier transformation.
+1.  A monolothic (non-distributed) version of the quantum Fourier transformation.
     We use this as a reference to check whether the results of the two distributed versions
     are correct.
 
@@ -32,50 +32,35 @@ quantum Fourier transformation:
 
 Follow
 [these installation instructions](installation.md)
-to install team Q-Harmonics Qiskit related code, Qiskit itself, and other dependencies.
+to install our quantum Fourier transformation implementations, Qiskit, and other dependencies.
 
 ## Directory structure
 
 All Qiskit related code is stored in the [`qiskit`](../qiskit/) subdirectory.
 
-As shown in the following table, we have three Qiskit implementations of the quantum Fourier
-transformation:
+There are Python scripts that implement abstractions of a monolithic quantum computer and a
+distributed quantum computer and that implement all three flavors of quantum Fourier transformation
+on these abstractions:
 
-| Implementation                                                       | Python files           | Jupyter notebook files    |
-| -------------------------------------------------------------------- | ---------------------- | ------------------------- |
-| Non-distributed (local) QFT                                          | `qft.py`               | `qft.ipynb`               |
-| `Processor` and `Cluster` base classes for both DQFT implementations | `cluster.py`           | `cluster.ipynb`           |
-| Distributed QFT using teleportation                                  | `teleport_dqft.py`     | `teleport_dqft.ipynb`     |
-| Distributed QFT using cat states                                     | **TODO** `cat_dqft.py` | **TODO** `cat_dqft.ipynb` |
+| File                | Function                                                                        |
+| ------------------- | ------------------------------------------------------------------------------- |
+| quantum_computer.py | Implements classes `MonolithicQuantumComputer` and `DistributedQuantumComputer` |
+| qft.py              | Implements classes `QFT` and `DQFT`                                             |
+| test_qft.py         | Unit tests for `qft.py`                                                         |
+| utils.py            | Common utilities                                                                |
+| examples.py         | Implements examples that are used in the demonstration Jupyter notebooks        |
 
-In each case, the implementation takes the form of a Python module containing classes that generate
-the quantum circuit to compute the quantum Fourier transform, and a corresponding Jupyter notebook
-to execute the circuit and visualize the results.
+There are also Jupyter notebooks to demonstrate the code:
 
-The [`qiskit`](../qiskit/) subdirectory also contains some files that were implemented to
-gain a better understanding of the the quantum Fourier transformation and its applications
-using Qiskit:
-
--   File `find_period.ipynb` contains a Jupyter notebook demonstrating how to use the quantum
-    Fourier transformation to find the period of function (this is a key step in Shor's factoring
-    algorithm).
-
--   File `just_crotz.ipynb` contains a Jupyter notebook that applies the controlled Z-rotation
-    (CROTZ) gate on a well-defined input state and shows the resulting density matrix in several
-    representations. The purpose of this file is to validate whether our implementation of CROTZ
-    in QNE-ADK is correct (see **TODO** add reference).
-
-(See also the
-[run purely classical code](run-purely-classical.md)
-chapter for some additional purely classical algorithms that help understand the QFT and it's
-applications.)
-
-We have also started implementing Python code to view, analyze, and compare density matrices
-for the output states that are produced by the Qiskit QFT implementations.
-To goal is to use these density matrices to verify that the Qiskit and QNE-ADK implementations
-actually produce the same results.
-The related code is in files `density_matrices.ipynb` and `utils.py`.
-**TODO** This is still a work in progress.
+| File                            | Function                                                                              |
+| ------------------------------- | ------------------------------------------------------------------------------------- |
+| quantum_computer.ipynb          | Demonstrates the classes `MonolithicQuantumComputer` and `DistributedQuantumComputer` |
+| qft.ipynb                       | Demonstrates monolithic (non-distributed) QFT                                         |
+| teleport_distributed_qft.ipynb  | Demonstrates distributed QFT using teleportation                                      |
+| cat_state_distributed_qft.ipynb | Demonstrates distributed QFT using cat states                                         |
+| density_matrices.ipynb          | Some basic examples of density matrices                                               |
+| just_crotz.ipynb                | Some basic examples of controlled rotation-Z                                          |
+| find_period.ipynb               | An example quantum circuit for finding the period of a function                       |
 
 ## The non-distributed (local) implementation of the quantum Fourier transformation
 

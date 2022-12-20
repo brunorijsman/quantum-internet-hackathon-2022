@@ -192,26 +192,20 @@ ancillary qubits and classical bits for communication.
 
 > > >
 
-The concrete derived class `ClusteredQuantumComputer` provides the exact same set of abstract
-operations, but the mapping of these abstract operations to concrete operations on the underlying
-hardware is more complicated:
+To the algorithm, the class `ClusteredQuantumComputer` provides the illusion that the clustered
+quantum computer has a set of logical qubits, indexed 0 thru `total_nr_qubits`-1. The algorithm
+can perform a single-qubit gate on any logical qubit and a two-qubit gate on any pair of logical
+qubits.
 
--   The clustered quantum computer consists of `nr_processors` quantum processors.
+Under the hood, the qubits are actually distributed across the multiple processors. For the sake of
+this explanation we will call these concrete qubits.
 
--   The total number of qubits that are available for running quantum algorithms (we call these
-    the main qubits) across all processors is `total_nr_qubits`. These qubits are assumed to be
-    equally divided across the processors, which means that each processor has `total_nr_qubits` /
-    `nr_processors` main qubits.
+When the algorithm performs a gate operation on one or two logical qubits, it is the job of
+the `ClusteredQuantumComputer` class is to map the logical qubits to the underlying concrete
+qubit and then to perform the operation on those underlying concrete qubits. In the Python
+code this is called mapping the global qubit index to a local qubit index.
 
--   Each processor also has some additional ancillary qubits (which are called the entanglement
-    qubit and the teleport qubit) in addition to the main qubits to implement teleportation and
-    cat states.
-
--   As far as the algorithm developer is concerned, the class `ClusteredQuantumComputer` provides
-    the abstraction of a single logical quantum computer that has `total_nr_qubits` qubits. The
-    exact same algorithm code can run on either a monolithic or a clustered quantum computer. Under
-    the hood, operations on logical qubits are mapped to operations on the underlying physical
-    qubits. In the case of a clustered quantum computer this mapping is as follows.
+The details of how this mapping takes place are as follows:
 
 -   For single-qubit operations (e.g. `hadamard`) the mapping figures out which physical qubit on
     which physical processor the logical qubit maps to, and performs the single-qubit operation on

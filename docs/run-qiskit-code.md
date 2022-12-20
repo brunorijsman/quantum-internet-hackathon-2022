@@ -158,7 +158,7 @@ Display the circuit. Here we can see that the operations on the logical qubits a
 to operations on the underlying concrete qubits:
 
 ```python
-display(computer.circuit_diagram(with_input=True))
+computer.circuit_diagram(with_input=True)
 ```
 
 ![monolithic-quantum-computer-circuit-example](figures/monolithic-quantum-computer-circuit-example.png)
@@ -245,7 +245,7 @@ explained later):
 ```python
 computer = ClusteredQuantumComputer(nr_processors=2, total_nr_qubits=4, method=Method.TELEPORT)
 computer.hadamard(2)
-display(computer.circuit_diagram())
+computer.circuit_diagram()
 ```
 
 ![single-qubit-gate-global-to-local-mapping](figures/single-qubit-gate-global-to-local-mapping.png)
@@ -266,7 +266,7 @@ processor.
 ```python
 computer = ClusteredQuantumComputer(nr_processors=2, total_nr_qubits=4, method=Method.TELEPORT)
 computer.controlled_phase(pi/4, 2, 3)
-display(computer.circuit_diagram())
+computer.circuit_diagram()
 ```
 
 ![two-qubit-gate-global-to-local-mapping-same-processor](figures/two-qubit-gate-global-to-local-mapping-same-processor.png)
@@ -292,6 +292,41 @@ methods for implementing the gate in a distributed manner:
 
 For two qubit gates which are not controlled-unitary gates (e.g. a swap gate) we always use
 the teleportation method.
+
+The implementation of teleportation and cat states requires some extra ancillary qubits and some
+classical bits to implement the communication between the processors across the quantum
+interconnect.
+
+Up until now, we have omitted these ancillary quantum qubits and classical bits from the circuit
+diagrams. In the following example, we show the complete circuit diagram.
+
+```python
+computer = ClusteredQuantumComputer(nr_processors=2, total_nr_qubits=4, method=Method.TELEPORT)
+computer.circuit_diagram()
+```
+
+![Quantum Processor Registers](figures/quantum-processor-registers.png)
+
+In the above circuit we have the following qubits and classical bits:
+
+-   The **main** qubits store the state for the quantum algorithm.
+    There are four main qubits in total, with global indexes 0 thru 3.
+    Each processor has two main qubits, with local indexes 0 thru 1.
+
+-   The **ancillary** qubits are used for quantum communication between the processors:
+
+    -   The **entanglement** qubit holds one half of an entanglement with another processor.
+        The entanglement is used to teleport another qubit or to entangle a cat state.
+
+    -   The **teleport** qubit is used to temporarily store the sent or received qubit during
+        teleportation.
+
+-   The classical **measurement** bits are used to measured classical bits during teleportation,
+    cat state entanglement, or cat state dis-entanglement.
+
+In the following example we have a clustered quantum computer with two processors (Alice and Bob).
+There is a total of 4 main qubits, 2 on each of the processors. Each processor also has some
+ancillary qubits and classical bits for communication.
 
 The details of how this mapping takes place are as follows:
 
@@ -322,28 +357,6 @@ The details of how this mapping takes place are as follows:
         create a cat state to create an entangled control qubit on the same processor as the
         target processor, then we perform the controlled unitary operational locally on that
         processor, and then we dis-entangle the control qubit.
-
-Each processor is modeled by a `ProcessorInClusteredQuantumComputer` object
-and has the following qubits and classical bits:
-
--   The **main** qubits store the state for the quantum algorithm.
-
--   The **ancillary** qubits are used for quantum communication between the processors:
-
-    -   The **entanglement** qubit holds one half of an entanglement with another processor.
-        The entanglement is used to teleport another qubit or to entangle a cat state.
-
-    -   The **teleport** qubit is used to temporarily store the sent or received qubit during
-        teleportation.
-
--   The classical **measurement** bits are used to measured classical bits during teleportation,
-    cat state entanglement, or cat state dis-entanglement.
-
-In the following example we have a clustered quantum computer with two processors (Alice and Bob).
-There is a total of 4 main qubits, 2 on each of the processors. Each processor also has some
-ancillary qubits and classical bits for communication.
-
-![Quantum Processor Registers](figures/quantum-processor-registers.png)
 
 ## The non-distributed (local) implementation of the quantum Fourier transformation
 

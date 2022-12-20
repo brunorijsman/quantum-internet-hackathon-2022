@@ -324,39 +324,52 @@ In the above circuit we have the following qubits and classical bits:
 -   The classical **measurement** bits are used to measured classical bits during teleportation,
     cat state entanglement, or cat state dis-entanglement.
 
-In the following example we have a clustered quantum computer with two processors (Alice and Bob).
-There is a total of 4 main qubits, 2 on each of the processors. Each processor also has some
-ancillary qubits and classical bits for communication.
+In the following example, we use the teleportation method to implement a controlled-phase gate
+between qubits 0 and 3, which are located on different processors.
 
-The details of how this mapping takes place are as follows:
+```python
+computer = ClusteredQuantumComputer(nr_processors=2, total_nr_qubits=4, method=Method.TELEPORT)
+computer.controlled_phase(pi/4, 0, 3)
+computer.circuit_diagram()
+```
 
--   For single-qubit operations (e.g. `hadamard`) the mapping figures out which physical qubit on
-    which physical processor the logical qubit maps to, and performs the single-qubit operation on
-    that physical qubit.
+Although, we only asked for a single controlled-phase gate, the circuit that the clustered
+quantum computer generates is quite complex:
 
--   For two-qubit operations (e.g. `controlled_phase` and `swap`) there are multiple steps:
+![two-qubit-gate-global-to-local-mapping-different-processor-using-teleportation](figures/two-qubit-gate-global-to-local-mapping-different-processor-using-teleportation.png)
 
-    -   First the mapping determines whether both involved logical qubits map to the same processor
-        or to different processors.
+We can understand what is happening by breaking the circuit down into five steps:
 
-    -   If the two logical qubits map to the same processor, the two-qubit operation is executed
-        locally on that processor, using the two physical qubits that the two logical qubits map to.
+-   Step 1: Swap the control qubit for the controlled-phase gate (proc0_main0) into the teleport on
+    processor 0 (proc0_teleport) in preparation for teleporting it to processor 1.
 
-    -   If the two logical qubits map to different processors, we use either teleportation or cat
-        states to implement the two qubit operation remotely. For controlled-unitary (e.g.
-        controlled-phase) operations, the `method` parameter for the `ClusteredQuantumComputer`
-        constructor determines whether teleportation or cat states are used. For remote swap gates,
-        we always use teleportation.
+-   Step 2: Teleport a qubit from processor 0 to processor 1 (proc0_teleport to proc1_teleport).
+    Teleportation is implemented using the following sub-steps:
 
-    -   When using teleportation to implement a two qubit operation, we first use teleportation
-        to teleport one qubit to the processor where the other qubit is located (at this point both
-        qubits are on the same processor), then we perform the two qubit operation locally on that
-        processor, and then we teleport the first qubit back to its original location.
+    -   Create an entanglement (a |ɸ+> Bell state to be precise) between qubits proc0_entanglement
+        and proc1_entanglement using a Hadamard and a controlled-NOT gate.
 
-    -   When using cat states to implement a two qubit controlled-unitary operation, we first
-        create a cat state to create an entangled control qubit on the same processor as the
-        target processor, then we perform the controlled unitary operational locally on that
-        processor, and then we dis-entangle the control qubit.
+    -   Perform two measurements on processor 0, and store the results in the proc0_measure
+        classical register.
+
+    -   Use the classical measurement results, to perform X and Z corrections on processor 1.
+        Note: in the Qiskit simulation, we don't model sending of classical messages between
+        processors. In the QNE-ADK simulation, we do.
+
+    -   Swap proc0_entanglement into proc0_teleport.
+
+-   Step 3: Perform the controlled-phase gate locally on processor 1, using the teleport qubit
+    proc1_teleport as the control gate, and proc1_main1 as the target gate.
+
+-   Step 4: Teleport the control gate proc1_teleport on processor 1 back to proc0_teleport on
+    processor 0. The steps are similar to step 2 above.
+
+-   Step 5: Teleport the control gate from proc0_teleport back into proc0_main0.
+
+Note that the steps are not optimal because the implementation uses teleportation as a subroutine.
+For example, the very last two swaps could be combined into a single swap.
+We don't attempt these optimizations in cluster computer circuit generator, because the underlying
+circuit compilers in Qiskit are quite good at these kinds of optimizations.
 
 ## The non-distributed (local) implementation of the quantum Fourier transformation
 

@@ -340,10 +340,10 @@ quantum computer generates is quite complex:
 
 We can understand what is happening by breaking the circuit down into five steps:
 
--   Step 1: Swap the control qubit for the controlled-phase gate (proc0_main0) into the teleport on
-    processor 0 (proc0_teleport) in preparation for teleporting it to processor 1.
+-   _Step 1_: Swap the control qubit for the controlled-phase gate (proc0_main0) into the teleport
+    on processor 0 (proc0_teleport) in preparation for teleporting it to processor 1.
 
--   Step 2: Teleport a qubit from processor 0 to processor 1 (proc0_teleport to proc1_teleport).
+-   _Step 2_: Teleport a qubit from processor 0 to processor 1 (proc0_teleport to proc1_teleport).
     Teleportation is implemented using the following sub-steps:
 
     -   Create an entanglement (a |ɸ+> Bell state to be precise) between qubits proc0_entanglement
@@ -358,18 +358,43 @@ We can understand what is happening by breaking the circuit down into five steps
 
     -   Swap proc0_entanglement into proc0_teleport.
 
--   Step 3: Perform the controlled-phase gate locally on processor 1, using the teleport qubit
+-   _Step 3_: Perform the controlled-phase gate locally on processor 1, using the teleport qubit
     proc1_teleport as the control gate, and proc1_main1 as the target gate.
 
--   Step 4: Teleport the control gate proc1_teleport on processor 1 back to proc0_teleport on
+-   _Step 4_: Teleport the control gate proc1_teleport on processor 1 back to proc0_teleport on
     processor 0. The steps are similar to step 2 above.
 
--   Step 5: Teleport the control gate from proc0_teleport back into proc0_main0.
+-   _Step 5_: Teleport the control gate from proc0_teleport back into proc0_main0.
 
 Note that the steps are not optimal because the implementation uses teleportation as a subroutine.
 For example, the very last two swaps could be combined into a single swap.
 We don't attempt these optimizations in cluster computer circuit generator, because the underlying
 circuit compilers in Qiskit are quite good at these kinds of optimizations.
+
+In the following example, we use the cat state method instead of the teleportation method to
+implement a controlled-phase gate between qubits 0 and 3:
+
+```python
+computer = ClusteredQuantumComputer(nr_processors=2, total_nr_qubits=4, method=Method.CAT_STATE)
+computer.controlled_phase(pi/4, 0, 3)
+computer.circuit_diagram()
+```
+
+![two-qubit-gate-global-to-local-mapping-different-processor-using-cat-state](figures/two-qubit-gate-global-to-local-mapping-different-processor-using-cat-state.png)
+
+When using the cat state method to implement the distributed controlled-phase gate, we have
+three steps:
+
+-   _Step 1_: Do a cat-entanglement operation to entangle qubit proc1_entangle on processor 1 with
+    the original control qubit proc0_main0 on processor 0.
+
+-   _Step 2_: Perform the controlled-phase gate locally on processor 0 between the entangled
+    control qubit proc1_entangle and the original target qubit proc1_main1.
+
+-   _Step 3_: Do a cat-disentangle operation to disentangle the original control qubit proc0_main0.
+
+As you can see, the cat state method is simpler than the teleportation method. However, we can
+only use if for controlled-unitary two qubit gates.
 
 ## The non-distributed (local) implementation of the quantum Fourier transformation
 

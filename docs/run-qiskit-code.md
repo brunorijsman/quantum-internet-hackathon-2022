@@ -500,3 +500,66 @@ qft.bloch_multivector()
 ```
 
 ![bloch-multi-vector-for-4-bit-distributed-qft-teleport-with-input-3.png](figures/bloch-multi-vector-for-4-bit-distributed-qft-teleport-with-input-3.png)
+
+## Testing the correctness of the distributed quantum Fourier implementation
+
+If you paid close attention you may have noticed that the Bloch spheres produced by the
+`QFT` class are identical to the Bloch spheres produced by the `DistributedQFT` class.
+
+This is a good thing! It means that the non-distributed and distributed implementation of the
+quantum Fourier transformation produce the same output states given the same input states.
+
+If we had displayed the state vectors instead of the Bloch spheres, this would be less obvious
+because the state vectors produced by non-distributed and distributed implementation differ
+by a global phase factor which can be ignored.
+
+The file `test_qft.py` contains a Pytest automated unit test which tests the correctness of
+our `DistributedQFT` class. There are several test cases, but the most important test case
+is `test_dqft_same_as_qft`. It runs the distributed quantum Fourier transformation for various
+numbers of qubits, various methods, and various input values. For each run, it checks whether
+the state vector produced by the distributed QFT is the same as the state vector produced by the
+non-distributed QFT for the same input value. It uses utility function `state_vectors_are_same`
+which ignores global phase differences and rounding errors when comparing state vectors.
+
+```python
+def test_dqft_same_as_qft():
+    nr_processors = 2
+    test_cases = [
+        (Method.TELEPORT, 2, 2, 0),
+        (Method.TELEPORT, 2, 2, 1),
+        (Method.TELEPORT, 2, 4, 0),
+        (Method.TELEPORT, 2, 4, 3),
+        (Method.TELEPORT, 2, 4, 12),
+        (Method.TELEPORT, 2, 4, 15),
+        (Method.TELEPORT, 2, 6, 3),
+        (Method.TELEPORT, 3, 6, 11),
+        (Method.CAT_STATE, 2, 4, 9),
+    ]
+    for method, nr_processors, total_nr_qubits, input_number in test_cases:
+        qft = QFT(total_nr_qubits)
+        qft.run(input_number)
+        qft_statevector = qft.main_statevector()
+        dqft = DistributedQFT(nr_processors, total_nr_qubits, method)
+        dqft.run(input_number)
+        dqft_statevector = qft.main_statevector()
+        assert state_vectors_are_same(qft_statevector, dqft_statevector)
+```
+
+Running the unit tests indicates that our distributed QFT implementation does indeed produce the
+correct output states:
+
+<pre>
+$ <b>pytest -v .</b>
+================================= test session starts ==================================
+platform darwin -- Python 3.8.14, pytest-7.2.0, pluggy-1.0.0 -- /Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/venv/bin/python3.8
+cachedir: .pytest_cache
+rootdir: /Users/brunorijsman/git-personal/quantum-internet-hackathon-2022/qiskit
+collected 4 items
+
+test_qft.py::test_monolithic_qft_one_qubit PASSED                                [ 25%]
+test_qft.py::test_monolithic_qft_two_qubits PASSED                               [ 50%]
+test_qft.py::test_monolithic_qft_four_qubits PASSED                              [ 75%]
+test_qft.py::test_dqft_same_as_qft PASSED                                        [100%]
+
+================================== 4 passed in 2.18s ===================================
+</pre>

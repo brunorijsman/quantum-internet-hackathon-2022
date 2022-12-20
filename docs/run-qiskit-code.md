@@ -1,5 +1,8 @@
 # The distributed quantum Fourier transformation (DQFT) implementation in Qiskit
 
+In this section we describe the implementation of the distributed quantum Fourier transformation
+in Qiskit.
+
 ## What is Qiskit?
 
 [Qiskit](https://qiskit.org/) is an open-source software development kit (SDK) for working with

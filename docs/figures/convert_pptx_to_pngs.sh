@@ -31,4 +31,3 @@ mv figures-5.png two-qubit-gate-global-to-local-mapping-different-processor-usin
 mv figures-6.png  two-qubit-gate-global-to-local-mapping-different-processor-using-cat-state.png
 mv figures-7.png 4-bit-local-quantum-fourier-transformation.png
 mv figures-8.png bloch-multi-vector-for-4-bit-qft-with-input-3.png
-mv figures-9.png density-matrix-city-plot-for-4-bit-qft-with-input-3.png

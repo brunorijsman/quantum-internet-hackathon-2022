@@ -434,3 +434,35 @@ monolithic quantum computer or for a distributed quantum computer:
 -   If the `computer` argument is a `ClusteredQuantumComputer` object, the circuit will be generated
     for a clustered quantum computer. All necessary teleportations and/or cat states will
     automatically be generated under the hood.
+
+## The monolithic (non-distributed) quantum Fourier transformation
+
+The class `QFT` is a convenience class which represents the quantum Fourier transform running
+on a monolithic (non-distributed) quantum computer.
+
+The implementation is trivial:
+
+```python
+class QFT(MonolithicQuantumComputer):
+
+    def __init__(self, total_nr_qubits, final_swaps=True):
+        MonolithicQuantumComputer.__init__(self, total_nr_qubits)
+        create_qft_circuit(self, final_swaps)
+```
+
+In the following example, we create a 4-qubit QFT, run it with input value 3, and show the result
+as Bloch spheres:
+
+```python
+qft = QFT(total_nr_qubits=4, final_swaps=True)
+qft.run(input_number=3)
+qft.circuit_diagram()
+```
+
+![4-bit-local-quantum-fourier-transformation.png](figures/4-bit-local-quantum-fourier-transformation.png)
+
+```python
+qft.bloch_multivector()
+```
+
+![bloch-multi-vector-for-4-bit-qft-with-input-3.png](figures/bloch-multi-vector-for-4-bit-qft-with-input-3.png)

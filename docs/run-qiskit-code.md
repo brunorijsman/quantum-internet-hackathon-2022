@@ -60,14 +60,27 @@ classes.
 | utils.py            | Common utilities                                                              |
 | examples.py         | Implements examples that are used in the demonstration Jupyter notebooks      |
 
-There are Python modules that implement the three flavors of quantum Fourier transformation.
+There are Python modules that implement the three flavors of quantum Fourier transformation:
+(1) non-distributed, (2) distributed using teleportation, and (3) distributed using cat states.
 
-| File        | Function                                                                    |
-| ----------- | --------------------------------------------------------------------------- |
-| qft.py      | Implements classes `QFT` (non-distributed QFT) and `DQFT` (distributed QFT) |
-| test_qft.py | Unit tests for `qft.py`                                                     |
+The function `create_qft_circuit` creates a quantum circuit that implements the quantum Fourier
+transformation on either a monolothic quantum computer or on a clustered quantum computer.
+The function takes an argument `computer` which can be either a
+`MonolithicQuantumComputer` or a `ClusteredQuantumComputer`.
 
-There are also Jupyter notebooks to demonstrate the code.defines the operations
+The class `QFT` represents a monolithic quantum computer that runs the non-distributed version
+of the quantum Fourier transformation.
+
+The class `DQFT` represents a clustered quantum computer that runs the distributed version of the
+quantum Fourier transformation. The constructor takes a `method` argument which chooses between
+using teleportation or cat states for implementing distributed two-qubit controlled-unitary gates.
+
+| File        | Function                                                                   |
+| ----------- | -------------------------------------------------------------------------- |
+| qft.py      | Implements classes `QFT` and `DQFT`, and the function `create_qft_circuit` |
+| test_qft.py | Unit tests for `qft.py`                                                    |
+
+There are also Jupyter notebooks to demonstrate the code.
 
 | File                              | Function                                                        |
 | --------------------------------- | --------------------------------------------------------------- |

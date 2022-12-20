@@ -71,14 +71,14 @@ The function takes an argument `computer` which can be either a
 The class `QFT` represents a monolithic quantum computer that runs the non-distributed version
 of the quantum Fourier transformation.
 
-The class `DQFT` represents a clustered quantum computer that runs the distributed version of the
+The class `DistributedQFT` represents a clustered quantum computer that runs the distributed version of the
 quantum Fourier transformation. The constructor takes a `method` argument which chooses between
 using teleportation or cat states for implementing distributed two-qubit controlled-unitary gates.
 
-| File        | Function                                                                   |
-| ----------- | -------------------------------------------------------------------------- |
-| qft.py      | Implements classes `QFT` and `DQFT`, and the function `create_qft_circuit` |
-| test_qft.py | Unit tests for `qft.py`                                                    |
+| File        | Function                                                                             |
+| ----------- | ------------------------------------------------------------------------------------ |
+| qft.py      | Implements classes `QFT` and `DistributedQFT`, and the function `create_qft_circuit` |
+| test_qft.py | Unit tests for `qft.py`                                                              |
 
 There are also Jupyter notebooks to demonstrate the code.
 
@@ -87,8 +87,8 @@ There are also Jupyter notebooks to demonstrate the code.
 | monolithic_quantum_computer.ipynb | Demonstrates class `MonolithicQuantumComputer`                  |
 | clustered_quantum_computer.ipynb  | Demonstrates class `DistributedQuantumComputer`                 |
 | qft.ipynb                         | Demonstrates class `QFT`                                        |
-| teleport_distributed_qft.ipynb    | Demonstrates class `DQFT` using teleportation                   |
-| cat_state_distributed_qft.ipynb   | Demonstrates class `DQFT` using cat states                      |
+| teleport_distributed_qft.ipynb    | Demonstrates class `DistributedQFT` using teleportation         |
+| cat_state_distributed_qft.ipynb   | Demonstrates class `DistributedQFT` using cat states            |
 | density_matrices.ipynb            | Some basic examples of density matrices                         |
 | just_crotz.ipynb                  | Some basic examples of controlled rotation-Z                    |
 | find_period.ipynb                 | An example quantum circuit for finding the period of a function |
@@ -466,3 +466,37 @@ qft.bloch_multivector()
 ```
 
 ![bloch-multi-vector-for-4-bit-qft-with-input-3.png](figures/bloch-multi-vector-for-4-bit-qft-with-input-3.png)
+
+## The clustered (distributed) quantum Fourier transformation
+
+The class `DistributedQFT` is a convenience class which represents the quantum Fourier transform running
+on a clustered (distributed) quantum computer.
+
+Once again, the implementation is trivial. Note that this implementation uses the exact same
+`create_qft_circuit` function as the monolithic implementation:
+
+```python
+class DistributedQFT(ClusteredQuantumComputer):
+
+    def __init__(self, nr_processors, total_nr_qubits, method, final_swaps=True):
+        ClusteredQuantumComputer.__init__(self, nr_processors, total_nr_qubits, method)
+        create_qft_circuit(self, final_swaps)
+
+```
+
+In the following example, we create a 4-qubit DistributedQFT using the teleport method, run it
+with input value 3, and show the result as Bloch spheres:
+
+```python
+qft = DistributedQFT(nr_processors=2, total_nr_qubits=4, method=Method.TELEPORT)
+qft.run(input_number=3)
+qft.circuit_diagram()
+```
+
+![4-bit-distributed-quantum-fourier-transformation-using-teleportation.png](figures/4-bit-distributed-quantum-fourier-transformation-using-teleportation.png)
+
+```python
+qft.bloch_multivector()
+```
+
+![bloch-multi-vector-for-4-bit-distributed-qft-teleport-with-input-3.png](figures/bloch-multi-vector-for-4-bit-distributed-qft-teleport-with-input-3.png)

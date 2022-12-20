@@ -26,25 +26,33 @@ We implement three different versions of the quantum Fourier transformation (QFT
     We use this as a reference to check whether the results of the two distributed versions
     are correct.
 
-2.  A distributed version of the quantum Fourier transformation based on teleportation.
+2.  A distributed version of the quantum Fourier transformation using teleportation.
 
-3.  A distributed version of the quantum Fourier transformation based on cat states.
+3.  A distributed version of the quantum Fourier transformation using cat states.
 
 ## Installation instructions
 
 Follow
 [these installation instructions](installation.md)
-to install the quantum Fourier transformation implementations, Qiskit, and other dependencies.
+to install our implementation of the quantum Fourier distribution in Qiskit and the
+dependencies.
 
 ## Directory structure
 
-The Qiskit implementation of the distributed quantum Fourier transformation is stored in the
-[`qiskit`](../qiskit/) subdirectory of this repository.
+The [`qiskit`](../qiskit/) subdirectory of this repository contains the implementation of the
+distributed quantum Fourier transformation in Qiskit.
 
-There are Python modules that implement abstractions of quantum computers on which to run the
-quantum Fourier transformation algorithm.
+There are Python modules that implement abstractions of quantum computers.
 The class `MonolithicQuantumComputer` abstracts a monolithic (non-distributed) quantum computer.
 The class `ClusteredQuantumComputer` abstracts a clustered (distributed) quantum computer.
+
+These classes are designed in such a way that you can implement a quantum algorithm once, and then
+choose to run it on the monolithic or on the clustered quantum computer without any changes to
+the a algorithm code.
+
+We have implemented the quantum Fourier transformation algorithm to run on these quantum computers.
+However, you can also implement other quantum algorithms to run on these same quantum computer
+classes.
 
 | File                | Function                                                                      |
 | ------------------- | ----------------------------------------------------------------------------- |

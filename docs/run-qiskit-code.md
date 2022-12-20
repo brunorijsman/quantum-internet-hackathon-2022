@@ -176,58 +176,122 @@ of how to use the class `MonolithicQuantumComputer`.
 
 ## Class `ClusteredQuantumComputer`
 
-The class `ClusteredQuantumComputer` models a clustered (i.e. distributed) quantum computer.
+The class `ClusteredQuantumComputer` models a clustered (i.e. distributed) quantum computer that
+consists of multiple processors connected by an entanglement-based quantum interconnect.
 
-The clustered quantum computer consists of several processors connected by an entanglement-based
-quantum network.
+To the quantum algorithms running on the computer, the class `ClusteredQuantumComputer` provides the
+illusion that the clustered quantum computer has a uniform set of global qubits, indexed 0 thru
+`total_nr_qubits`-1.
 
-The `ClusteredQuantumComputer` takes the following parameters:
+The algorithm can perform a single-qubit gate on any global qubit and a two-qubit gate on any pair
+of global qubits, without needing to worry whether those two qubits are located on the same or on
+different processors.
+
+The `ClusteredQuantumComputer` constructor takes the following arguments:
 
 -   `nr_processors`: The number of quantum processors in the cluster.
 
--   `total_nr_qubits`: The total number of main qubits in the cluster. This must be a multiple of
-    `nr_processors`.
+-   `total_nr_qubits`: The total number of qubits in the cluster. This must be a multiple of
+    `nr_processors` so that the qubits can be evenly divided across the processors.
 
 -   `method`: The method that is used to implement distributed controlled-unitary gates, either
     `Method.TELEPORT` or `Method.CAT_STATE`
 
-Each processor in the cluster is modeled by a `ProcessorInClusteredQuantumComputer` object.
+The following example creates a clustered quantum computer and defines an example circuit with some
+single-qubit and two-qubit gates.
 
-Each processor has the following qubits and classical bits:
+```python
+nr_processors = 2
+total_nr_qubits = 4
+method = Method.TELEPORT
+computer = ClusteredQuantumComputer(nr_processors, total_nr_qubits, method)
 
--   The **main** qubits store the state for the quantum algorithm.
+computer.hadamard(0)
+computer.controlled_phase(pi/8, 0, 1)
+computer.controlled_phase(pi/4, 0, 2)
+computer.swap(0, 3)
+```
 
--   The **ancillary** qubits are used for quantum communication between the processors:
+Note that we used the exact same function calls to create the circuit as in the example for
+the monolithic quantum computer above.
+In other words, you can write a quantum algorithm once and run it either on a monolithic or
+distributed quantum computer without making any change to the code.
 
-    -   The **entanglement** qubit holds one half of an entanglement with another processor.
-        The entanglement is used to teleport another qubit or to entangle a cat state.
+Under the hood, each processor in the cluster is modeled by a `_ProcessorInClusteredQuantumComputer`
+object. Note that the class name starts with an underscore; it is a private class used internally
+in the implementation that is not intended to be used by algorithm developers.
 
-    -   The **teleport** qubit is used to temporarily store the sent or received qubit during
-        teleportation.
+The processors are indexed 0 thru `nr_processors`-1.
 
--   The classical **measurement** bits are used to measured classical bits during teleportation,
-    cat state entanglement, or cat state dis-entanglement.
+Each processor has a set of local qubits, indexed 0 thru `nr_qubits_per_processor`-1
+where `nr_qubits_per_processor` = `total_nr_qubits` / `nr_processors`.
 
-In the following example we have a clustered quantum computer with two processors (Alice and Bob).
-There is a total of 4 main qubits, 2 on each of the processors. Each processor also has some
-ancillary qubits and classical bits for communication.
+It is very easy to map a global qubit index to a combination of a processor index and a local
+qubit index:
 
-![Quantum Processor Registers](figures/quantum-processor-registers.png)
+```python
+processor_index = global_qubit_index // nr_qubits_per_processor
+local_qubit_index = global_qubit_index % nr_qubits_per_processor
+```
 
-> > >
+When the `ClusteredQuantumComputer` is asked to perform a single qubit gate on a global qubit,
+it simply maps the global qubit index to a processor index and a local qubit index on that
+processor, and then executes the single qubit gate on that local qubit.
 
-To the algorithm, the class `ClusteredQuantumComputer` provides the illusion that the clustered
-quantum computer has a set of logical qubits, indexed 0 thru `total_nr_qubits`-1. The algorithm
-can perform a single-qubit gate on any logical qubit and a two-qubit gate on any pair of logical
-qubits.
+In the following example, we can see that global qubit index 2 is mapped to processor index 1
+and local qubit index 0 (we have deleted some details from the circuit diagram that will be
+explained later):
 
-Under the hood, the qubits are actually distributed across the multiple processors. For the sake of
-this explanation we will call these concrete qubits.
+```python
+computer = ClusteredQuantumComputer(nr_processors=2, total_nr_qubits=4, method=Method.TELEPORT)
+computer.hadamard(2)
+display(computer.circuit_diagram())
+```
 
-When the algorithm performs a gate operation on one or two logical qubits, it is the job of
-the `ClusteredQuantumComputer` class is to map the logical qubits to the underlying concrete
-qubit and then to perform the operation on those underlying concrete qubits. In the Python
-code this is called mapping the global qubit index to a local qubit index.
+![single-qubit-gate-global-to-local-mapping](figures/single-qubit-gate-global-to-local-mapping.png)
+
+Things get more interesting when the `ClusteredQuantumComputer` is asked to perform a two-qubit
+gate.
+
+First, clustered quantum computer maps the global qubit index of each involved qubit to a processor
+index and a local qubit index.
+
+If both qubits happen to be mapped to the same processor, the clustered quantum computer simply
+executes the two qubit gate locally on that processor.
+
+In the following example, we perform a controlled-phase operation between global qubits 2 and 3.
+These happen to be located on the same processor, so we can perform the gate locally on that
+processor.
+
+```python
+computer = ClusteredQuantumComputer(nr_processors=2, total_nr_qubits=4, method=Method.TELEPORT)
+computer.controlled_phase(pi/4, 2, 3)
+display(computer.circuit_diagram())
+```
+
+![two-qubit-gate-global-to-local-mapping-same-processor](figures/two-qubit-gate-global-to-local-mapping-same-processor.png)
+
+If the two qubits are not located on the same processor, the clustered quantum computer implements
+the two qubit gate in a distributed manner.
+
+For controlled-unitary gates (of which controlled-phase is an example), there are two different
+methods for implementing the gate in a distributed manner:
+
+-   Using **teleportation**:
+
+    -   Teleport one qubit, so that both qubits are located on the same processor.
+    -   Perform the two qubit gate locally on that processor.
+    -   Teleport the qubit back to its original processor.
+
+-   Using **cat states**:
+
+    -   Perform a cat-entangle operation to create an additional entangled control qubit on the same
+        processor as the target qubit.
+    -   Perform the two qubit gate locally on that processor.
+    -   Perform a cat-disentangle operation to disentangle the additional control qubit.
+
+For two qubit gates which are not controlled-unitary gates (e.g. a swap gate) we always use
+the teleportation method.
 
 The details of how this mapping takes place are as follows:
 
@@ -258,6 +322,28 @@ The details of how this mapping takes place are as follows:
         create a cat state to create an entangled control qubit on the same processor as the
         target processor, then we perform the controlled unitary operational locally on that
         processor, and then we dis-entangle the control qubit.
+
+Each processor is modeled by a `ProcessorInClusteredQuantumComputer` object
+and has the following qubits and classical bits:
+
+-   The **main** qubits store the state for the quantum algorithm.
+
+-   The **ancillary** qubits are used for quantum communication between the processors:
+
+    -   The **entanglement** qubit holds one half of an entanglement with another processor.
+        The entanglement is used to teleport another qubit or to entangle a cat state.
+
+    -   The **teleport** qubit is used to temporarily store the sent or received qubit during
+        teleportation.
+
+-   The classical **measurement** bits are used to measured classical bits during teleportation,
+    cat state entanglement, or cat state dis-entanglement.
+
+In the following example we have a clustered quantum computer with two processors (Alice and Bob).
+There is a total of 4 main qubits, 2 on each of the processors. Each processor also has some
+ancillary qubits and classical bits for communication.
+
+![Quantum Processor Registers](figures/quantum-processor-registers.png)
 
 ## The non-distributed (local) implementation of the quantum Fourier transformation
 
@@ -567,3 +653,7 @@ The constructor for the `Processor` class takes the following arguments:
 When you instantiate a `Processor` object, the constructor creates the all the quantum and
 classical registers for the processor and adds them to the one and only Qiskit quantum circuit
 for the cluster.
+
+```
+
+```

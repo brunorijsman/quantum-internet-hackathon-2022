@@ -246,7 +246,7 @@ class Method(Enum):
     """
 
 
-class ProcessorInClusteredQuantumComputer:
+class _ProcessorInClusteredQuantumComputer:
     """
     A single quantum processor within a cluster of quantum processors that collectively run a
     distributed quantum computation.
@@ -269,11 +269,7 @@ class ProcessorInClusteredQuantumComputer:
         self.method = method
         self.qc = cluster.qc
         self.index = index
-        names = ["alice", "bob", "charlie", "david", "eve", "frank", "george", "harry"]
-        if index > len(names):
-            self.name = str(index)
-        else:
-            self.name = names[index]
+        self.name = f"proc{str(index)}"
         self.main_reg = QuantumRegister(nr_qubits, f"{self.name}_main")
         self.qc.add_register(self.main_reg)
         self.entanglement_reg = QuantumRegister(1, f"{self.name}_entanglement")
@@ -533,7 +529,7 @@ class ClusteredQuantumComputer(QuantumComputer):
         self.nr_qubits_per_processor = total_nr_qubits // nr_processors
         self.processors = {}
         for processor_index in range(nr_processors):
-            self.processors[processor_index] = ProcessorInClusteredQuantumComputer(
+            self.processors[processor_index] = _ProcessorInClusteredQuantumComputer(
                 self, processor_index, self.nr_qubits_per_processor, method
             )
 

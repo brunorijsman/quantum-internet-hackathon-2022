@@ -24,7 +24,9 @@ magick convert -density 300 -units pixelsperinch -trim +profile "icc" figures.pd
 echo "Renaming files"
 mv figures-0.png monolithic-quantum-computer-circuit-example.png
 mv figures-1.png monolithic-quantum-computer-city-plot.png
-mv figures-2.png quantum-processor-registers.png
-mv figures-3.png 4-bit-local-quantum-fourier-transformation.png
-mv figures-4.png bloch-multi-vector-for-4-bit-qft-with-input-3.png
-mv figures-5.png density-matrix-city-plot-for-4-bit-qft-with-input-3.png
+mv figures-2.png single-qubit-gate-global-to-local-mapping.png
+mv figures-3.png two-qubit-gate-global-to-local-mapping-same-processor.png
+mv figures-4.png quantum-processor-registers.png
+mv figures-5.png 4-bit-local-quantum-fourier-transformation.png
+mv figures-6.png bloch-multi-vector-for-4-bit-qft-with-input-3.png
+mv figures-7.png density-matrix-city-plot-for-4-bit-qft-with-input-3.png

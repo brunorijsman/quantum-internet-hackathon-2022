@@ -1,7 +1,12 @@
 ![All checks](https://github.com/brunorijsman/quantum-internet-hackathon-2022/actions/workflows/actions.yaml/badge.svg)
 
-If you are impatient and just want to run the code, jump ahead to the
-[running the code](#running-the-code) section.
+This document is published at
+[https://brunorijsman.github.io/quantum-internet-hackathon-2022/](https://brunorijsman.github.io/quantum-internet-hackathon-2022/).
+
+If you are impatient and just want to see the code, jump ahead to the
+[Qiskit implementation](docs/qiskit-implementation.md)
+or the
+[QNE ADK implementation](docs/qne-adk-implementation.md).
 
 # RIPE Labs Quantum Internet Hackathon 2022
 
@@ -13,17 +18,16 @@ on 1 and 2 December 2022.
 
 # Team Q-Harmonics
 
-Team Q-Harmonics participates in the quantum hackathon; it consists of the following members
-(in alphabetical order):
+Team Q-Harmonics participates in the quantum hackathon; it consists of the following members:
 
 | Name             | LinkedIn                                                         | GitHub                                       |
 | ---------------- | ---------------------------------------------------------------- | -------------------------------------------- |
+| Bruno Rijsman    | [LinkedIn](https://www.linkedin.com/in/brunorijsman/)            | [GitHub](https://github.com/brunorijsman)    |
+| Tyler Cowan      | [LinkedIn](https://www.linkedin.com/in/tyler-cowan/)             | [GitHub](https://github.com/tylergcowan)     |
+| Sai Ganesh Manda | [LinkedIn](https://www.linkedin.com/in/sai-ganesh-manda-bo2002/) | [GitHub](https://github.com/mvsg2)           |
 | Abdullah K       |                                                                  | [GitHub](https://github.com/AbdullahKazi500) |
 | B Akash Reddy    | [LinkedIn](https://www.linkedin.com/in/akash-reddy-501909250/)   | [GitHub](https://github.com/Akash6300)       |
-| Bruno Rijsman    | [LinkedIn](https://www.linkedin.com/in/brunorijsman/)            | [GitHub](https://github.com/brunorijsman)    |
 | Kiran Kaur       | [LinkedIn](https://www.linkedin.com/in/kiran-kaur-b2922622a/)    | [GitHub](https://github.com/KyranKaur)       |
-| Sai Ganesh Manda | [LinkedIn](https://www.linkedin.com/in/sai-ganesh-manda-bo2002/) | [GitHub](https://github.com/mvsg2)           |
-| Tyler Cowan      | [LinkedIn](https://www.linkedin.com/in/tyler-cowan/)             | [GitHub](https://github.com/tylergcowan)     |
 
 The name of the team, Q-Harmonics (for Quantum Harmonics) was chosen because we will be working
 on the quantum Fourier transformation. The Fourier transformation is also known as
@@ -142,7 +146,7 @@ part of the problem.
 We will be implementing our distributed quantum Fourier transformation on two different simulation
 platforms: Qiskit and QNE-ADK (both are described in more detail below).
 
-# Qiskit Implementation
+# [Qiskit Implementation](docs/qiskit-implementation.md)
 
 [Qiskit](https://qiskit.org/) is an open-source software development kit (SDK) for working with
 quantum computers at the level of pulses, circuits, and application modules.
@@ -161,13 +165,12 @@ Fourier transformation:
 
 3.  A distributed version of the quantum Fourier transformation based on cat states.
 
-Read the
-[viewing and running the team Q-Harmonics Qiskit related code](docs/run-qiskit-code.md)
-for more details on Qiskit and for more details on the team Q-Harmonics implementation of
-the distributed quantum Fourier transformation in Qiskit (including the structure of the code
-and instructions on how to install and run the code).
+See the
+[Qiskit implementation](docs/qiskit-implementation.md)
+chapter for more details on our implementation of the distributed quantum Fourier transformation in
+Qiskit.
 
-# QNE-ADK Implementation
+# [QNE-ADK implementation](docs/qne-adk-implementation.md)
 
 The [Quantum Network Explorer (QNE)](https://www.quantum-network.com/)
 is a platform provided by
@@ -181,25 +184,7 @@ allows users to develop quantum applications that run on the quantum network exp
 In this project we port the three implementation of the Quantum fourier transformation (see above)
 from Qiskit to QNE-ADK.
 
-# Running the code
-
-Enough theory talk! Let's get our hands dirty and actually run some code!
-
-## Installation instructions
-
-Read the
-[installation instructions](docs/installation.md)
-for instructions on how to download and install the team Q-Harmonics code and its
-dependencies.
-
-## Running the distributed quantum Fourier transformation implemented in Qiskit
-
-A description of how the distributed quantum Fourier transformation is implemented in **Qiskit** and
-instructions on how to run the Qiskit-based DQFT code cand be found [here](docs/run-qiskit-code.md).
-
-## Running the distributed quantum Fourier transformation implemented in QNE-ADK
-
-A description of how the distributed quantum Fourier transformation is implemented in
-the **Quantum Network Explorer (QNE) Application Development Kit (ADK)** and
-instructions on how to run the QNE-ADK-based DQFT code cand be found
-[here](docs/run-qne-adk-code.md).
+See the
+[QNE-ADK implementation](docs/qne-adk-implementation.md)
+chapter for more details on our implementation of the distributed quantum Fourier transformation
+in QNE-ADK.

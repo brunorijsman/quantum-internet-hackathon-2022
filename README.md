@@ -1,8 +1,5 @@
 ![All checks](https://github.com/brunorijsman/quantum-internet-hackathon-2022/actions/workflows/actions.yaml/badge.svg)
 
-This document is published at
-[https://brunorijsman.github.io/quantum-internet-hackathon-2022/](https://brunorijsman.github.io/quantum-internet-hackathon-2022/).
-
 If you are impatient and just want to see the code, jump ahead to the
 [Qiskit implementation](docs/qiskit-implementation.md)
 or the
@@ -10,15 +7,19 @@ or the
 
 # RIPE Labs Quantum Internet Hackathon 2022
 
-The
+<img src="docs/figures/quantum-internet-hackathon-2022-logo.png" width="300"/>
+
+On 1 and 2 December 2022 the
 [Réseaux IP Européens (RIPE) Network Coordination Center (NCC)](https://www.ripe.net/)
-is co-organizing the
-[Quantum Internet Hackathon (QIH) 2022](https://labs.ripe.net/author/karla-white/take-part-in-the-quantum-internet-hackathon-2022/)
-on 1 and 2 December 2022.
+organized the
+[Quantum Internet Hackathon (QIH) 2022](https://labs.ripe.net/author/karla-white/take-part-in-the-quantum-internet-hackathon-2022/).
+Teams from five European cities (Amsterdam, Dublin, Padua, Sarajevo and Poznan) as well as online
+teams worked on quantum networking related projects.
 
 # Team Q-Harmonics
 
-Team Q-Harmonics participates in the quantum hackathon; it consists of the following members:
+Team Q-Harmonics was one of the online teams that participated in the 2022 Quantum Internet
+Hackathon. The members of the team were:
 
 | Name             | LinkedIn                                                         | GitHub                                       |
 | ---------------- | ---------------------------------------------------------------- | -------------------------------------------- |
@@ -29,23 +30,31 @@ Team Q-Harmonics participates in the quantum hackathon; it consists of the follo
 | B Akash Reddy    | [LinkedIn](https://www.linkedin.com/in/akash-reddy-501909250/)   | [GitHub](https://github.com/Akash6300)       |
 | Kiran Kaur       | [LinkedIn](https://www.linkedin.com/in/kiran-kaur-b2922622a/)    | [GitHub](https://github.com/KyranKaur)       |
 
-The name of the team, Q-Harmonics (for Quantum Harmonics) was chosen because we will be working
-on the quantum Fourier transformation. The Fourier transformation is also known as
+# The Distributed Quantum Fourier Transformation
+
+The project that we chose for the hackathon was to implement a distributed version of the
+quantum Fourier transformation that runs on a cluster of small quantum computers connected by
+an entanglement-based quantum network.
+We did three different implementations: one using
+[Qiskit](docs/qiskit-implementation.md),
+one using
+[QNE-ADK](docs/qne-adk-implementation.md), and one using
+Pennylane.
+
+The name of the team, Q-Harmonics (for Quantum Harmonics) was chosen because the Fourier
+transformation is also known as
 [harmonic analysis](https://en.wikipedia.org/wiki/Harmonic_analysis).
-
-# Team Project: Distributed Quantum Fourier Transformation
-
-The team Q-Harmonics project for the QIH 2022 hackathon is to implement a distributed version of
-the Quantum Fourier Transformation (QFT) on two different simulation platforms, namely Qiskit
-and QNE-ADK.
 
 # This GitHub Repository
 
-GitHub repository
+This GitHub repository
 [https://github.com/brunorijsman/quantum-internet-hackathon-2022/](https://github.com/brunorijsman/quantum-internet-hackathon-2022/)
 contains all code and documentation that team Q-Harmonics produced
 for the hackathon.
 Everything is open source (Apache 2.0 license).
+
+The documentation in this GitHub repository is also published on GitHub pages:
+[https://brunorijsman.github.io/quantum-internet-hackathon-2022/](https://brunorijsman.github.io/quantum-internet-hackathon-2022/).
 
 # The Quantum Fourier Transformation (QFT)
 
@@ -96,6 +105,9 @@ Academia and industry are pursuing several different approaches to overcome this
     of smaller quantum computers that are interconnected by a quantum network (as opposed to a large
     monolithic quantum computer).
 
+In this project we explore the path of using distributed quantum computing by implementing a
+distributed version of the quantum Fourier transformation.
+
 The following blogs and papers discuss distributed quantum computing:
 
 -   [Distributed Quantum Computing: A path to large scale quantum computing](https://medium.com/@stephen.diadamo/distributed-quantum-computing-1c5d38a34c50)
@@ -108,10 +120,6 @@ The goal of this project is to implement a _distributed_ version of the quantum 
 transformation.
 
 We want to compute the quantum Fourier transform on an _N_ qubit input value.
-
-We pretend that we only have access to quantum computers that have fewer than _N_ qubits of memory.
-(I say pretend because in our project we will use only small values of _N_ due to limitations
-of the simulators that we will be using.)
 
 We are going to distribute the quantum Fourier transform computation over _M_ separate smaller
 quantum processors, where each quantum processor has _N/M_ qubit memories plus a few extra qubit
@@ -139,12 +147,12 @@ Some existing resources that describe the distributed quantum Fourier transforma
 -   [PhD thesis "Architecture of a Quantum Multicomputer Optimized for Shor's Factoring Algorithm"
     by Rodney van Meter.](https://arxiv.org/pdf/quant-ph/0607065.pdf)
 
-Note that some of these papers discuss a distributed implementation of Shor's algorithm. This
-includes as a sub-problem a distributed quantum Fourier transformation, which is the easiest
-part of the problem.
+Some of these papers discuss a distributed implementation of Shor's algorithm.
+The quantum Fourier transformation is one of the steps in Shor's algorithm (not the most
+difficult step).
 
-We will be implementing our distributed quantum Fourier transformation on two different simulation
-platforms: Qiskit and QNE-ADK (both are described in more detail below).
+We will be implementing our distributed quantum Fourier transformation on three different simulation
+platforms: Qiskit, QNE-ADK, and Pennylane (all are described in more detail below).
 
 # [Qiskit Implementation](docs/qiskit-implementation.md)
 

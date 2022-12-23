@@ -39,6 +39,7 @@
         "pytest",
         "QASM",
         "QFT",
+        "QMPI",
         "qnode",
         "qobj",
         "Qubit",

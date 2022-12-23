@@ -114,6 +114,10 @@ The following blogs and papers discuss distributed quantum computing:
 
 -   [D-NISQ: A reference model for Distributed Noisy Intermediate-Scale Quantum computers](https://www.sciencedirect.com/science/article/pii/S1566253522000951)
 
+-   [Generalized GHZ States and Distributed Quantum Computing](https://arxiv.org/pdf/quant-ph/0402148)
+
+-   [Distributed Quantum Computing with QMPI](https://arxiv.org/pdf/2105.01109.pdf)
+
 # The Distributed Quantum Fourier Transformation (DQFT)
 
 The goal of this project is to implement a _distributed_ version of the quantum Fourier
@@ -140,9 +144,6 @@ We will be using two approaches for implementing the distributed quantum Fourier
     state.
 
 Some existing resources that describe the distributed quantum Fourier transformation include:
-
--   [ArXiv paper "Generalized GHZ States and Distributed Quantum Computing" by
-    Anocha Yimsiriwattana and Samuel J. Lomonaco Jr.](https://arxiv.org/pdf/quant-ph/0402148)
 
 -   [ArXiv paper "Distributed quantum computing: A distributed Shor algorithm" by
     Anocha Yimsiriwattana and Samuel J. Lomonaco Jr.](https://arxiv.org/abs/quant-ph/0403146)

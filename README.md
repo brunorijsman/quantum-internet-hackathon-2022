@@ -141,6 +141,9 @@ We will be using two approaches for implementing the distributed quantum Fourier
 
 Some existing resources that describe the distributed quantum Fourier transformation include:
 
+-   [ArXiv paper "Generalized GHZ States and Distributed Quantum Computing" by
+    Anocha Yimsiriwattana and Samuel J. Lomonaco Jr.](https://arxiv.org/pdf/quant-ph/0402148)
+
 -   [ArXiv paper "Distributed quantum computing: A distributed Shor algorithm" by
     Anocha Yimsiriwattana and Samuel J. Lomonaco Jr.](https://arxiv.org/abs/quant-ph/0403146)
 

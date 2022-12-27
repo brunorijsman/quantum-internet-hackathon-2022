@@ -1,8 +1,68 @@
+# The distributed quantum Fourier transformation (DQFT) implementation in QNE-ADK
+
+In this section we describe our implementation of the distributed quantum Fourier transformation
+in the Quantum Network Explorer Application Development Kit (QNE-ADK).
+
+## What is QNE-ADK
+
+The
+[Quantum Network Explorer (QNE)](https://www.quantum-network.com/)
+is a website that teaches the fundamentals of quantum networking.
+It is published by
+[QuTech](https://qutech.nl/),
+a world-leading research institute for quantum computing and the quantum Internet
+based in the Netherlands.
+
+In addition to tutorials, QNE also offers an
+[Application Development Kit (ADK)](https://www.quantum-network.com/adk/)
+which allows users to develop their own quantum network applications.
+
+QNE-ADK uses NetQASM to provide the application programming interface (API) for quantum network
+application developers. NetQASM is a Python module and the applications are developed in Python.
+
+NetQASM is based on QASM, a family of assembly-level programming languages for
+quantum computers.
+[OpenQASM](https://github.com/openqasm/openqasm#readme) is one example of a language in this
+family.
+
+NetQASM extends QASM by also providing quantum networking primitives in addition to
+quantum computing primitives.
+One example of such an extension is a primitive to create entanglement between two nodes in
+the network.
+
+You can find more detailed information about NetQASM in:
+
+-   ArXiv paper
+    [NetQASM: A low-level instruction set architecture for hybrid quantum-classical programs in a quantum internet](https://arxiv.org/abs/2111.09823)
+-   [The NetQASM GitHub repository](https://github.com/QuTech-Delft/netqasm)
+-   [The NetQASM read-the-docs documentation page](https://netqasm.readthedocs.io/en/latest/).
+
+QNE-ADK also provides a suite of command line tools to:
+
+-   Manage the life cycle of quantum network applications.
+-   Run applications locally on your computer.
+-   Upload applications to the QNE-ADK cloud and run them there.
+-   Publish applications and make them available to other users of QNE-ADK.
+
+These command line tools are documented in the
+[QNE-ADK user guide](https://www.quantum-network.com/knowledge-base/qne-quantum-application-development-kit-adk/).
+
+Currently, QNE-ADK uses simulated quantum networks to run the applications.
+
+According to the
+[NetSquid documentation](https://github.com/QuTech-Delft/netqasm)
+it is possible to use either
+[NetSquid]()
+or
+[SimulaQron]()
+as the simulator backend, although it seems that NetSquid is much better supported than SimulaQron.
+We only used the NetSquid backend.
+
 # Running the distributed quantum Fourier transformation implemented in QNE-ADK
 
 This is just a minimal place holder so that everyone can try running a basic QNE-ADK program.
 
-I am assuming that the environment variable `QIH_2022_ROOT` is set to the 
+I am assuming that the environment variable `QIH_2022_ROOT` is set to the
 directory where we cloned our repositories (see the
 [installation instructions](docs/installation.md)
 for details).

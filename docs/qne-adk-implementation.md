@@ -30,7 +30,7 @@ quantum computing primitives.
 One example of such an extension is a primitive to create entanglement between two nodes in
 the network.
 
-You can find more detailed information about NetQASM in:
+You can find information about NetQASM in:
 
 -   ArXiv paper
     [NetQASM: A low-level instruction set architecture for hybrid quantum-classical programs in a quantum internet](https://arxiv.org/abs/2111.09823)
@@ -52,11 +52,19 @@ Currently, QNE-ADK uses simulated quantum networks to run the applications.
 According to the
 [NetSquid documentation](https://github.com/QuTech-Delft/netqasm)
 it is possible to use either
-[NetSquid]()
+[NetSquid](https://netsquid.org/)
 or
-[SimulaQron]()
+[SimulaQron](http://www.simulaqron.org/)
 as the simulator backend, although it seems that NetSquid is much better supported than SimulaQron.
 We only used the NetSquid backend.
+
+You can find information about NetSquid in:
+
+-   Nature paper
+    [NetSquid, a NETwork Simulator for QUantum Information using Discrete events](https://www.nature.com/articles/s42005-021-00647-8).
+-   [The NetSquid website](https://netsquid.org/).
+-   [The NetSquid documentation](https://docs.netsquid.org/latest-release/)
+    (requires registration).
 
 # Running the distributed quantum Fourier transformation implemented in QNE-ADK
 

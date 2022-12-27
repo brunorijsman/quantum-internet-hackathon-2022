@@ -66,6 +66,10 @@ You can find information about NetSquid in:
 -   [The NetSquid documentation](https://docs.netsquid.org/latest-release/)
     (requires registration).
 
+TODO: Describe SquidASM
+
+TODO: Mention the real quantum network and the Quantum Internet Alliance
+
 # Running the distributed quantum Fourier transformation implemented in QNE-ADK
 
 This is just a minimal place holder so that everyone can try running a basic QNE-ADK program.

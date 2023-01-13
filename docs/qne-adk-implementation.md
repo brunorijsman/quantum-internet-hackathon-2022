@@ -131,6 +131,138 @@ QNE-ADK, namely:
 
 We will walk you through the code and show you how to run it for the teleport example.
 
+In the teleport example, we have two nodes: sender and receiver.
+
+The code for the sender is in file
+[`app_sender.py`](../qne_adk/teleport/src/app_sender.py):
+
+```python
+from netqasm.logging.output import get_new_app_logger
+from netqasm.sdk import EPRSocket, Qubit
+from netqasm.sdk.classical_communication.message import StructuredMessage
+from netqasm.sdk.external import NetQASMConnection, Socket, get_qubit_state
+from netqasm.sdk.toolbox import set_qubit_state
+
+
+def main(phi, theta, app_config=None):
+
+    app_logger = get_new_app_logger(app_name=app_config.app_name,
+                                    log_config=app_config.log_config)
+    app_logger.log("sender starts")
+
+    app_logger.log("sender creates classical socket")
+    socket = Socket("sender", "receiver", log_config=app_config.log_config)
+
+    app_logger.log("sender creates quantum socket")
+    epr_socket = EPRSocket("receiver")
+
+    app_logger.log("sender creates qasm connection")
+    sender = NetQASMConnection("sender",
+                               log_config=app_config.log_config,
+                               epr_sockets=[epr_socket])
+
+    with sender:
+
+        app_logger.log("sender creates qubit to teleport")
+        q = Qubit(sender)
+        set_qubit_state(q, phi, theta)
+        sender.flush()
+
+        dm = get_qubit_state(q)
+        app_logger.log(f"sender density matrix of teleported qubit is {dm}")
+        sender.flush()
+
+        app_logger.log("sender creates entanglement with receiver")
+        q_ent = epr_socket.create_keep()[0]
+
+        app_logger.log("sender performs teleportation")
+        q.cnot(q_ent)
+        q.H()
+        m1 = q.measure()
+        m2 = q_ent.measure()
+
+    correction = (int(m1), int(m2))
+    app_logger.log(f"sender sends correction message {correction} to receiver")
+    socket.send_structured(StructuredMessage("correction", correction))
+
+    return "sender finishes"
+```
+
+The code for the receiver is in file
+[`app_receiver.py`](../qne_adk/teleport/src/app_receiver.py):
+
+```python
+from netqasm.logging.output import get_new_app_logger
+from netqasm.sdk.external import NetQASMConnection, Socket, get_qubit_state
+from netqasm.sdk import EPRSocket
+
+
+def main(app_config=None):
+
+    app_logger = get_new_app_logger(app_name=app_config.app_name,
+                                    log_config=app_config.log_config)
+    app_logger.log("receiver starts")
+
+    app_logger.log("receiver creates classical socket")
+    socket = Socket("receiver", "sender", log_config=app_config.log_config)
+
+    app_logger.log("receiver creates quantum socket")
+    epr_socket = EPRSocket("sender")
+
+    app_logger.log("receiver creates qasm connection")
+    receiver = NetQASMConnection("receiver",
+                                 log_config=app_config.log_config,
+                                 epr_sockets=[epr_socket])
+
+    with receiver:
+
+        app_logger.log("receiver creates entanglement with sender")
+        q_ent = epr_socket.recv_keep()[0]
+        receiver.flush()
+
+        m1, m2 = socket.recv_structured().payload
+        app_logger.log(f"receiver receives correction ({m1}, {m2}) from sender")
+
+        if m2 == 1:
+            app_logger.log("receiver performs X correction")
+            q_ent.X()
+        else:
+            app_logger.log("receiver does not perform X correction")
+        if m1 == 1:
+            app_logger.log("receiver performs Z correction")
+            q_ent.Z()
+        else:
+            app_logger.log("receiver does not perform Z correction")
+        receiver.flush()
+
+        dm = get_qubit_state(q_ent)
+        app_logger.log(f"receiver density matrix of teleported qubit is {dm}")
+
+    return "receiver finishes"
+```
+
+In this code:
+
+-   Sender and receiver each create a `Socket` for exchanging classical messages.
+
+-   Sender and receiver each create an `EPRSocket` and a `NetQASMConnection` for creating
+    entangled qubit pairs.
+
+-   Sender creates a qubit `q` which will be teleported to receiver later on.
+    The state is determined by the `phi` and `theta` parameters passed to the `main` function.
+
+-   Sender creates an entangled qubit pair by calling `epr_socket.create()`.
+    One of the qubits is sent to receiver and the other is stored locally in `q_ent`.
+
+-   Receiver receives the entangled qubit from Bob by calling `epr_socket.recv()` and stores it
+    in `q_ent`.
+
+-   Sender performs gates `CNOT(q, q_ent)` and `H(q_ent)`, measures `q` and `q_ent` and sends
+    the measurement results in a classical message to receiver.
+
+-   Receiver receives the classical message and possibly performs an `X` and/or `Z` correction
+    on its `q_ent` qubit, based on the received measurement results.
+
 # Monolithic quantum Fourier transformation implementation in QNE-ADK
 
 # Distributed quantum Fourier transformation implementation in QNE-ADK

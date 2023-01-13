@@ -85,7 +85,42 @@ The following figure shows the relationship between all of the components of QNE
 
 ![Components of QNE](figures/components-of-qne.png)
 
-# Running the distributed quantum Fourier transformation implemented in QNE-ADK
+# Modifications to QNE-ADK
+
+We soon found out that QNE-ADK was missing some features that we needed to implement
+distributed QFT.
+
+NetQASM was missing a controlled rotation-Z (CROTZ) gate. We filed GitHub
+[issue #39](https://github.com/QuTech-Delft/netqasm/issues/39) for this
+and we implemented quick and dirty patches to implement the missing CROTZ in QNE-ADK on our own
+forks of the QuTech repos:
+
+-   [This is our patch](https://github.com/QuTech-Delft/netqasm/compare/develop...brunorijsman:netqasm:issue-39-add-controlled-z-rotation-arbitrary-angle)
+    on our
+    [fork of the NetQASM repo](https://github.com/brunorijsman/netqasm)
+
+-   [This is our patch](https://github.com/QuTech-Delft/squidasm/compare/develop...brunorijsman:squidasm:issue-39-add-controlled-z-rotation-arbitrary-angle)
+    on our
+    [fork of the SquidASM repo](https://github.com/brunorijsman/squidasm)
+
+We plan to work with the QuTech QNE team to clean up the code for these patches and to
+to submit a pull-requests to upstream them to QuTech's NetQASM repository.
+
+NetQASM was also missing a swap gate (not to be confused with entanglement swapping).
+We decided not implement a patch for this (yet).
+Instead, we match the swaps at the end of the QFT optional since it is essentially just a
+renumbering of the qubits.
+
+Finally, we found that by default QNE-ADK supports a maximum of three qubits per node.
+If you construct a `NetQASMConnection` and pass a value of greater than 3 to parameter
+`max_qubits`, there is no immediate exception at constructor time.
+However, some of the qubits will not be mapped to physical qubits and there are runtime errors
+later on. As a work-around, we manually edited file `networks/nodes.json` in QNE-ADK
+to set `“number_of_qubits”: 10`.
+
+# Monolithic quantum Fourier transformation implementation in QNE-ADK
+
+# Distributed quantum Fourier transformation implementation in QNE-ADK
 
 This is just a minimal place holder so that everyone can try running a basic QNE-ADK program.
 

@@ -42,7 +42,9 @@ QNE-ADK also provides a suite of command line tools to:
 -   Manage the life cycle of quantum network applications.
 -   Run applications locally on your computer.
 -   Upload applications to the QNE-ADK cloud and run them there.
--   Publish applications and make them available to other users of QNE-ADK.
+-   Publish quantum network applications on the
+    [Community Application Library](https://www.youtube.com/watch?v=DTONkiX1bMU)
+    and make them available to other users of QNE-ADK.
 
 These command line tools are documented in the
 [QNE-ADK user guide](https://www.quantum-network.com/knowledge-base/qne-quantum-application-development-kit-adk/).
@@ -66,9 +68,18 @@ You can find information about NetSquid in:
 -   [The NetSquid documentation](https://docs.netsquid.org/latest-release/)
     (requires registration).
 
-TODO: Describe SquidASM
+The mapping of the NetQASM API to the NetSquid simulation backend is open sourced in
+GitHub repository
+[QuTech-Delft/squidasm](https://github.com/QuTech-Delft/squidasm).
 
-TODO: Mention the real quantum network and the Quantum Internet Alliance
+The
+[Quantum Internet Alliance(QIA)](https://quantum-internet.team/)
+is a collaboration between Europe’s leading quantum research institutes and industry actors
+working to develop the quantum Internet.
+They are in the process of building a metropolitan scale quantum networks containing quantum
+processors and quantum repeaters.
+Once that real quantum network is in place, the applications developed on QNE ADK will be able to
+run on it.
 
 # Running the distributed quantum Fourier transformation implemented in QNE-ADK
 

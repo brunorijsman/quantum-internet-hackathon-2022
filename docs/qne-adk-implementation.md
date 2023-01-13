@@ -85,7 +85,7 @@ The following figure shows the relationship between all of the components of QNE
 
 ![Components of QNE](figures/components-of-qne.png)
 
-# Modifications to QNE-ADK
+# Addressing some QNE-ADK limitations
 
 We soon found out that QNE-ADK was missing some features that we needed to implement
 distributed QFT.

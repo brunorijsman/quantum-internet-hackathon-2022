@@ -118,6 +118,19 @@ However, some of the qubits will not be mapped to physical qubits and there are 
 later on. As a work-around, we manually edited file `networks/nodes.json` in QNE-ADK
 to set `“number_of_qubits”: 10`.
 
+# Getting familiar with QNE-ADK
+
+The very first thing we did was try out two very simple examples to get familiar with
+QNE-ADK, namely:
+
+1. Basic entanglement generation between two nodes.
+   See the code in directory [entanglement](../qne_adk/entanglement/)
+
+2. Teleporting a qubit from one node to another.
+   See the code in directory [teleport](../qne_adk/teleport/)
+
+We will walk you through the code and show you how to run it for the teleport example.
+
 # Monolithic quantum Fourier transformation implementation in QNE-ADK
 
 # Distributed quantum Fourier transformation implementation in QNE-ADK

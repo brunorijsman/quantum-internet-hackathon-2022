@@ -81,6 +81,10 @@ processors and quantum repeaters.
 Once that real quantum network is in place, the applications developed on QNE ADK will be able to
 run on it.
 
+The following figure shows the relationship between all of the components of QNE mentioned above:
+
+![Components of QNE](figures/components-of-qne.png)
+
 # Running the distributed quantum Fourier transformation implemented in QNE-ADK
 
 This is just a minimal place holder so that everyone can try running a basic QNE-ADK program.

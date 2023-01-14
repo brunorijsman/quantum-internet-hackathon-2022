@@ -31,32 +31,30 @@ def apply_qft_rotations(app_logger, conn, qubits, n):
     app_logger.log(f"hadamard qubit {n}")
     qubits[n].H()
     for i in range(n):
-        app_logger.log(f"controlled phase control qubit {i} and target qubit {n} "
-                       f"by angle pi/{2 ** (n - i)}")
-        qubits[i].crot_Z(qubits[n], n=1, d=n-i)
+        app_logger.log(
+            f"controlled phase control qubit {i} and target qubit {n} "
+            f"by angle pi/{2 ** (n - i)}"
+        )
+        qubits[i].crot_Z(qubits[n], n=1, d=n - i)
     apply_qft_rotations(app_logger, conn, qubits, n)
 
 
 def apply_qft_swaps(app_logger, conn, qubits, n):
     app_logger.log("apply qft swaps")
-    for i1 in range(n//2):
+    for i1 in range(n // 2):
         i2 = n - i1 - 1
         app_logger.log(f"swap qubit {i1} with qubit {i2} (XXX not implemented)")
         # TODO
 
 
 def main(app_config=None):
-    app_logger = get_new_app_logger(app_name=app_config.app_name,
-                                    log_config=app_config.log_config)
+    app_logger = get_new_app_logger(app_name=app_config.app_name, log_config=app_config.log_config)
     app_logger.log("qft starts")
     n = 3
     app_logger.log(f"{n=}")
     value = 1
     app_logger.log(f"{value=}")
-    conn = NetQASMConnection("qft",
-                             log_config=app_config.log_config,
-                             epr_sockets=[],
-                             max_qubits=n)
+    conn = NetQASMConnection("qft", log_config=app_config.log_config, epr_sockets=[], max_qubits=n)
     with conn:
         app_logger.log(f"qft creates register of {n} qubits")
         qubits = {}
@@ -78,7 +76,4 @@ def main(app_config=None):
                 for c in range(n):
                     print(density_matrix[r][c], file=f)
     app_logger.log("qft ends")
-    return {
-        "n": n,
-        "value": value
-    }
+    return {"n": n, "value": value}

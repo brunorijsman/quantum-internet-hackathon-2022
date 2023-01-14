@@ -6,7 +6,9 @@ FALSE=0
 SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
 REPO_ROOT_DIR=${SCRIPT_DIR}/..
 
-LINTED_DIRS="purely_classical qiskit"
+LINTED_DIRS="purely_classical"
+LINTED_DIRS+=" qiskit"
+LINTED_DIRS+=" qne_adk"
 ALL_LINTS_OK=$TRUE
 
 for DIR in $LINTED_DIRS; do

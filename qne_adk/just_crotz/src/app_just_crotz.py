@@ -1,19 +1,34 @@
+"""
+Apply a control rotation-Z gate (CROTZ) gate.
+"""
 from netqasm.logging.output import get_new_app_logger
 from netqasm.sdk.external import NetQASMConnection, get_qubit_state
 from netqasm.sdk import Qubit
 
-from datetime import datetime
 
+def apply_crotz(app_logger, control_qubit, target_qubit, rotation_pi_fraction):
+    """
+    Apply a CROTZ gate.
 
-def apply_crotz(app_logger, conn, qubits, pi_fraction):
+    Parameters
+    ----------
+    app_logger: The application logger.
+    control_qubit: The control qubit.
+    target_qubit: The target qubit.
+    rotation_pi_fraction: The rotation angle, as a fraction of pi.
+    """
     app_logger.log("apply crotz")
     app_logger.log(
-        f"controlled phase control qubit 0 and target qubit 1 " f"by angle pi/{pi_fraction}"
+        f"controlled phase control qubit 0 and target qubit 1 "
+        f"by angle pi/{rotation_pi_fraction}"
     )
-    qubits[0].crot_Z(qubits[1], n=1, d=pi_fraction)
+    control_qubit.crot_Z(target_qubit, n=1, d=rotation_pi_fraction)
 
 
 def main(app_config=None):
+    """
+    The application main function.
+    """
     app_logger = get_new_app_logger(app_name=app_config.app_name, log_config=app_config.log_config)
     app_logger.log("just crotz starts")
     conn = NetQASMConnection(
@@ -30,16 +45,14 @@ def main(app_config=None):
         qubits[1].H()  # |+>
         app_logger.log("Initialize pi_fraction")
         pi_fraction = 3  # 2 ** 3 = 8
-        apply_crotz(app_logger, conn, qubits, pi_fraction)
+        apply_crotz(app_logger, qubits[0], qubits[1], pi_fraction)
         conn.flush()
         density_matrix = get_qubit_state(qubits[0], reduced_dm=False)
         app_logger.log("Density matrix:")
-        n = 2
-        for r in range(n * n):
+        size = 2
+        for row_nr in range(size * size):
             line = ""
-            for c in range(n * n):
-                value = density_matrix[r][c]
-                rv = value.real
-                iv = value.imag
-                line += f"{rv:>6.3f} {iv:>6.3f}j    "
+            for col_nr in range(size * size):
+                value = density_matrix[row_nr][col_nr]
+                line += f"{value.real:>6.3f} {value.imag:>6.3f}j    "
             app_logger.log(line)

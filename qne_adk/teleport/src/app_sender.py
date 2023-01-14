@@ -29,24 +29,24 @@ def main(phi, theta, app_config=None):
     with sender:
 
         app_logger.log("sender creates qubit to teleport")
-        q = Qubit(sender)
-        set_qubit_state(q, phi, theta)
+        teleported_qubit = Qubit(sender)
+        set_qubit_state(teleported_qubit, phi, theta)
         sender.flush()
 
-        dm = get_qubit_state(q)
-        app_logger.log(f"sender density matrix of teleported qubit is {dm}")
+        density_matrix = get_qubit_state(teleported_qubit)
+        app_logger.log(f"sender density matrix of teleported qubit is {density_matrix}")
         sender.flush()
 
         app_logger.log("sender creates entanglement with receiver")
-        q_ent = epr_socket.create_keep()[0]
+        entangled_qubit = epr_socket.create_keep()[0]
 
         app_logger.log("sender performs teleportation")
-        q.cnot(q_ent)
-        q.H()
-        m1 = q.measure()
-        m2 = q_ent.measure()
+        teleported_qubit.cnot(entangled_qubit)
+        teleported_qubit.H()
+        measurement_1 = teleported_qubit.measure()
+        measurement_2 = entangled_qubit.measure()
 
-    correction = (int(m1), int(m2))
+    correction = (int(measurement_1), int(measurement_2))
     app_logger.log(f"sender sends correction message {correction} to receiver")
     socket.send_structured(StructuredMessage("correction", correction))
 

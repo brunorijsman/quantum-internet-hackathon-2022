@@ -10,6 +10,7 @@ LINTED_DIRS="purely_classical"
 LINTED_DIRS+=" qiskit"
 LINTED_DIRS+=" qne_adk"
 LINTED_DIRS+=" qne_adk/entanglement/src"
+LINTED_DIRS+=" qne_adk/teleport/src"
 ALL_LINTS_OK=$TRUE
 
 for DIR in $LINTED_DIRS; do

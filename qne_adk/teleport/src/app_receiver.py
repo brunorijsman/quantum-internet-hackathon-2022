@@ -29,25 +29,27 @@ def main(app_config=None):
     with receiver:
 
         app_logger.log("receiver creates entanglement with sender")
-        q_ent = epr_socket.recv_keep()[0]
+        entangled_qubit = epr_socket.recv_keep()[0]
         receiver.flush()
 
-        m1, m2 = socket.recv_structured().payload
-        app_logger.log(f"receiver receives correction ({m1}, {m2}) from sender")
+        measurement_1, measurement_2 = socket.recv_structured().payload
+        app_logger.log(
+            f"receiver receives correction ({measurement_1}, {measurement_2}) from sender"
+        )
 
-        if m2 == 1:
+        if measurement_2 == 1:
             app_logger.log("receiver performs X correction")
-            q_ent.X()
+            entangled_qubit.X()
         else:
             app_logger.log("receiver does not perform X correction")
-        if m1 == 1:
+        if measurement_1 == 1:
             app_logger.log("receiver performs Z correction")
-            q_ent.Z()
+            entangled_qubit.Z()
         else:
             app_logger.log("receiver does not perform Z correction")
         receiver.flush()
 
-        dm = get_qubit_state(q_ent)
-        app_logger.log(f"receiver density matrix of teleported qubit is {dm}")
+        density_matrix = get_qubit_state(entangled_qubit)
+        app_logger.log(f"receiver density matrix of teleported qubit is {density_matrix}")
 
     return "receiver finishes"

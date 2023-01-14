@@ -111,12 +111,15 @@ We decided not implement a patch for this (yet).
 Instead, we match the swaps at the end of the QFT optional since it is essentially just a
 renumbering of the qubits.
 
-Finally, we found that by default QNE-ADK supports a maximum of three qubits per node.
+Also, we found that by default QNE-ADK supports a maximum of three qubits per node.
 If you construct a `NetQASMConnection` and pass a value of greater than 3 to parameter
 `max_qubits`, there is no immediate exception at constructor time.
 However, some of the qubits will not be mapped to physical qubits and there are runtime errors
 later on. As a work-around, we manually edited file `networks/nodes.json` in QNE-ADK
 to set `“number_of_qubits”: 10`.
+
+Finally, we found the process of running a QNE-ADK application and interpreting its output
+cumbersome. So, we created a convenience shell script `run.sh`.
 
 # Getting familiar with QNE-ADK
 
@@ -262,6 +265,31 @@ In this code:
 
 -   Receiver receives the classical message and possibly performs an `X` and/or `Z` correction
     on its `q_ent` qubit, based on the received measurement results.
+
+Run the application as follows:
+
+<pre>
+$ <b>./run.sh entanglement</b>
+Cleaning entanglement...
+Creating entanglement_experiment...
+qne experiment create entanglement_experiment entanglement randstad
+Running entanglement_experiment...
+Experiment run successfully. Check the results using command 'experiment results'
+Results:
+[
+  {
+    "app_alice": "alice measurement is: 0",
+    "app_bob": "bob measurement is: 0"
+  }
+]
+Logs:
+alice_app_log.yaml:
+  LOG: alice main
+  LOG: alice outcome is 0
+bob_app_log.yaml:
+  LOG: bob main
+  LOG: bob outcome is 0
+</pre>
 
 # Monolithic quantum Fourier transformation implementation in QNE-ADK
 

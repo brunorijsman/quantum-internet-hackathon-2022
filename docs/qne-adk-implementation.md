@@ -291,6 +291,45 @@ bob_app_log.yaml:
   LOG: bob outcome is 0
 </pre>
 
+# Testing the CROTZ gate
+
+We implemented a `just_crotz` QNE-ADK application to test the correctness of the CROTZ gate
+that we added to QNE-ADK in our fork (see above).
+
+The code is in directory [just_crotz/src](../qne_adk/just_crotz/src).
+
+The code initializes qubit `q0` to state |1> and qubit `q1` to state `|+>`, then
+performs gate `CROTZ(q0, q1, pi/3)`, and prints the density matrix for resulting state:
+
+<pre>
+$ <b>./run.sh just_crotz</b>
+Cleaning just_crotz...
+Creating just_crotz_experiment...
+qne experiment create just_crotz_experiment just_crotz randstad
+Running just_crotz_experiment...
+Experiment run successfully. Check the results using command 'experiment results'
+Results:
+[
+  {
+    "app_just_crotz": null
+  }
+]
+Logs:
+just_crotz_app_log.yaml:
+  LOG: just crotz starts
+  LOG: just_crotz creates register of 2 qubits
+  LOG: Initialize control qubit 0
+  LOG: Initialize target qubit 1
+  LOG: Initialize pi_fraction
+  LOG: apply crotz
+  LOG: controlled phase control qubit 0 and target qubit 1 by angle pi/3
+  LOG: 'Density matrix:'
+  LOG: ' 0.000  0.000j     0.000  0.000j     0.000  0.000j     0.000  0.000j    '
+  LOG: ' 0.000  0.000j     0.000  0.000j     0.000  0.000j     0.000  0.000j    '
+  LOG: ' 0.000  0.000j     0.000  0.000j     0.500  0.000j     0.462 -0.191j    '
+  LOG: ' 0.000  0.000j     0.000  0.000j     0.462  0.191j     0.500  0.000j    '
+</pre>
+
 # Monolithic quantum Fourier transformation implementation in QNE-ADK
 
 # Distributed quantum Fourier transformation implementation in QNE-ADK

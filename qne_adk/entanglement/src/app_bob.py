@@ -24,8 +24,8 @@ def main(app_config=None):
     )
     with bob:
         q_ent = epr_socket.create()[0]
-        m = q_ent.measure()
+        measurement = q_ent.measure()
 
-    app_logger.log(f"bob outcome is {m}")
+    app_logger.log(f"bob outcome is {measurement}")
 
-    return f"bob measurement is: {m}"
+    return f"bob measurement is: {measurement}"

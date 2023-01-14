@@ -24,8 +24,8 @@ def main(app_config=None):
     )
     with alice:
         q_ent = epr_socket.recv()[0]
-        m = q_ent.measure()
+        measurement = q_ent.measure()
 
-    app_logger.log(f"alice outcome is {m}")
+    app_logger.log(f"alice outcome is {measurement}")
 
-    return f"alice measurement is: {m}"
+    return f"alice measurement is: {measurement}"

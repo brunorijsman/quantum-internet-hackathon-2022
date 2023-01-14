@@ -330,10 +330,10 @@ just_crotz_app_log.yaml:
   LOG: ' 0.000  0.000j     0.000  0.000j     0.462  0.191j     0.500  0.000j    '
 </pre>
 
-# Monolithic quantum Fourier transformation implementation in QNE-ADK
+# Monolithic quantum Fourier transformation
 
 [TODO]
 
-# Distributed quantum Fourier transformation implementation in QNE-ADK
+# Distributed quantum Fourier transformation
 
 [TODO]

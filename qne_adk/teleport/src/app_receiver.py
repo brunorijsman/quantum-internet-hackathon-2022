@@ -1,12 +1,18 @@
+"""
+Teleport an arbitrary qubit from sender to receiver; this is the receiver side.
+"""
+
 from netqasm.logging.output import get_new_app_logger
 from netqasm.sdk.external import NetQASMConnection, Socket, get_qubit_state
 from netqasm.sdk import EPRSocket
 
 
 def main(app_config=None):
+    """
+    Application main function for the receiver.
+    """
 
-    app_logger = get_new_app_logger(app_name=app_config.app_name,
-                                    log_config=app_config.log_config)
+    app_logger = get_new_app_logger(app_name=app_config.app_name, log_config=app_config.log_config)
     app_logger.log("receiver starts")
 
     app_logger.log("receiver creates classical socket")
@@ -16,9 +22,9 @@ def main(app_config=None):
     epr_socket = EPRSocket("sender")
 
     app_logger.log("receiver creates qasm connection")
-    receiver = NetQASMConnection("receiver",
-                                 log_config=app_config.log_config,
-                                 epr_sockets=[epr_socket])
+    receiver = NetQASMConnection(
+        "receiver", log_config=app_config.log_config, epr_sockets=[epr_socket]
+    )
 
     with receiver:
 

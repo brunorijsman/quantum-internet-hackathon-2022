@@ -16,5 +16,5 @@ jobs:
                   path: 'minimal-requirements.txt'
             - uses: py-actions/py-dependency-install@v4
               with:
-                  path: 'netqasm-requirements.txt'
+                  path: 'qne-adk-requirements.txt'
             - run: scripts/all_checks.sh

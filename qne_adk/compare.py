@@ -19,7 +19,6 @@ def read_density_matrix(file_name):
     A dictionary with the following keys:
     input_size: The number of input qubits for the (D)QFT
     input_value: The input value for the (D)QFT
-    swap: True if the (D)QFT did final swaps; False if not
     density_matrix: The density matrix describing the final state of the data qubits for the (D)QFT
     """
     print(f"Reading density matrix from {file_name}")
@@ -34,8 +33,6 @@ def read_density_matrix(file_name):
         print(f"  Input size: {input_size}")
         input_value = int(file.readline().strip())
         print(f"  Input value: {input_value}")
-        swap = file.readline().strip() == "True"
-        print(f"  Swap: {swap}")
         density_matrix = []
         for _ in range(input_size):
             row = []
@@ -47,7 +44,6 @@ def read_density_matrix(file_name):
         return {
             "input_size": input_size,
             "input_value": input_value,
-            "swap": swap,
             "density_matrix": density_matrix,
         }
 
@@ -125,9 +121,6 @@ def compare_qiskit_with_qne():
 
     if qiskit["input_value"] != qne["input_value"]:
         print("WARNING: Inconsistent input value")
-
-    if qiskit["swap"] != qne["swap"]:
-        print("WARNING: Inconsistent swap")
 
     qiskit_density_matrix = qiskit["density_matrix"]
     transposed_qiskit_dm = transpose_density_matrix(qiskit_density_matrix)

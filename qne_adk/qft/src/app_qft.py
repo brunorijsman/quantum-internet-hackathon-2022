@@ -8,7 +8,7 @@ from netqasm.sdk.external import NetQASMConnection, get_qubit_state
 from netqasm.sdk import Qubit
 
 
-def apply_qft(app_logger, connection, qubits, input_size, input_value, do_final_swaps):
+def apply_qft(app_logger, connection, qubits, input_size, input_value):
     """
     Apply a quantum Fourier transformation.
 
@@ -21,14 +21,12 @@ def apply_qft(app_logger, connection, qubits, input_size, input_value, do_final_
     input_size: The number of qubits in the input value for the QFT.
     input_value: Assume that all input values for qubits are |0> or |1>, treat these qubits
         as the binary encoding of the input value as a number.
-    do_final_swaps: If True, do the final swaps for the QFT. If False, don't.
     """
     app_logger.log("apply qft")
     assert len(qubits) == input_size
     apply_qft_value(app_logger, qubits, input_size, input_value)
     apply_qft_rotations(app_logger, connection, qubits, input_size)
-    if do_final_swaps:
-        apply_qft_swaps(app_logger, qubits, input_size)
+    apply_qft_swaps(app_logger, qubits, input_size)
 
 
 def apply_qft_value(app_logger, qubits, input_size, input_value):
@@ -109,7 +107,7 @@ def apply_qft_swaps(app_logger, qubits, nr_qubits):
         qubits[qubit_index_1].cnot(qubit_index_2)
 
 
-def write_density_matrix_to_file(app_logger, qubits, input_size, input_value, do_final_swaps):
+def write_density_matrix_to_file(app_logger, qubits, input_size, input_value):
     """
     Write the density matrix for the qubits to a file, including some metadata.
 
@@ -121,7 +119,6 @@ def write_density_matrix_to_file(app_logger, qubits, input_size, input_value, do
     input_size: The number of qubits in the input value for the QFT.
     input_value: Assume that all input values for qubits are |0> or |1>, treat these qubits
         as the binary encoding of the input value as a number.
-    do_final_swaps: If True, do the final swaps for the QFT. If False, don't.
     """
     density_matrix = get_qubit_state(qubits[0], reduced_dm=False)
     app_logger.log(f"density matrix is {density_matrix}")
@@ -133,7 +130,6 @@ def write_density_matrix_to_file(app_logger, qubits, input_size, input_value, do
         print(f"{datetime.now()}", file=file)
         print(f"{input_size}", file=file)
         print(f"{input_value}", file=file)
-        print(f"{do_final_swaps}", file=file)
         for row_index in range(input_size):
             for column_index in range(input_size):
                 print(density_matrix[row_index][column_index], file=file)
@@ -150,8 +146,6 @@ def main(app_config=None):
     app_logger.log(f"{input_size=}")
     input_value = 1
     app_logger.log(f"{input_value=}")
-    do_final_swaps = True
-    app_logger.log(f"{do_final_swaps=}")
     connection = NetQASMConnection(
         "qft", log_config=app_config.log_config, epr_sockets=[], max_qubits=input_size
     )
@@ -160,8 +154,8 @@ def main(app_config=None):
         qubits = {}
         for qubit_index in range(input_size):
             qubits[qubit_index] = Qubit(connection)
-        apply_qft(app_logger, connection, qubits, input_size, input_value, do_final_swaps)
+        apply_qft(app_logger, connection, qubits, input_size, input_value)
         connection.flush()
-    write_density_matrix_to_file(app_logger, qubits, input_size, input_value, do_final_swaps)
+    write_density_matrix_to_file(app_logger, qubits, input_size, input_value)
     app_logger.log("qft ends")
     return {"n": input_size, "value": input_value}

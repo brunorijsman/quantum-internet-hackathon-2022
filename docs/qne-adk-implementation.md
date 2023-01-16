@@ -52,7 +52,7 @@ These command line tools are documented in the
 Currently, QNE-ADK uses simulated quantum networks to run the applications.
 
 According to the
-[NetSquid documentation](https://github.com/QuTech-Delft/netqasm)
+[NetQASM documentation](https://github.com/QuTech-Delft/netqasm)
 it is possible to use either
 [NetSquid](https://netsquid.org/)
 or

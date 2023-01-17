@@ -1,67 +1,203 @@
 #!/bin/bash
 
-set -e
+NORMAL=$(tput sgr0)
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
+MAGENTA=$(tput setaf 5)
+BEEP=$(tput bel)
 
-TOP=$(git rev-parse --show-toplevel)/qne_adk
-cd ${TOP}
+FALSE=0
+TRUE=1
 
-if [[ "$#" -eq 0 ]]; then
-    applications=$(cat ${TOP}/applications)
-else
-    applications=""
+TOP=""
+SKIP_CREATE_EXPERIMENTS=${FALSE}
+APPLICATIONS=""
+
+fatal_error ()
+{
+    local message="$1"
+
+    echo "${RED}Error:${NORMAL} ${message}" >&2
+    exit 1
+}
+
+progress ()
+{
+    local message="$1"
+
+    echo "${NORMAL}${message}"
+}
+
+function run_command ()
+{
+    local command="$1"
+    local failure_msg="$2"
+
+    output=$(${command} 2>&1)
+    if [ $? -ne 0 ] ; then
+        echo "${RED}Error:${NORMAL} $failure_msg:"
+        echo "The following command failed:"
+        echo "${MAGENTA}${command}${NORMAL}"
+        echo "The output of the command was:"
+        echo "${MAGENTA}${output}${NORMAL}"
+        exit 1
+    fi
+}
+
+determine_top_directory ()
+{
+    run_command "git --version" "Git is not installed"
+    TOP=$(git rev-parse --show-toplevel)/qne_adk
+    progress "Directory containing QNE-ADK applications is ${TOP}"
+}
+
+help ()
+{
+    echo
+    echo "SYNOPSIS"
+    echo
+    echo "    run.sh [OPTION]... [APPLICATION]..."
+    echo
+    echo "OPTIONS"
+    echo
+    echo "    -?, -h, --help"
+    echo "      Print this help and exit"
+    echo
+    echo "    -s, --skip-create-experiments"
+    echo "      Skip the create expirement steps. Just run the experiments that were"
+    echo "      already created in a previous run."
+    echo
+    echo "APPLICATIONS"
+    echo
+    echo "    List of directory names, each containing an QNE-ADK application to run."
+    echo
+    exit 0
+}
+
+parse_command_line_options ()
+{
     while [[ "$#" -gt 0 ]]; do
-        applications="$applications $1"
+        case $1 in
+            -?|-h|--help)
+                help
+                ;;
+            -s|--skip-create-experiments)
+                SKIP_CREATE_EXPERIMENTS=${TRUE}
+                ;;
+            *)
+                APPLICATIONS="${APPLICATIONS} $1"
+                ;;
+        esac
         shift
     done
-fi
+}
 
-if [[ ! -d ~/.qne ]]; then
-    mkdir ~/.qne
-fi
-FIRST=1
-echo "{" > ~/.qne/applications.json
-for application in $applications; do
-    if [[ ${FIRST} == 0 ]]; then 
-        echo "  ," >> ~/.qne/applications.json
-    else
-        FIRST=0
+run_all_applications ()
+{
+    create_fresh_dot_qne_directory
+    for application in ${APPLICATIONS}; do
+        run_one_application ${application}
+    done
+}
+
+create_fresh_dot_qne_directory ()
+{
+    progress "Creating fresh .qne directory in home directory..."
+    if [[ ! -d ~/.qne ]]; then
+        run_command "mkdir ~/.qne"
     fi
-    echo "  \"${application}\": {" >> ~/.qne/applications.json
-    echo "    \"path\": \"${TOP}/${application}/\"" >> ~/.qne/applications.json
-    echo "  }" >> ~/.qne/applications.json
-done
-echo "}" >> ~/.qne/applications.json
+    first=$TRUE
+    echo "{" > ~/.qne/applications.json
+    for application in $APPLICATIONS; do
+        if [[ ${first} == $FALSE ]]; then 
+            echo "  ," >> ~/.qne/applications.json
+        else
+            first=$FALSE
+        fi
+        echo "  \"${application}\": {" >> ~/.qne/applications.json
+        echo "    \"path\": \"${TOP}/${application}/\"" >> ~/.qne/applications.json
+        echo "  }" >> ~/.qne/applications.json
+    done
+    echo "}" >> ~/.qne/applications.json
+}
 
-for application in $applications; do
+run_one_application ()
+{
+    local application="$1"
 
-    echo "Cleaning ${application}..."
-    rm -rf ${application}/${application}_experiment
+    check_application_exists $application
+    create_fresh_experiment_directory $application
+    run_application_experiment $application
+    show_results $application
+    show_logs $application
+}
 
-    echo "Creating ${application}_experiment..."
+check_application_exists ()
+{
+    local application="$1"
+
+    if [[ ! -d $TOP/$application ]]; then
+        fatal_error "Application directory $application not found"
+    fi
+}
+
+create_fresh_experiment_directory ()
+{
+    local application="$1"
+
+    progress "Creating fresh ${application}_experiment directory..."
     cd ${TOP}/${application}
-    echo qne experiment create ${application}_experiment ${application} randstad
-    qne experiment create ${application}_experiment ${application} randstad > /dev/null
-
+    run_command "rm -rf ${application}_experiment"
+    run_command "qne experiment create ${application}_experiment ${application} randstad"
+    
     for f in src/*.py; do
         f=$(basename $f)
         if [[ ! -e ${application}_experiment/input/$f ]]; then
-            echo "Copy common file ${f}..."
-            cp src/$f ${application}_experiment/input
+            progress "Copying source file ${f}..."
+            run_command "cp src/$f ${application}_experiment/input"
         fi
     done
+}
 
-    echo "Running ${application}_experiment..."
-    cd ${application}_experiment
-    qne experiment run | gsed 's/\\n/\n/g'
+run_application_experiment ()
+{
+    local application="$1"
 
-    echo "Results:"
+    progress "Running ${application}_experiment..."
+    cd ${TOP}/${application}/${application}_experiment
+    output=$(qne experiment run)
+    if [[ "$output" == Error* ]]; then
+        echo "${RED}Error${NORMAL} while running the script"
+        echo "${MAGENTA}${output}${MAGENTA}" | gsed 's/\\n/\n/g'
+    fi
+}
+
+show_results ()
+{
+    local application="$1"
+
+    progress "Results:"
+    cd ${TOP}/${application}/${application}_experiment
     cat results/processed.json | jq '.round_result'
+}
 
-    echo "Logs:"
+show_logs ()
+{
+    local application="$1"
+
+    progress "Logs:"
     for log_file in ${TOP}/${application}/${application}_experiment/raw_output/LAST/*_app_log.yaml; do
         base=$(basename ${log_file})
         echo "${base}:"
         egrep -v '(HFL|HLN|WCT)' ${log_file}
     done
+}
 
-done
+determine_top_directory
+parse_command_line_options $@
+if [ -z "${APPLICATIONS}" ]; then
+    APPLICATIONS=$(cat ${TOP}/applications)
+fi
+run_all_applications

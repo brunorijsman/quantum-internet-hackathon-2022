@@ -102,9 +102,9 @@ def apply_qft_swaps(app_logger, qubits, nr_qubits):
         # NetQASM does not yet natively support a SWAP gate; instead construct a SWAP gate out of
         # three CNOT gates as described here: https://algassert.com/post/1717
         # See issue #47 for details: https://github.com/QuTech-Delft/netqasm/issues/47
-        qubits[qubit_index_1].cnot(qubit_index_2)
-        qubits[qubit_index_2].cnot(qubit_index_1)
-        qubits[qubit_index_1].cnot(qubit_index_2)
+        qubits[qubit_index_1].cnot(qubits[qubit_index_2])
+        qubits[qubit_index_2].cnot(qubits[qubit_index_1])
+        qubits[qubit_index_1].cnot(qubits[qubit_index_2])
 
 
 def write_density_matrix_to_file(app_logger, qubits, input_size, input_value):
@@ -156,6 +156,6 @@ def main(app_config=None):
             qubits[qubit_index] = Qubit(connection)
         apply_qft(app_logger, connection, qubits, input_size, input_value)
         connection.flush()
-    write_density_matrix_to_file(app_logger, qubits, input_size, input_value)
+        write_density_matrix_to_file(app_logger, qubits, input_size, input_value)
     app_logger.log("qft ends")
     return {"n": input_size, "value": input_value}

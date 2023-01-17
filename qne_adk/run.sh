@@ -79,8 +79,8 @@ help ()
 parse_command_line_options ()
 {
     while [[ "$#" -gt 0 ]]; do
-        case $1 in
-            -?|-h|--help)
+        case "$1" in
+            -\?|-h|--help)
                 help
                 ;;
             -s|--skip-create-experiments)
@@ -128,7 +128,9 @@ run_one_application ()
     local application="$1"
 
     check_application_exists $application
-    create_fresh_experiment_directory $application
+    if [[ $SKIP_CREATE_EXPERIMENTS == $FALSE ]]; then
+        create_fresh_experiment_directory $application
+    fi
     run_application_experiment $application
     show_results $application
     show_logs $application
@@ -195,8 +197,8 @@ show_logs ()
     done
 }
 
+parse_command_line_options "$@"
 determine_top_directory
-parse_command_line_options $@
 if [ -z "${APPLICATIONS}" ]; then
     APPLICATIONS=$(cat ${TOP}/applications)
 fi

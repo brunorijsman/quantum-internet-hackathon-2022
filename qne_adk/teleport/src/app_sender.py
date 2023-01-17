@@ -17,6 +17,8 @@ def main(phi, theta, app_config=None):
 
     app_logger = get_new_app_logger(app_name=app_config.app_name, log_config=app_config.log_config)
     app_logger.log("sender starts")
+    app_logger.log(f"phi = {phi}")
+    app_logger.log(f"theta = {theta}")
 
     app_logger.log("sender creates classical socket")
     socket = Socket("sender", "receiver", log_config=app_config.log_config)

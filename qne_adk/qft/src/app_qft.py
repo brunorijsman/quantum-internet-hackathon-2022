@@ -3,9 +3,9 @@ Monolithic (non-distributed) implementation of the quantum Fourier transformatio
 """
 
 from netqasm.logging.output import get_new_app_logger
-from netqasm.sdk.external import NetQASMConnection
+from netqasm.sdk.external import get_qubit_state, NetQASMConnection
 from netqasm.sdk import Qubit
-from common import write_density_matrix_to_file
+from common import write_density_matrix_to_log, write_density_matrix_to_file
 
 
 def apply_qft(app_logger, connection, qubits, input_size, input_value):
@@ -128,6 +128,9 @@ def main(app_config=None):
             qubits[qubit_index] = Qubit(connection)
         apply_qft(app_logger, connection, qubits, input_size, input_value)
         connection.flush()
-        write_density_matrix_to_file(app_logger, qubits, input_size, input_value)
+        density_matrix = get_qubit_state(qubits[0], reduced_dm=False)
+        app_logger.log("qft output density matrix")
+        write_density_matrix_to_log(app_logger, density_matrix)
+        write_density_matrix_to_file(app_logger, density_matrix, input_size, input_value)
     app_logger.log("qft ends")
     return {"n": input_size, "value": input_value}

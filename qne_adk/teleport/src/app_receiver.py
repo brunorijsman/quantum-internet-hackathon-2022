@@ -5,6 +5,7 @@ Teleport an arbitrary qubit from sender to receiver; this is the receiver side.
 from netqasm.logging.output import get_new_app_logger
 from netqasm.sdk.external import NetQASMConnection, Socket, get_qubit_state
 from netqasm.sdk import EPRSocket
+from common import write_density_matrix_to_log
 
 
 def main(app_config=None):
@@ -49,7 +50,8 @@ def main(app_config=None):
             app_logger.log("receiver does not perform Z correction")
         receiver.flush()
 
+        app_logger.log("receiver density matrix of teleported qubit")
         density_matrix = get_qubit_state(entangled_qubit)
-        app_logger.log(f"receiver density matrix of teleported qubit is {density_matrix}")
+        write_density_matrix_to_log(app_logger, density_matrix)
 
     return "receiver finishes"

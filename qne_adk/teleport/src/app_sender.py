@@ -7,6 +7,7 @@ from netqasm.sdk import EPRSocket, Qubit
 from netqasm.sdk.classical_communication.message import StructuredMessage
 from netqasm.sdk.external import NetQASMConnection, Socket, get_qubit_state
 from netqasm.sdk.toolbox import set_qubit_state
+from common import write_density_matrix_to_log
 
 
 def main(phi, theta, app_config=None):
@@ -33,9 +34,9 @@ def main(phi, theta, app_config=None):
         set_qubit_state(teleported_qubit, phi, theta)
         sender.flush()
 
+        app_logger.log("sender density matrix of teleported qubit")
         density_matrix = get_qubit_state(teleported_qubit)
-        app_logger.log(f"sender density matrix of teleported qubit is {density_matrix}")
-        sender.flush()
+        write_density_matrix_to_log(app_logger, density_matrix)
 
         app_logger.log("sender creates entanglement with receiver")
         entangled_qubit = epr_socket.create_keep()[0]

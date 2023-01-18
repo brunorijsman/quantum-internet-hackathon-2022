@@ -131,9 +131,7 @@ run_one_application ()
     if [[ $SKIP_CREATE_EXPERIMENTS == $FALSE ]]; then
         create_fresh_experiment_directory $application
     fi
-    run_application_experiment $application
-    show_results $application
-    show_logs $application
+    run_all_experiments_for_application $application
 }
 
 check_application_exists ()
@@ -163,17 +161,50 @@ create_fresh_experiment_directory ()
     done
 }
 
-run_application_experiment ()
+#@@@
+run_all_experiments_for_application ()
 {
     local application="$1"
 
-    progress "Running ${application}_experiment..."
+    if [[ -d ${TOP}/${application}/experiment_values ]]; then
+        for values_file in ${TOP}/${application}/experiment_values/*; do
+            run_one_experiment_for_application "$application" "$values_file"
+        done
+    else
+        run_one_experiment_for_application "$application" ""
+    fi
+}
+
+run_one_experiment_for_application ()
+{
+    local application="$1"
+    local values_file="$2"
+
+}
+
+run_one_experiment_for_application ()
+{
+    local application="$1"
+    local values_file="$2"
+
     cd ${TOP}/${application}/${application}_experiment
+
+    if [[ -z "$values_file" ]]; then
+        progress "Running ${application}_experiment using default values..."
+    else
+        value_file_base_name=$(basename ${values_file})
+        progress "Running ${application}_experiment using values file ${value_file_base_name}..."
+        ${TOP}/set_experiment_values.py experiment.json "$values_file"
+    fi
+
     output=$(qne experiment run)
     if [[ "$output" == Error* ]]; then
         echo "${RED}Error${NORMAL} while running the script"
         echo "${MAGENTA}${output}${MAGENTA}" | gsed 's/\\n/\n/g'
     fi
+
+    show_results $application
+    show_logs $application
 }
 
 show_results ()

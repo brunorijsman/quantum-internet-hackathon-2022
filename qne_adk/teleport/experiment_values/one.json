@@ -1,0 +1,17 @@
+[
+    {
+        "roles": ["sender"],
+        "values": [
+            {
+                "name": "phi",
+                "value": 0.0,
+                "scale_value": 1.0
+            },
+            {
+                "name": "theta",
+                "value": 3.14159265359,
+                "scale_value": 1.0
+            }
+        ]
+    }
+]

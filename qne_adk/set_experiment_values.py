@@ -64,7 +64,7 @@ def validate_experiment(experiment):
     ----------
     experiment: The experiment to be validated.
     """
-    if type(experiment) is not dict:
+    if not isinstance(experiment, dict):
         fatal_error("Experiment must be a dictionary")
     if "meta" not in experiment:
         fatal_error("Experiment must have 'meta' key")
@@ -74,7 +74,7 @@ def validate_experiment(experiment):
         fatal_error("Experiment[asset] must have 'network' key")
     if "application" not in experiment["asset"]:
         fatal_error("Experiment[asset] must have 'application' key")
-    if type(experiment["asset"]["application"]) is not list:
+    if not isinstance(experiment["asset"]["application"], list):
         fatal_error("Experiment[asset][application] must have be a list")
 
 
@@ -86,10 +86,10 @@ def validate_application_meta_data(application_meta_data):
     ----------
     application_meta_data: The application meta data to be validated.
     """
-    if type(application_meta_data) is not list:
+    if not isinstance(application_meta_data, list):
         fatal_error("Application meta data must be a list")
     for node_meta_data in application_meta_data:
-        if type(node_meta_data) is not dict:
+        if not isinstance(node_meta_data, dict):
             fatal_error("Node meta data must be a dict")
         if "roles" not in node_meta_data:
             fatal_error("Node meta data must have 'roles' key")

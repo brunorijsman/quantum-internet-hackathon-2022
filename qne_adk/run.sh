@@ -180,7 +180,6 @@ run_all_experiments_for_application ()
     local application="$1"
 
     if [[ ! -z "$VALUES_FILE" ]]; then
-        echo "*** VALUES FILE SPECIFIED ***"
         if [[ "$VALUES_FILE" == /* || "$VALUES_FILE" == ~* ]]; then
             absolute_values_path="$VALUES_FILE"
         else

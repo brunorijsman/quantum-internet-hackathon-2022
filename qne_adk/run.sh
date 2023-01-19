@@ -13,6 +13,7 @@ TRUE=1
 
 TOP=""
 SKIP_CREATE_EXPERIMENTS=${FALSE}
+VALUES_FILE=""
 APPLICATIONS=""
 
 fatal_error ()
@@ -69,6 +70,11 @@ help ()
     echo "      Skip the create expirement steps. Just run the experiments that were"
     echo "      already created in a previous run."
     echo
+    echo "    -v VALUES_FILE, --values VALUES_FILE"
+    echo "      Run the experiment only with VALUES_FILE to specity the input values"
+    echo "      for the application (as opposed to running multiple times, once for each"
+    echo "      values file."
+    echo
     echo "APPLICATIONS"
     echo
     echo "    List of directory names, each containing an QNE-ADK application to run."
@@ -85,6 +91,14 @@ parse_command_line_options ()
                 ;;
             -s|--skip-create-experiments)
                 SKIP_CREATE_EXPERIMENTS=${TRUE}
+                ;;
+            -v|--values)
+                shift
+                if [[ "$#" -gt 0 ]]; then
+                    VALUES_FILE="$1"
+                else
+                    fatal_error "Missing VALUES_FILE argument"
+                fi
                 ;;
             *)
                 APPLICATIONS="${APPLICATIONS} $1"
@@ -161,18 +175,35 @@ create_fresh_experiment_directory ()
     done
 }
 
-#@@@
 run_all_experiments_for_application ()
 {
     local application="$1"
+
+    if [[ ! -z "$VALUES_FILE" ]]; then
+        echo "*** VALUES FILE SPECIFIED ***"
+        if [[ "$VALUES_FILE" == /* || "$VALUES_FILE" == ~* ]]; then
+            absolute_values_path="$VALUES_FILE"
+        else
+            absolute_values_path="${TOP}/${application}/experiment_values/${VALUES_FILE}"
+        fi
+        if [[ ! "$absolute_values_path" == *.json ]]; then
+            absolute_values_path="${absolute_values_path}.json"
+        fi
+        if [[ ! -f "$absolute_values_path" ]]; then
+            fatal_error "Value file ${absolute_values_path} does not exist"
+        fi
+        run_one_experiment_for_application "$application" "$absolute_values_path"
+        return
+    fi
 
     if [[ -d ${TOP}/${application}/experiment_values ]]; then
         for values_file in ${TOP}/${application}/experiment_values/*; do
             run_one_experiment_for_application "$application" "$values_file"
         done
-    else
-        run_one_experiment_for_application "$application" ""
+        return
     fi
+
+    run_one_experiment_for_application "$application" ""
 }
 
 run_one_experiment_for_application ()

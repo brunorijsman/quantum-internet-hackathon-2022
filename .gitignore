@@ -2,5 +2,4 @@ venv/**
 *.pyc
 **/*_experiment/**
 ~*.pptx
-*_dm.txt
 results/*.json

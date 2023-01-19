@@ -122,6 +122,8 @@ def write_density_matrix_to_file(
         "platform": platform,
         "flavor": flavor,
         "datetime": now,
+        "input_size": input_size,
+        "input_value": input_value,
         "density_matrix": serializable_matrix,
     }
     write_json_file(data, file_name, "density_matrix")

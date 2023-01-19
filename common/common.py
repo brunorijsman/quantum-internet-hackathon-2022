@@ -82,7 +82,9 @@ def write_density_matrix_to_log(app_logger, density_matrix):
         app_logger.log(log_msg)
 
 
-def write_density_matrix_to_file(platform, flavor, input_size, input_value, density_matrix):
+def write_density_matrix_to_file(
+    platform, flavor, input_size, input_value, density_matrix, results_dir=None
+):
     """
     Write the density matrix for the qubits to a file, including some metadata.
 
@@ -93,6 +95,7 @@ def write_density_matrix_to_file(platform, flavor, input_size, input_value, dens
     input_size: The number of qubits in the input value for the QFT.
     input_value: The input value for the QFT.
     density_matrix: The density matrix to write to a file.
+    results_dir: The results directory.
 
     Returns
     -------
@@ -109,7 +112,10 @@ def write_density_matrix_to_file(platform, flavor, input_size, input_value, dens
             serializable_matrix_row.append(serializable_value)
         serializable_matrix.append(serializable_matrix_row)
     file_name = f"dm_{platform}_{flavor}_size_{input_size}_value_{input_value}.json"
-    dir_name = os.getenv("QIH_RESULTS_DIR")
+    if results_dir is not None:
+        dir_name = results_dir
+    else:
+        dir_name = os.getenv("QIH_RESULTS_DIR")
     if dir_name:
         file_name = f"{dir_name}/{file_name}"
     data = {

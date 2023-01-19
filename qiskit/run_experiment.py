@@ -4,8 +4,9 @@ Run a QFT experiment using Qiskit and write the results to a file for verificati
 """
 
 import argparse
-import common
+import quantum_computer
 import qft
+import common
 
 
 def parse_command_line_arguments():
@@ -32,7 +33,9 @@ def run_experiment(flavor, input_size, input_value, results_dir):
     if flavor == "monolithic":
         algorithm = qft.QFT(input_size)
     elif flavor == "distributed":
-        algorithm = qft.DistributedQFT(input_size)
+        nr_processors = 2
+        method = quantum_computer.Method.TELEPORT
+        algorithm = qft.DistributedQFT(nr_processors, input_size, method)
     else:
         assert False, "Unknown flavor"
     print(f"Running {flavor} QFT, input_size {input_size}, input_value {input_value}")

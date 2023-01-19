@@ -136,7 +136,9 @@ def main(input_size, input_value, app_config=None):
         density_matrix = get_qubit_state(qubits[0], reduced_dm=False)
         app_logger.log("qft output density matrix")
         write_density_matrix_to_log(app_logger, density_matrix)
-        file_name = write_density_matrix_to_file("qne", "monolithic", input_size, input_value, density_matrix)
+        file_name = write_density_matrix_to_file(
+            "qne", "monolithic", input_size, input_value, density_matrix
+        )
         app_logger.log(f"wrote density matrix to {file_name}")
     app_logger.log("qft ends")
     return {"input_size": input_size, "input_value": input_value}

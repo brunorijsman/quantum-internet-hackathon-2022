@@ -4,6 +4,7 @@ Validate whether the result files are consistent with each other.
 """
 
 import argparse
+import math
 import os
 import common
 
@@ -74,6 +75,14 @@ def validate_one_experiment_results(experiment_results, all_experiment_results):
     """
     file_name = experiment_results["file_name"]
     data = experiment_results["data"]
+    # DEBUG
+    if data["input_size"] != 3:
+        return True
+    if data["input_value"] != 7:
+        return True
+    if data["platform"] != "qiskit":
+        return True
+    # END DEBUG
     print(f"Validate {file_name}")
     all_consistent = True
     for other_experiment_results in all_experiment_results:
@@ -111,8 +120,18 @@ def check_consistency(experiment_results_1, experiment_results_2):
     True if the results are consistent with each other, False if not
     """
     max_delta = 0.001
-    density_matrix_1 = experiment_results_1["data"]["density_matrix"]
-    density_matrix_2 = experiment_results_2["data"]["density_matrix"]
+    data_1 = experiment_results_1["data"]
+    data_2 = experiment_results_2["data"]
+    density_matrix_1 = data_1["density_matrix"]
+    density_matrix_2 = data_2["density_matrix"]
+    # if data_1["platform"] != data_2["platform"]:
+    #     density_matrix_2 = density_matrix_reversed_bit_order(density_matrix_2)
+    # DEBUG
+    print("Density matrix 1:")
+    pretty_print_density_matrix(density_matrix_1)
+    print("Density matrix 2:")
+    pretty_print_density_matrix(density_matrix_2)
+    # END DEBUG
     assert len(density_matrix_1) == len(density_matrix_2)
     for row_1, row_2 in zip(density_matrix_1, density_matrix_2):
         assert len(row_1) == len(row_2)
@@ -122,6 +141,82 @@ def check_consistency(experiment_results_1, experiment_results_2):
             if abs(value_1["imag"] - value_2["imag"]) > max_delta:
                 return False
     return True
+
+
+def density_matrix_reversed_bit_order(density_matrix):
+    """
+    Produce a new density matrix by reversing the bit order of the indexes.
+
+    Parameters
+    ----------
+    density_matrix: The original density matrix.
+
+    Returns
+    -------
+    The new density matrix, with the bit order of the indexes reversed.
+    """
+    size = len(density_matrix)
+    nr_bits = round(math.log2(size))
+    assert 2 ** nr_bits == size
+    new_density_matrix = []
+    for row_index in range(size):
+        new_row = []
+        for col_index in range(size):
+            reversed_row_index = reverse_bit_order(nr_bits, row_index)
+            reversed_col_index = reverse_bit_order(nr_bits, col_index)
+            value = density_matrix[reversed_row_index][reversed_col_index]
+            new_row.append(value)
+        new_density_matrix.append(new_row)
+    return new_density_matrix
+
+
+def reverse_bit_order(nr_bits, value):
+    """
+    Reverse the bit order.
+
+    Parameters
+    ----------
+    nr_bits: The number of bits in the value to be reversed.
+    value: The value to be reversed.
+
+    Returns
+    -------
+    The value with the bit order reversed.
+    """
+    reversed_value = 0
+    for _ in range(nr_bits):
+        bit = value & 1
+        reversed_value <<= 1
+        reversed_value |= bit
+        value >>= 1
+    return reversed_value
+
+
+def pretty_print_density_matrix(density_matrix):
+    """
+    Pretty print a density matrix
+
+    Parameters
+    ----------
+    density_matrix: The density matrix to be printed.
+    """
+    for row in density_matrix:
+        line = ""
+        for value in row:
+            real_value = value["real"]
+            imaginary_value = value["imag"]
+            if real_value < 0.0:
+                imaginary_sign = "-"
+                real_value = -real_value
+            else:
+                real_sign = " "
+            if imaginary_value < 0.0:
+                imaginary_sign = "-"
+                imaginary_value = -imaginary_value
+            else:
+                imaginary_sign = "+"
+            line += f"{real_sign}{real_value:>5.3f} {imaginary_sign} {imaginary_value:<5.3f}i    "
+        print(line)
 
 
 def main():

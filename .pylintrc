@@ -6,6 +6,7 @@ good-names=qc
 
 [MESSAGES CONTROL]
 disable=
+    duplicate-code,
     fixme,
     too-few-public-methods,
     too-many-arguments,

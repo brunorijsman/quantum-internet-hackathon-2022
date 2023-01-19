@@ -28,8 +28,9 @@ def parse_command_line_arguments():
     -------
     The parsed arguments in the form of a dictionary.
     """
-    parser = argparse.ArgumentParser(description="Increase the number of qubits per node in "
-                                                 "QNE-ADK from 3 to 32.")
+    parser = argparse.ArgumentParser(
+        description="Increase the number of qubits per node in " "QNE-ADK from 3 to 32."
+    )
     parser.add_argument("venv_dir", help="Python virtual environment directory")
     args = parser.parse_args()
     return args

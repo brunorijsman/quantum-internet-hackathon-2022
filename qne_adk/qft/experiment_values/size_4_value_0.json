@@ -1,0 +1,15 @@
+[
+    {
+        "roles": ["qft"],
+        "values": [
+            {
+                "name": "input_size",
+                "value": 4
+            },
+            {
+                "name": "input_value",
+                "value": 0
+            }
+        ]
+    }
+]

@@ -107,16 +107,21 @@ def apply_qft_swaps(app_logger, qubits, nr_qubits):
         qubits[qubit_index_1].cnot(qubits[qubit_index_2])
 
 
-def main(app_config=None):
+def main(input_size, input_value, app_config=None):
     """
     The application main function.
+
+    Parameters
+    ----------
+    input_size: The size of the input to the QFT, in number of qubits.
+    input_value: The input value to the QFT, encoded as a classical number. For example, if the
+        input is |1> |0> |1> (three qubits), then input_value is 5 (which the decimal representation
+        of 101 binary).
+    app_config: The application configuration (a QNE-ADK thing; not sure what this is for)
     """
-    # TODO: Make input_size and input_value application parameters
     app_logger = get_new_app_logger(app_name=app_config.app_name, log_config=app_config.log_config)
     app_logger.log("qft starts")
-    input_size = 3
     app_logger.log(f"{input_size=}")
-    input_value = 1
     app_logger.log(f"{input_value=}")
     connection = NetQASMConnection(
         "qft", log_config=app_config.log_config, epr_sockets=[], max_qubits=input_size
@@ -133,4 +138,4 @@ def main(app_config=None):
         write_density_matrix_to_log(app_logger, density_matrix)
         write_density_matrix_to_file(app_logger, density_matrix, input_size, input_value)
     app_logger.log("qft ends")
-    return {"n": input_size, "value": input_value}
+    return {"input_size": input_size, "input_value": input_value}

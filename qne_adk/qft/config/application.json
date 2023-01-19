@@ -1,1 +1,36 @@
-[]
+[
+    {
+        "title": "Input size for QFT (number of qubits)",
+        "slug": "qft_input_size",
+        "description": "Input size for QFT (number of qubits)",
+        "values": [
+            {
+                "name": "input_size",
+                "default_value": 2,
+                "minimum_value": 2,
+                "maximum_value": 32,
+                "unit": "qubits",
+                "scale_value": 1.0
+            }
+        ],
+        "input_type": "number",
+        "roles": ["qft"]
+    },
+    {
+        "title": "Input value for QFT (encoded as a classical number)",
+        "slug": "qft_input_value",
+        "description": "Input value for QFT (encoded as a classical number)",
+        "values": [
+            {
+                "name": "input_value",
+                "default_value": 1,
+                "minimum_value": 0,
+                "maximum_value": 4294967295,
+                "unit": "",
+                "scale_value": 1.0
+            }
+        ],
+        "input_type": "number",
+        "roles": ["qft"]
+    }
+]

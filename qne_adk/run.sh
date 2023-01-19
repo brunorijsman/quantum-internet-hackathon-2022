@@ -11,7 +11,8 @@ BEEP=$(tput bel)
 FALSE=0
 TRUE=1
 
-TOP=""
+GIT_DIR=""
+QNE_ADK_DIR=""
 SKIP_CREATE_EXPERIMENTS=${FALSE}
 VALUES_FILE=""
 APPLICATIONS=""
@@ -50,8 +51,9 @@ function run_command ()
 determine_top_directory ()
 {
     run_command "git --version" "Git is not installed"
-    TOP=$(git rev-parse --show-toplevel)/qne_adk
-    progress "Directory containing QNE-ADK applications is ${TOP}"
+    GIT_DIR=$(git rev-parse --show-toplevel)
+    QNE_ADK_DIR=${GIT_DIR}/qne_adk
+    progress "Directory containing QNE-ADK applications is ${QNE_ADK_DIR}"
 }
 
 help ()
@@ -131,7 +133,7 @@ create_fresh_dot_qne_directory ()
             first=$FALSE
         fi
         echo "  \"${application}\": {" >> ~/.qne/applications.json
-        echo "    \"path\": \"${TOP}/${application}/\"" >> ~/.qne/applications.json
+        echo "    \"path\": \"${QNE_ADK_DIR}/${application}/\"" >> ~/.qne/applications.json
         echo "  }" >> ~/.qne/applications.json
     done
     echo "}" >> ~/.qne/applications.json
@@ -152,7 +154,7 @@ check_application_exists ()
 {
     local application="$1"
 
-    if [[ ! -d $TOP/$application ]]; then
+    if [[ ! -d $QNE_ADK_DIR/$application ]]; then
         fatal_error "Application directory $application not found"
     fi
 }
@@ -162,7 +164,7 @@ create_fresh_experiment_directory ()
     local application="$1"
 
     progress "Creating fresh ${application}_experiment directory..."
-    cd ${TOP}/${application}
+    cd ${QNE_ADK_DIR}/${application}
     run_command "rm -rf ${application}_experiment"
     run_command "qne experiment create ${application}_experiment ${application} randstad"
     
@@ -183,7 +185,7 @@ run_all_experiments_for_application ()
         if [[ "$VALUES_FILE" == /* || "$VALUES_FILE" == ~* ]]; then
             absolute_values_path="$VALUES_FILE"
         else
-            absolute_values_path="${TOP}/${application}/experiment_values/${VALUES_FILE}"
+            absolute_values_path="${QNE_ADK_DIR}/${application}/experiment_values/${VALUES_FILE}"
         fi
         if [[ ! "$absolute_values_path" == *.json ]]; then
             absolute_values_path="${absolute_values_path}.json"
@@ -195,8 +197,8 @@ run_all_experiments_for_application ()
         return
     fi
 
-    if [[ -d ${TOP}/${application}/experiment_values ]]; then
-        for values_file in ${TOP}/${application}/experiment_values/*; do
+    if [[ -d ${QNE_ADK_DIR}/${application}/experiment_values ]]; then
+        for values_file in ${QNE_ADK_DIR}/${application}/experiment_values/*; do
             run_one_experiment_for_application "$application" "$values_file"
         done
         return
@@ -217,16 +219,17 @@ run_one_experiment_for_application ()
     local application="$1"
     local values_file="$2"
 
-    cd ${TOP}/${application}/${application}_experiment
+    cd ${QNE_ADK_DIR}/${application}/${application}_experiment
 
     if [[ -z "$values_file" ]]; then
         progress "Running ${application}_experiment using default values..."
     else
         value_file_base_name=$(basename ${values_file})
         progress "Running ${application}_experiment using values file ${value_file_base_name}..."
-        ${TOP}/set_experiment_values.py experiment.json "$values_file"
+        ${QNE_ADK_DIR}/set_experiment_values.py experiment.json "$values_file"
     fi
 
+    export QIH_RESULTS_DIR="${GIT_DIR}/results"
     output=$(qne experiment run)
     if [[ "$output" == Error* ]]; then
         echo "${RED}Error${NORMAL} while running the script"
@@ -242,7 +245,7 @@ show_results ()
     local application="$1"
 
     progress "Results:"
-    cd ${TOP}/${application}/${application}_experiment
+    cd ${QNE_ADK_DIR}/${application}/${application}_experiment
     cat results/processed.json | jq '.round_result'
 }
 
@@ -251,7 +254,7 @@ show_logs ()
     local application="$1"
 
     progress "Logs:"
-    for log_file in ${TOP}/${application}/${application}_experiment/raw_output/LAST/*_app_log.yaml; do
+    for log_file in ${QNE_ADK_DIR}/${application}/${application}_experiment/raw_output/LAST/*_app_log.yaml; do
         base=$(basename ${log_file})
         echo "${base}:"
         egrep -v '(HFL|HLN|WCT)' ${log_file}
@@ -261,6 +264,6 @@ show_logs ()
 parse_command_line_options "$@"
 determine_top_directory
 if [ -z "${APPLICATIONS}" ]; then
-    APPLICATIONS=$(cat ${TOP}/applications)
+    APPLICATIONS=$(cat ${QNE_ADK_DIR}/applications)
 fi
 run_all_applications

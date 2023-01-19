@@ -126,7 +126,7 @@ def write_json_file(data, file_name, description):
     """
     try:
         with open(file_name, "w", encoding="utf-8") as file:
-            data = json.dump(data, file, indent=2)
+            json.dump(data, file, indent=2)
     except (OSError, IOError) as exception:
         fatal_error(f"Could not open {description} file {file_name}: {exception}")
 

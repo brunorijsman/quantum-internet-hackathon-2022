@@ -76,21 +76,20 @@ def validate_one_experiment_results(experiment_results, all_experiment_results):
     file_name = experiment_results["file_name"]
     data = experiment_results["data"]
     # DEBUG
-    if data["input_size"] != 3:
-        return True
-    if data["input_value"] != 7:
-        return True
-    if data["platform"] != "qiskit":
-        return True
+    # if data["input_size"] != 3:
+    #     return True
+    # if data["input_value"] != 7:
+    #     return True
+    # if data["platform"] != "qiskit":
+    #     return True
     # END DEBUG
     print(f"Validate {file_name}")
+    at_least_one_comparison = False
     all_consistent = True
     for other_experiment_results in all_experiment_results:
         other_file_name = other_experiment_results["file_name"]
         other_data = other_experiment_results["data"]
         if file_name == other_file_name:
-            continue
-        if data["flavor"] != other_data["flavor"]:
             continue
         if data["input_size"] != other_data["input_size"]:
             continue
@@ -101,7 +100,10 @@ def validate_one_experiment_results(experiment_results, all_experiment_results):
             print(f"  Compare with {other_file_name}: consistent")
         else:
             print(f"  Compare with {other_file_name}: NOT consistent")
+        at_least_one_comparison = True
         all_consistent = all_consistent and consistent
+    if not at_least_one_comparison:
+        print("  Nothing to compare with")
     return all_consistent
 
 
@@ -124,13 +126,13 @@ def check_consistency(experiment_results_1, experiment_results_2):
     data_2 = experiment_results_2["data"]
     density_matrix_1 = data_1["density_matrix"]
     density_matrix_2 = data_2["density_matrix"]
-    # if data_1["platform"] != data_2["platform"]:
-    #     density_matrix_2 = density_matrix_reversed_bit_order(density_matrix_2)
+    if data_1["platform"] != data_2["platform"]:
+        density_matrix_2 = density_matrix_reversed_bit_order(density_matrix_2)
     # DEBUG
-    print("Density matrix 1:")
-    pretty_print_density_matrix(density_matrix_1)
-    print("Density matrix 2:")
-    pretty_print_density_matrix(density_matrix_2)
+    # print("Density matrix 1:")
+    # pretty_print_density_matrix(density_matrix_1)
+    # print("Density matrix 2:")
+    # pretty_print_density_matrix(density_matrix_2)
     # END DEBUG
     assert len(density_matrix_1) == len(density_matrix_2)
     for row_1, row_2 in zip(density_matrix_1, density_matrix_2):

@@ -13,6 +13,7 @@ LINTED_DIRS+=" qne_adk/entanglement/src"
 LINTED_DIRS+=" qne_adk/teleport/src"
 LINTED_DIRS+=" qne_adk/just_crotz/src"
 LINTED_DIRS+=" qne_adk/qft/src"
+LINTED_DIRS+=" qne_adk/qft2/src"
 ALL_LINTS_OK=$TRUE
 
 for DIR in $LINTED_DIRS; do

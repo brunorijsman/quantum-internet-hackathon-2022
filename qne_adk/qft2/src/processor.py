@@ -23,12 +23,7 @@ class Processor:
 
     @staticmethod
     def processor_index_to_name(index):
-        names = ["alice", "bob", "charlie", "david", "eve", "frank", "george", "harry"]
-        if index > len(names):
-            name = f"processor_{index}"
-        else:
-            name = names[index]
-        return name
+        return f"processor{index}"
 
     def run(self):
         self.connect_to_netqasm()

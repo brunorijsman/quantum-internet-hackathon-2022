@@ -1,0 +1,4 @@
+{
+    "networks": ["randstad", "europe", "the-netherlands"],
+    "roles": ["processor0", "processor1"]
+}

@@ -1,9 +1,18 @@
 #!/usr/bin/env python3
 """
 Validate whether the result files are consistent with each other.
+
+QNE-ADK use different numbering of qubits than Qiskit to create the density matrices. At first I
+thought it was just a matter of little endian vs big endian, which would imply that reversing the
+qubit order would be sufficient. This turned out not to be the case. I could not really discover the
+logic in the difference in bit ordering. So, whenever I compare a QNE-ADK density matrix to a Qiskit
+density matrix, I try all possible permutations of qubit indexing. If I find a match for any
+permutation, I declare the density matrixes to be the same (and show the permutation that led to a
+match - perhaps I can discover some pattern after all.)
 """
 
 import argparse
+import itertools
 import math
 import os
 import common
@@ -75,14 +84,6 @@ def validate_one_experiment_results(experiment_results, all_experiment_results):
     """
     file_name = experiment_results["file_name"]
     data = experiment_results["data"]
-    # DEBUG
-    # if data["input_size"] != 3:
-    #     return True
-    # if data["input_value"] != 7:
-    #     return True
-    # if data["platform"] != "qiskit":
-    #     return True
-    # END DEBUG
     print(f"Validate {file_name}")
     at_least_one_comparison = False
     all_consistent = True
@@ -95,11 +96,16 @@ def validate_one_experiment_results(experiment_results, all_experiment_results):
             continue
         if data["input_value"] != other_data["input_value"]:
             continue
-        consistent = check_consistency(experiment_results, other_experiment_results)
-        if consistent:
+        result = check_consistency(experiment_results, other_experiment_results)
+        if result is True:
             print(f"  Compare with {other_file_name}: consistent")
-        else:
+            consistent = True
+        elif result is False:
             print(f"  Compare with {other_file_name}: NOT consistent")
+            consistent = False 
+        else:
+            print(f"  Compare with {other_file_name}: consistent, using permutation {result}")
+            consistent = True
         at_least_one_comparison = True
         all_consistent = all_consistent and consistent
     if not at_least_one_comparison:
@@ -119,21 +125,42 @@ def check_consistency(experiment_results_1, experiment_results_2):
 
     Returns
     -------
-    True if the results are consistent with each other, False if not
+    False if the results are not consistent with each other.
+    True if the results are consistent without any permutation needed.
+    The permutation for the density matrix in experiment_results_2 which makes the results
+        consistent.
     """
-    max_delta = 0.001
     data_1 = experiment_results_1["data"]
     data_2 = experiment_results_2["data"]
     density_matrix_1 = data_1["density_matrix"]
     density_matrix_2 = data_2["density_matrix"]
-    if data_1["platform"] != data_2["platform"]:
-        density_matrix_2 = density_matrix_reversed_bit_order(density_matrix_2)
-    # DEBUG
-    # print("Density matrix 1:")
-    # pretty_print_density_matrix(density_matrix_1)
-    # print("Density matrix 2:")
-    # pretty_print_density_matrix(density_matrix_2)
-    # END DEBUG
+    if data_1["platform"] == data_2["platform"]:
+        return compare_density_matrices(density_matrix_1, density_matrix_2)
+    size = len(density_matrix_1)
+    nr_bits = number_of_bits(size)
+    bit_indexes = range(nr_bits)
+    for permutation in itertools.permutations(bit_indexes):
+        permuted_density_matrix_2 = density_matrix_permuted_bit_order(density_matrix_2, permutation)
+        consistent = compare_density_matrices(density_matrix_1, permuted_density_matrix_2)
+        if consistent:
+            return permutation
+    return False
+
+
+def compare_density_matrices(density_matrix_1, density_matrix_2):
+    """
+    Compare two density matrices for equality.
+
+    Parameters
+    ----------
+    density_matrix_1: The first density matrix to be compared.
+    density_matrix_2: The second density matrix to be compared.
+
+    Returns
+    -------
+    True if the density matrices are the same. False if they are different.
+    """
+    max_delta = 0.001
     assert len(density_matrix_1) == len(density_matrix_2)
     for row_1, row_2 in zip(density_matrix_1, density_matrix_2):
         assert len(row_1) == len(row_2)
@@ -145,53 +172,72 @@ def check_consistency(experiment_results_1, experiment_results_2):
     return True
 
 
-def density_matrix_reversed_bit_order(density_matrix):
+def number_of_bits(number):
     """
-    Produce a new density matrix by reversing the bit order of the indexes.
+    Determine the number of bits in a number, which must be a power of two.
+
+    Parameters
+    ---------
+    number: An integer which must be a power of two.
+
+    Returns
+    -------
+    The number of bits in the number.
+    """
+    nr_bits = round(math.log2(number))
+    assert 2**nr_bits == number
+    return nr_bits
+
+
+def density_matrix_permuted_bit_order(density_matrix, permutation):
+    """
+    Produce a new density matrix by permuting the bit order of the indexes.
 
     Parameters
     ----------
     density_matrix: The original density matrix.
+    permutation: The permutation.
 
     Returns
     -------
-    The new density matrix, with the bit order of the indexes reversed.
+    The new density matrix, with the bit order of the indexes permuted.
     """
     size = len(density_matrix)
-    nr_bits = round(math.log2(size))
-    assert 2 ** nr_bits == size
     new_density_matrix = []
     for row_index in range(size):
         new_row = []
         for col_index in range(size):
-            reversed_row_index = reverse_bit_order(nr_bits, row_index)
-            reversed_col_index = reverse_bit_order(nr_bits, col_index)
+            reversed_row_index = permute_bit_order(row_index, permutation)
+            reversed_col_index = permute_bit_order(col_index, permutation)
             value = density_matrix[reversed_row_index][reversed_col_index]
             new_row.append(value)
         new_density_matrix.append(new_row)
     return new_density_matrix
 
 
-def reverse_bit_order(nr_bits, value):
+def permute_bit_order(number, permutation):
     """
-    Reverse the bit order.
+    Permute the bit order in a given number.
 
     Parameters
     ----------
-    nr_bits: The number of bits in the value to be reversed.
-    value: The value to be reversed.
+    number: The number whose bits need to be permuted.
+    permutation: The permutation.
 
     Returns
     -------
-    The value with the bit order reversed.
+    The number with the bit order permuted.
     """
-    reversed_value = 0
-    for _ in range(nr_bits):
-        bit = value & 1
-        reversed_value <<= 1
-        reversed_value |= bit
-        value >>= 1
-    return reversed_value
+    new_number = 0
+    nr_bits = len(permutation)
+    for old_bit_index in range(nr_bits):
+        bit_value = number & 1
+        number >>= 1
+        if bit_value:
+            new_bit_index = permutation[old_bit_index]
+            bit_mask = 1 << new_bit_index
+            new_number |= bit_mask
+    return new_number
 
 
 def pretty_print_density_matrix(density_matrix):

@@ -45,10 +45,11 @@ def add_qft_rotations(controller_processor, remaining_nr_qubits):
         return
     remaining_nr_qubits -= 1
     controller_processor.hadamard(remaining_nr_qubits)
-    for qubit in range(remaining_nr_qubits):
-        controller_processor.controlled_phase(
-            numpy.pi / 2 ** (remaining_nr_qubits - qubit), qubit, remaining_nr_qubits
-        )
+    # TODO
+    # for qubit in range(remaining_nr_qubits):
+    #     controller_processor.controlled_phase(
+    #         numpy.pi / 2 ** (remaining_nr_qubits - qubit), qubit, remaining_nr_qubits
+    #     )
     add_qft_rotations(controller_processor, remaining_nr_qubits)
 
 

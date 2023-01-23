@@ -50,7 +50,9 @@ class Processor:
         The main entry point for an agent processor. Listen for incoming commands from the
         coordinator processor (over the classical channel) and execute them.
         """
-        # TODO
+        self.logger.log(
+            f"{self.name}: Agent processor waits for instructions from coordinator processor"
+        )
 
     @staticmethod
     def _processor_index_to_name(index):
@@ -89,11 +91,20 @@ class Processor:
         global_qubit_index: The global index of the qubit on which to perform the hadamard gate.
         """
         assert self._am_coordinator_processor()
+        self.logger.log(f"{self.name}: Global hadamard {global_qubit_index=}")
         (processor_index, local_qubit_index) = self._global_to_local_index(global_qubit_index)
-        if processor_index != self.processor_index:
-            return
+        if processor_index == self.processor_index:
+            self._local_hadamard(local_qubit_index)
+        else:
+            self._remote_hadamard(processor_index, local_qubit_index)
+
+    def _local_hadamard(self, local_qubit_index):
         self.logger.log(f"{self.name}: Local hadamard {local_qubit_index=}")
         self.main_qubit[local_qubit_index].H()
+
+    def _remote_hadamard(self, processor_index, local_qubit_index):
+        self.logger.log(f"{self.name}: Remote hadamard {processor_index=} {local_qubit_index=}")
+        # TODO
 
     def controlled_phase(self, _angle, global_control_qubit_index, global_target_qubit_index):
         """

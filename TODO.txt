@@ -1,9 +1,0 @@
-TODO Add run (with input) and display statevector and density matrix to DQFT notebooks
-
-TODO Add type checking
-
-TODO Run doxygen to generate documentation
-
-TODO Generate read-the-docs page
-
-TODO Add more text to the Jupyter notebooks to explain what is being shown

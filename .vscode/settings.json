@@ -46,6 +46,7 @@
         "qobj",
         "Qron",
         "Qubit",
+        "rcfile",
         "Reddy",
         "scipy",
         "Shor",
@@ -62,8 +63,10 @@
     ],
     "editor.formatOnSave": true,
     "editor.formatOnPaste": false,
-    "python.linting.pylintEnabled": true,
-    "python.linting.flake8Enabled": true,
     "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.pylintArgs": ["--rcfile", "${workspaceFolder}/.pylintrc"],
+    "python.linting.pylintPath": "${workspaceFolder}/venv/bin/pylint",
+    "python.linting.flake8Enabled": true,
     "python.formatting.provider": "black"
 }

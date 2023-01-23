@@ -102,7 +102,7 @@ def validate_one_experiment_results(experiment_results, all_experiment_results):
             consistent = True
         elif result is False:
             print(f"  Compare with {other_file_name}: NOT consistent")
-            consistent = False 
+            consistent = False
         else:
             print(f"  Compare with {other_file_name}: consistent, using permutation {result}")
             consistent = True

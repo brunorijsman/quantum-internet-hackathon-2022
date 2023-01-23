@@ -11,7 +11,7 @@ def main(app_config=None):
     Main function for the QNE-ADK quantum Fourier transformation running on the first of two
     processors.
     """
-    proc = processor.Processor(
+    agent_processor = processor.Processor(
         app_config=app_config, nr_processors=2, total_nr_qubits=4, processor_index=1
     )
-    proc.run()
+    agent_processor.agent_processor_main()

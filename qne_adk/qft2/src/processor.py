@@ -2,10 +2,12 @@
 Quantum processor for QNE-ADK.
 """
 
+from time import sleep
 from netqasm.logging.output import get_new_app_logger
 from netqasm.sdk import EPRSocket
 from netqasm.sdk import Qubit
-from netqasm.sdk.external import NetQASMConnection
+from netqasm.sdk.classical_communication.message import StructuredMessage
+from netqasm.sdk.external import NetQASMConnection, Socket
 
 
 class Processor:
@@ -39,11 +41,17 @@ class Processor:
         self.name = self._processor_index_to_name(processor_index)
         self.logger.log(f"{self.name}: Create processor index {self.processor_index}")
         self.epr_socket = {}
+        self.classical_socket = {}
         self.main_qubit = {}
-        self.conn = None
-        self._connect_to_netqasm()
+        self.conn = NetQASMConnection(
+            self.name,
+            log_config=self.app_config.log_config,
+            epr_sockets=list(self.epr_socket.values()),
+        )
         self._create_qubits()
         self._create_epr_sockets_to_other_processors()
+        self._create_classical_sockets_to_other_processors()
+        self._wait_until_classical_sockets_connected()
 
     def agent_processor_main(self):
         """
@@ -53,6 +61,14 @@ class Processor:
         self.logger.log(
             f"{self.name}: Agent processor waits for instructions from coordinator processor"
         )
+        socket = self.classical_socket[0]
+        # message = coordinator_socket.recv_structured()
+        message = socket.recv()
+        socket.send("response")
+        #     self.logger.log(f"Receive {message=}")
+        # command = message.header
+        # arguments = message.payload
+        # TODO
 
     @staticmethod
     def _processor_index_to_name(index):
@@ -60,14 +76,6 @@ class Processor:
 
     def _am_coordinator_processor(self):
         return self.processor_index == 0
-
-    def _connect_to_netqasm(self):
-        self.logger.log(f"{self.name}: Connect to NetQASM")
-        self.conn = NetQASMConnection(
-            self.name,
-            log_config=self.app_config.log_config,
-            epr_sockets=list(self.epr_socket.values()),
-        )
 
     def _create_qubits(self):
         for index in range(self.local_nr_qubits):
@@ -81,6 +89,39 @@ class Processor:
                 remote_name = self._processor_index_to_name(remote_processor_index)
                 self.logger.log(f"{self.name}: Create EPR socket {remote_processor_index=}")
                 self.epr_socket[remote_processor_index] = EPRSocket(remote_name)
+
+    def _create_classical_sockets_to_other_processors(self):
+        for remote_processor_index in range(self.nr_processors):
+            if remote_processor_index != self.processor_index:
+                local_name = self.name
+                remote_name = self._processor_index_to_name(remote_processor_index)
+                self.logger.log(
+                    f"{self.name}: Create classical socket {remote_processor_index=} "
+                    f"{local_name=} {remote_name=}"
+                )
+                self.classical_socket[remote_processor_index] = Socket(
+                    local_name, remote_name, log_config=self.app_config.log_config
+                )
+
+    def _wait_until_classical_sockets_connected(self):
+        # TODO: We used to try to send a message over a socket soon after creating it. This caused
+        #       an exception ConnectionError("Socket is not connected so cannot send")
+        #       This function is an attempt to wait until the sockets are connected before
+        #       proceeding. For reasons unknown to me, it doesn't work: now we just get a
+        #       TimeoutExpired exception. I asked for help on the QNE-ADK Slack channel.
+        while True:
+            all_connected = True
+            for remote_processor_index in range(self.nr_processors):
+                if remote_processor_index != self.processor_index:
+                    socket = self.classical_socket[remote_processor_index]
+                    if not socket.connected:
+                        all_connected = False
+                        break
+            if all_connected:
+                self.logger.log("All classical sockets are connected")
+                return
+            self.logger.log("At least one classical socket is not yet connected")
+            sleep(1.0)
 
     def hadamard(self, global_qubit_index):
         """
@@ -104,7 +145,12 @@ class Processor:
 
     def _remote_hadamard(self, processor_index, local_qubit_index):
         self.logger.log(f"{self.name}: Remote hadamard {processor_index=} {local_qubit_index=}")
-        # TODO
+        message = StructuredMessage("hadamard", str(local_qubit_index))
+        self.logger.log(f"{self.name}: Send {message=} {processor_index=}")
+        # self.classical_socket[processor_index].send_structured(message)
+        # socket = self.classical_socket[processor_index]
+        # socket.send("command")
+        # response = socket.recv()
 
     def controlled_phase(self, _angle, global_control_qubit_index, global_target_qubit_index):
         """

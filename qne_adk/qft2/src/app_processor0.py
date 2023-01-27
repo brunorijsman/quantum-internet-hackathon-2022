@@ -21,7 +21,11 @@ def main(app_config=None):
 
 
 def _quantum_fourier_transform(controller_processor, total_nr_qubits):
-    _add_qft_rotations(controller_processor, total_nr_qubits)
+    socket = controller_processor.classical_socket[1]
+    socket.send("hello")
+    socket.send("end")
+
+    # _add_qft_rotations(controller_processor, total_nr_qubits)
 
 
 def _add_qft_rotations(controller_processor, remaining_nr_qubits):

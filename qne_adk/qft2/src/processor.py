@@ -49,26 +49,25 @@ class Processor:
             epr_sockets=list(self.epr_socket.values()),
         )
         self._create_qubits()
-        self._create_epr_sockets_to_other_processors()
         self._create_classical_sockets_to_other_processors()
-        self._wait_until_classical_sockets_connected()
+        self._create_epr_sockets_to_other_processors()
 
     def agent_processor_main(self):
         """
         The main entry point for an agent processor. Listen for incoming commands from the
         coordinator processor (over the classical channel) and execute them.
         """
-        self.logger.log(
-            f"{self.name}: Agent processor waits for instructions from coordinator processor"
-        )
-        socket = self.classical_socket[0]
-        # message = coordinator_socket.recv_structured()
-        message = socket.recv()
-        socket.send("response")
-        #     self.logger.log(f"Receive {message=}")
-        # command = message.header
-        # arguments = message.payload
-        # TODO
+        coordinator_processor_index = 0
+        socket = self.classical_socket[coordinator_processor_index]
+        while True:
+            self.logger.log(
+                f"{self.name}: Agent processor waits for instructions from coordinator processor"
+            )
+            message = socket.recv()
+            self.logger.log(f"{self.name}: Received {message}")
+            if message == "end":
+                return
+            self.logger.log(f"{self.name}: Ignore unrecognized message {message}")
 
     @staticmethod
     def _processor_index_to_name(index):
@@ -102,26 +101,6 @@ class Processor:
                 self.classical_socket[remote_processor_index] = Socket(
                     local_name, remote_name, log_config=self.app_config.log_config
                 )
-
-    def _wait_until_classical_sockets_connected(self):
-        # TODO: We used to try to send a message over a socket soon after creating it. This caused
-        #       an exception ConnectionError("Socket is not connected so cannot send")
-        #       This function is an attempt to wait until the sockets are connected before
-        #       proceeding. For reasons unknown to me, it doesn't work: now we just get a
-        #       TimeoutExpired exception. I asked for help on the QNE-ADK Slack channel.
-        while True:
-            all_connected = True
-            for remote_processor_index in range(self.nr_processors):
-                if remote_processor_index != self.processor_index:
-                    socket = self.classical_socket[remote_processor_index]
-                    if not socket.connected:
-                        all_connected = False
-                        break
-            if all_connected:
-                self.logger.log("All classical sockets are connected")
-                return
-            self.logger.log("At least one classical socket is not yet connected")
-            sleep(1.0)
 
     def hadamard(self, global_qubit_index):
         """

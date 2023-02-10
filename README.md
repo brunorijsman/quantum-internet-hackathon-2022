@@ -163,6 +163,9 @@ platforms: Qiskit, QNE-ADK, and Pennylane (all are described in more detail belo
 [Qiskit](https://qiskit.org/) is an open-source software development kit (SDK) for working with
 quantum computers at the level of pulses, circuits, and application modules.
 
+[Diskit](https://github.com/Interlin-q/diskit)
+[Diskit Documentation](https://interlin-q.github.io/diskit/)
+
 One of the components in Qiskit is [Aer](https://github.com/Qiskit/qiskit-aer), which provides
 high-performance quantum computing simulators with realistic noise models.
 
